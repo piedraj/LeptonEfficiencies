@@ -16,7 +16,14 @@
     cd CMSSW_9_1_1_patch1/src
     scram b -j 8
     cd test
-    cmsRun MuonAnalyzer_cfg.py
+
+    mkdir rootfiles
+
+    cmsRun MuonAnalyzer_cfg.py print inputDataset='PU200'
+    mv MyMuonPlots.root rootfiles/MyMuonPlots_PU200.root
+
+    cmsRun MuonAnalyzer_cfg.py print inputDataset='noPU'
+    mv MyMuonPlots.root rootfiles/MyMuonPlots_noPU.root
 
 # Read histograms and draw distributions
 
