@@ -1,6 +1,6 @@
 # Everything begins here
 
-      ssh -Y lxplus.cern.ch -o ServerAliveInterval=240
+    ssh -Y lxplus.cern.ch -o ServerAliveInterval=240
 
     bash -l
 
@@ -29,6 +29,6 @@
 
 # Read histograms and draw distributions
 
-    cd test
+    cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
     root -l -b -q doEfficiencies.C+
 
