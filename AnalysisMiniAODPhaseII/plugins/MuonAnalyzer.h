@@ -71,11 +71,6 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
   TH1F* hGlbMuons_vr;
   TH1F* hGlbMuons_res[nbinspt];
 
-  TH1F* hGlbStaMuons_dR;
-  TH1F* hGlbStaMuons_pt;
-  TH1F* hGlbStaMuons_vr;
-  TH1F* hGlbStaMuons_res[nbinspt];
-
   // TH2 histograms
   TH2F* hGenStaMuons_eta;
   TH2F* hGenStaMuons_phi;

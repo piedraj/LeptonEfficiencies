@@ -66,15 +66,10 @@ void ExampleMuonAnalyzer::beginJob()
   hGlbMuons_pt = fileService->make<TH1F>("GlbMuons_pt", "glb-gen dR-matched pt", 100, 0, 100);
   hGlbMuons_vr = fileService->make<TH1F>("GlbMuons_vr", "glb-gen dR-matched vr", 750, 0, 750);
 
-  hGlbStaMuons_dR = fileService->make<TH1F>("GlbStaMuons_dR", "glbsta-gen dR-matched dR", 100, 0,   4);
-  hGlbStaMuons_pt = fileService->make<TH1F>("GlbStaMuons_pt", "glbsta-gen dR-matched pt", 100, 0, 100);
-  hGlbStaMuons_vr = fileService->make<TH1F>("GlbStaMuons_vr", "glbsta-gen dR-matched vr", 750, 0, 750);
-
   for (Int_t i=0; i<nbinspt; i++) {
-    hStaMuons_res   [i] = fileService->make<TH1F>(Form("StaMuons_res_%d",    i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
-    hTrkMuons_res   [i] = fileService->make<TH1F>(Form("TrkMuons_res_%d",    i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
-    hGlbMuons_res   [i] = fileService->make<TH1F>(Form("GlbMuons_res_%d",    i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
-    hGlbStaMuons_res[i] = fileService->make<TH1F>(Form("GlbStaMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
+    hStaMuons_res[i] = fileService->make<TH1F>(Form("StaMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
+    hTrkMuons_res[i] = fileService->make<TH1F>(Form("TrkMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
+    hGlbMuons_res[i] = fileService->make<TH1F>(Form("GlbMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
   }
 
   // TH2 histograms
@@ -153,10 +148,6 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     Float_t glb_pt         = -999;
     Float_t glb_res        = -999;
 
-    Float_t glbsta_min_deltaR =  999; 
-    Float_t glbsta_pt         = -999;
-    Float_t glbsta_res        = -999;
-
     Float_t sta_eta = -999;  // So far we are only drawing standalone vs. gen eta
     Float_t sta_phi = -999;  // So far we are only drawing standalone vs. gen phi
 
@@ -216,9 +207,9 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
       }
 
 
-      // isGlobalMuon
+      // isGlobalMuon && isStandAloneMuon
       //------------------------------------------------------------------------
-      if (muon->isGlobalMuon()) {
+      if (muon->isGlobalMuon() && muon->isStandAloneMuon()) {
 
 	float muEta    = muon->globalTrack()->eta();
 	float muPhi    = muon->globalTrack()->phi();
@@ -237,31 +228,6 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	  glb_min_deltaR = dR;
 	  glb_pt         = muPt;
 	  glb_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
-	}
-      }
-
-
-      // isGlobalMuon && isStandAloneMuon
-      //------------------------------------------------------------------------
-      if (muon->isGlobalMuon() && muon->isStandAloneMuon()) {
-
-	float muEta    = muon->globalTrack()->eta();
-	float muPhi    = muon->globalTrack()->phi();
-	float muPt     = muon->globalTrack()->pt();
-	float muCharge = muon->globalTrack()->charge();
-
-	if (fabs(muEta) > 2.4) continue;
-	if (muPt < ptbins[0])  continue;
-       
-	float dPhi = muPhi - phi;
-	float dEta = muEta - eta;
-
-	float dR = sqrt(dPhi*dPhi + dEta*dEta); 
-	
-	if (dR < glbsta_min_deltaR) {
-	  glbsta_min_deltaR = dR;
-	  glbsta_pt         = muPt;
-	  glbsta_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
     }  // for..muons
@@ -322,20 +288,6 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 
 	for (Int_t i=0; i<nbinspt; i++)
 	  if (pt > ptbins[i] && pt < ptbins[i+1]) hGlbMuons_res[i]->Fill(glb_res);
-      }
-
-
-    // Fill glbsta histograms
-    //--------------------------------------------------------------------------
-    hGlbStaMuons_dR->Fill(glbsta_min_deltaR);
-
-    if (glbsta_min_deltaR < max_deltaR)
-      {
-	hGlbStaMuons_pt->Fill(glbsta_pt);
-	hGlbStaMuons_vr->Fill(vr);
-
-	for (Int_t i=0; i<nbinspt; i++)
-	  if (pt > ptbins[i] && pt < ptbins[i+1]) hGlbStaMuons_res[i]->Fill(glbsta_res);
       }
   }  // for..pruned
 }
