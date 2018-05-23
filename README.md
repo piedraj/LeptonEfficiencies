@@ -4,7 +4,7 @@
 
     bash -l
 
-    export SCRAM_ARCH=slc6_amd64_gcc630
+    export SCRAM_ARCH=slc6_amd64_gcc530
     cmsrel CMSSW_9_1_1_patch1
     cd CMSSW_9_1_1_patch1/src
     cmsenv
@@ -15,15 +15,8 @@
 
     cd CMSSW_9_1_1_patch1/src
     scram b -j 8
-    cd test
-
-    mkdir rootfiles
-
-    cmsRun MuonAnalyzer_cfg.py print inputDataset='PU200'
-    mv MyMuonPlots.root rootfiles/MyMuonPlots_PU200.root
-
-    cmsRun MuonAnalyzer_cfg.py print inputDataset='noPU'
-    mv MyMuonPlots.root rootfiles/MyMuonPlots_noPU.root
+    cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
+    cmsRun MuonAnalyzer_cfg.py
 
 # Read histograms and draw distributions
 
