@@ -71,29 +71,29 @@ void doEfficiencies()
 
   // Do the work
   //----------------------------------------------------------------------------
-//  DrawEfficiency();
-//
-//  DrawResolution("Sta");
-//  DrawResolution("Trk");
-//  DrawResolution("Glb");
-//
-  DrawTH2("eta", "Sta");
-  //  DrawTH2("eta", "Trk");
-  //  DrawTH2("eta", "Glb");
+  DrawEfficiency();
 
+  DrawResolution("Sta");
+  DrawResolution("Trk");
+  DrawResolution("Glb");
+
+  DrawTH2("eta", "Sta");
+  DrawTH2("eta", "Trk");
+  DrawTH2("eta", "Glb");
+  
   DrawTH2("phi", "Sta");
-  //  DrawTH2("phi", "Trk");
-  //  DrawTH2("phi", "Glb");
-//
-//  Compare("dR", "Sta");
-//  Compare("dR", "Trk");
-//  Compare("dR", "Glb");
-//
-//  Compare("pt", "Sta");
-//  Compare("pt", "Trk");
-//  Compare("pt", "Glb");
-//
-//  Compare("vr", "Gen", 50);
+  DrawTH2("phi", "Trk");
+  DrawTH2("phi", "Glb");
+
+  Compare("dR", "Sta");
+  Compare("dR", "Trk");
+  Compare("dR", "Glb");
+  
+  Compare("pt", "Sta");
+  Compare("pt", "Trk");
+  Compare("pt", "Glb");
+  
+  Compare("vr", "Gen", 50);
 }
 
 

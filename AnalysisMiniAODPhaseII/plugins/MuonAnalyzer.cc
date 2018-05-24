@@ -81,8 +81,8 @@ void ExampleMuonAnalyzer::beginJob()
 
   // TH2 histograms
   hGenStaMuons_eta = fileService->make<TH2F>("GenStaMuons_eta", "sta-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
-  hGenTrkMuons_eta = fileService->make<TH2F>("GenStaMuons_eta", "trk-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
-  hGenGlbMuons_eta = fileService->make<TH2F>("GenStaMuons_eta", "glb-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
+  hGenTrkMuons_eta = fileService->make<TH2F>("GenTrkMuons_eta", "trk-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
+  hGenGlbMuons_eta = fileService->make<TH2F>("GenGlbMuons_eta", "glb-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
 
   hGenStaMuons_phi = fileService->make<TH2F>("GenStaMuons_phi", "sta-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
   hGenTrkMuons_phi = fileService->make<TH2F>("GenTrkMuons_phi", "trk-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
