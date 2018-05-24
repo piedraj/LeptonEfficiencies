@@ -50,22 +50,29 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
 
   // TH1 histograms
   TH1F* hGenMuons_eta;
+  TH1F* hGenMuons_phi;
   TH1F* hGenMuons_pt;
   TH1F* hGenMuons_vx;
   TH1F* hGenMuons_vy;
   TH1F* hGenMuons_vz;
   TH1F* hGenMuons_vr;
   
+  TH1F* hStaMuons_eta;
+  TH1F* hStaMuons_phi;
   TH1F* hStaMuons_dR;
   TH1F* hStaMuons_pt;
   TH1F* hStaMuons_vr;
   TH1F* hStaMuons_res[nbinspt];
 
+  TH1F* hTrkMuons_eta;
+  TH1F* hTrkMuons_phi;
   TH1F* hTrkMuons_dR;
   TH1F* hTrkMuons_pt;
   TH1F* hTrkMuons_vr;
   TH1F* hTrkMuons_res[nbinspt];
 
+  TH1F* hGlbMuons_eta;
+  TH1F* hGlbMuons_phi;
   TH1F* hGlbMuons_dR;
   TH1F* hGlbMuons_pt;
   TH1F* hGlbMuons_vr;
@@ -73,6 +80,11 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
 
   // TH2 histograms
   TH2F* hGenStaMuons_eta;
+  TH2F* hGenTrkMuons_eta;
+  TH2F* hGenGlbMuons_eta;
+
   TH2F* hGenStaMuons_phi;
+  TH2F* hGenTrkMuons_phi;
+  TH2F* hGenGlbMuons_phi;
 };
 #endif

@@ -48,23 +48,30 @@ void ExampleMuonAnalyzer::beginJob()
 
   // TH1 histograms
   hGenMuons_eta = fileService->make<TH1F>("GenMuons_eta", "gen muons eta", 100, -2.5, 2.5);
+  hGenMuons_phi = fileService->make<TH1F>("GenMuons_phi", "gen muons phi", 100, -3.2, 3.2);
   hGenMuons_pt  = fileService->make<TH1F>("GenMuons_pt",  "gen muons pt",  100,    0, 100); 
   hGenMuons_vx  = fileService->make<TH1F>("GenMuons_vx",  "gen muons vx",  150,    0, 750);
   hGenMuons_vy  = fileService->make<TH1F>("GenMuons_vy",  "gen muons vy",  150,    0, 750);
   hGenMuons_vz  = fileService->make<TH1F>("GenMuons_vz",  "gen muons vz",  150,    0, 750);
   hGenMuons_vr  = fileService->make<TH1F>("GenMuons_vr",  "gen muons vr",  750,    0, 750);
 
-  hStaMuons_dR = fileService->make<TH1F>("StaMuons_dR", "sta-gen dR-matched dR", 100, 0,   4);
-  hStaMuons_pt = fileService->make<TH1F>("StaMuons_pt", "sta-gen dR-matched pt", 100, 0, 100);
-  hStaMuons_vr = fileService->make<TH1F>("StaMuons_vr", "sta-gen dR-matched vr", 750, 0, 750);
+  hStaMuons_eta = fileService->make<TH1F>("StaMuons_eta", "sta muons eta",         100, -2.5, 2.5);
+  hStaMuons_phi = fileService->make<TH1F>("StaMuons_phi", "sta muons phi",         100, -3.2, 3.2);
+  hStaMuons_dR  = fileService->make<TH1F>("StaMuons_dR",  "sta-gen dR",            100,    0,   4);
+  hStaMuons_pt  = fileService->make<TH1F>("StaMuons_pt",  "sta-gen dR-matched pt", 100,    0, 100);
+  hStaMuons_vr  = fileService->make<TH1F>("StaMuons_vr",  "sta-gen dR-matched vr", 750,    0, 750);
 
-  hTrkMuons_dR  = fileService->make<TH1F>("TrkMuons_dR", "trk-gen dR-matched dR", 100, 0,   4);
-  hTrkMuons_pt  = fileService->make<TH1F>("TrkMuons_pt", "trk-gen dR-matched pt", 100, 0, 100);
-  hTrkMuons_vr  = fileService->make<TH1F>("TrkMuons_vr", "trk-gen dR-matched vr", 750, 0, 750);
+  hTrkMuons_eta = fileService->make<TH1F>("TrkMuons_eta", "trk muons eta",         100, -2.5, 2.5);
+  hTrkMuons_phi = fileService->make<TH1F>("TrkMuons_phi", "trk muons phi",         100, -3.2, 3.2);
+  hTrkMuons_dR  = fileService->make<TH1F>("TrkMuons_dR",  "trk-gen dR",            100,    0,   4);
+  hTrkMuons_pt  = fileService->make<TH1F>("TrkMuons_pt",  "trk-gen dR-matched pt", 100,    0, 100);
+  hTrkMuons_vr  = fileService->make<TH1F>("TrkMuons_vr",  "trk-gen dR-matched vr", 750,    0, 750);
 
-  hGlbMuons_dR = fileService->make<TH1F>("GlbMuons_dR", "glb-gen dR-matched dR", 100, 0,   4);
-  hGlbMuons_pt = fileService->make<TH1F>("GlbMuons_pt", "glb-gen dR-matched pt", 100, 0, 100);
-  hGlbMuons_vr = fileService->make<TH1F>("GlbMuons_vr", "glb-gen dR-matched vr", 750, 0, 750);
+  hGlbMuons_eta = fileService->make<TH1F>("GlbMuons_eta", "glb muons eta",         100, -2.5, 2.5);
+  hGlbMuons_phi = fileService->make<TH1F>("GlbMuons_phi", "glb muons phi",         100, -3.2, 3.2);
+  hGlbMuons_dR  = fileService->make<TH1F>("GlbMuons_dR",  "glb-gen dR",            100,    0,   4);
+  hGlbMuons_pt  = fileService->make<TH1F>("GlbMuons_pt",  "glb-gen dR-matched pt", 100,    0, 100);
+  hGlbMuons_vr  = fileService->make<TH1F>("GlbMuons_vr",  "glb-gen dR-matched vr", 750,    0, 750);
 
   for (Int_t i=0; i<nbinspt; i++) {
     hStaMuons_res[i] = fileService->make<TH1F>(Form("StaMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -3, 3);
@@ -74,7 +81,12 @@ void ExampleMuonAnalyzer::beginJob()
 
   // TH2 histograms
   hGenStaMuons_eta = fileService->make<TH2F>("GenStaMuons_eta", "sta-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
+  hGenTrkMuons_eta = fileService->make<TH2F>("GenStaMuons_eta", "trk-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
+  hGenGlbMuons_eta = fileService->make<TH2F>("GenStaMuons_eta", "glb-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
+
   hGenStaMuons_phi = fileService->make<TH2F>("GenStaMuons_phi", "sta-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
+  hGenTrkMuons_phi = fileService->make<TH2F>("GenTrkMuons_phi", "trk-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
+  hGenGlbMuons_phi = fileService->make<TH2F>("GenGlbMuons_phi", "glb-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
 }
 
 
@@ -137,19 +149,22 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     // Loop over reconstructed muons
     //--------------------------------------------------------------------------
     Float_t sta_min_deltaR =  999;   
+    Float_t sta_eta        = -999;
+    Float_t sta_phi        = -999;
     Float_t sta_pt         = -999;
     Float_t sta_res        = -999;
 
     Float_t trk_min_deltaR =  999; 
+    Float_t trk_eta        = -999;
+    Float_t trk_phi        = -999;
     Float_t trk_pt         = -999;
     Float_t trk_res        = -999;
 
     Float_t glb_min_deltaR =  999; 
+    Float_t glb_eta        = -999;
+    Float_t glb_phi        = -999;
     Float_t glb_pt         = -999;
     Float_t glb_res        = -999;
-
-    Float_t sta_eta = -999;  // So far we are only drawing standalone vs. gen eta
-    Float_t sta_phi = -999;  // So far we are only drawing standalone vs. gen phi
 
 
     for (pat::MuonCollection::const_iterator muon=muons->begin(); muon!=muons->end(); ++muon) {
@@ -201,6 +216,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	
 	if (dR < trk_min_deltaR) {
 	  trk_min_deltaR = dR;
+	  trk_eta        = muEta;
+	  trk_phi        = muPhi;
 	  trk_pt         = muPt;
 	  trk_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
@@ -226,6 +243,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	
 	if (dR < glb_min_deltaR) {
 	  glb_min_deltaR = dR;
+	  glb_eta        = muEta;
+	  glb_phi        = muPhi;
 	  glb_pt         = muPt;
 	  glb_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
@@ -239,6 +258,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     // Fill gen histograms
     //--------------------------------------------------------------------------
     hGenMuons_eta->Fill(eta);
+    hGenMuons_phi->Fill(phi);
     hGenMuons_pt ->Fill(pt);
     hGenMuons_vx ->Fill(fabs(vx));
     hGenMuons_vy ->Fill(fabs(vy));
@@ -248,46 +268,67 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 
     // Fill sta histograms
     //--------------------------------------------------------------------------
-    hStaMuons_dR->Fill(sta_min_deltaR);
-
-    if (sta_min_deltaR < max_deltaR)
+    if (sta_min_deltaR < 999)
       {
-	hStaMuons_pt->Fill(sta_pt);
-	hStaMuons_vr->Fill(vr);
+	hStaMuons_eta->Fill(sta_eta);
+	hStaMuons_phi->Fill(sta_phi);
+	hStaMuons_dR ->Fill(sta_min_deltaR);
 
-	hGenStaMuons_eta->Fill(eta, sta_eta);
-	hGenStaMuons_phi->Fill(phi, sta_phi);
+	if (sta_min_deltaR < max_deltaR)
+	  {
+	    hStaMuons_pt->Fill(sta_pt);
+	    hStaMuons_vr->Fill(vr);
 
-	for (Int_t i=0; i<nbinspt; i++)
-	  if (pt > ptbins[i] && pt < ptbins[i+1]) hStaMuons_res[i]->Fill(sta_res);
+	    hGenStaMuons_eta->Fill(eta, sta_eta);
+	    hGenStaMuons_phi->Fill(phi, sta_phi);
+
+	    for (Int_t i=0; i<nbinspt; i++)
+	      if (pt > ptbins[i] && pt < ptbins[i+1]) hStaMuons_res[i]->Fill(sta_res);
+	  }
       }
 
 
     // Fill trk histograms
     //--------------------------------------------------------------------------
-    hTrkMuons_dR->Fill(trk_min_deltaR);
-
-    if (trk_min_deltaR < max_deltaR)
+    if (trk_min_deltaR < 999)
       {
-	hTrkMuons_pt->Fill(trk_pt);
-	hTrkMuons_vr->Fill(vr);
+	hTrkMuons_eta->Fill(trk_eta);
+	hTrkMuons_phi->Fill(trk_phi);
+	hTrkMuons_dR ->Fill(trk_min_deltaR);
+
+	if (trk_min_deltaR < max_deltaR)
+	  {
+	    hTrkMuons_pt->Fill(trk_pt);
+	    hTrkMuons_vr->Fill(vr);
 	
-	for (Int_t i=0; i<nbinspt; i++)
-	  if (pt > ptbins[i] && pt < ptbins[i+1]) hTrkMuons_res[i]->Fill(trk_res);
+	    hGenTrkMuons_eta->Fill(eta, trk_eta);
+	    hGenTrkMuons_phi->Fill(phi, trk_phi);
+
+	    for (Int_t i=0; i<nbinspt; i++)
+	      if (pt > ptbins[i] && pt < ptbins[i+1]) hTrkMuons_res[i]->Fill(trk_res);
+	  }
       }
 
 
     // Fill glb histograms
     //--------------------------------------------------------------------------
-    hGlbMuons_dR->Fill(glb_min_deltaR);
-
-    if (glb_min_deltaR < max_deltaR)
+    if (glb_min_deltaR < 999)
       {
-	hGlbMuons_pt->Fill(glb_pt);
-	hGlbMuons_vr->Fill(vr);
+	hGlbMuons_eta->Fill(glb_eta);
+	hGlbMuons_phi->Fill(glb_phi);
+	hGlbMuons_dR ->Fill(glb_min_deltaR);
 
-	for (Int_t i=0; i<nbinspt; i++)
-	  if (pt > ptbins[i] && pt < ptbins[i+1]) hGlbMuons_res[i]->Fill(glb_res);
+	if (glb_min_deltaR < max_deltaR)
+	  {
+	    hGlbMuons_pt->Fill(glb_pt);
+	    hGlbMuons_vr->Fill(vr);
+
+	    hGenGlbMuons_eta->Fill(eta, glb_eta);
+	    hGenGlbMuons_phi->Fill(phi, glb_phi);
+
+	    for (Int_t i=0; i<nbinspt; i++)
+	      if (pt > ptbins[i] && pt < ptbins[i+1]) hGlbMuons_res[i]->Fill(glb_res);
+	  }
       }
   }  // for..pruned
 }

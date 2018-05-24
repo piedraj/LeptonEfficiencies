@@ -38,7 +38,8 @@ void               DrawEfficiency();
 
 void               DrawResolution(TString muonType);
 
-void               DrawTH2       (TString variable);
+void               DrawTH2       (TString variable,
+				  TString muonType);
 
 void               Compare       (TString variable,
 				  TString muonType,
@@ -70,24 +71,29 @@ void doEfficiencies()
 
   // Do the work
   //----------------------------------------------------------------------------
-  DrawEfficiency();
+//  DrawEfficiency();
+//
+//  DrawResolution("Sta");
+//  DrawResolution("Trk");
+//  DrawResolution("Glb");
+//
+  DrawTH2("eta", "Sta");
+  //  DrawTH2("eta", "Trk");
+  //  DrawTH2("eta", "Glb");
 
-  DrawResolution("Sta");
-  DrawResolution("Trk");
-  DrawResolution("Glb");
-
-  DrawTH2("eta");
-  DrawTH2("phi");
-
-  Compare("dR", "Sta");
-  Compare("dR", "Trk");
-  Compare("dR", "Glb");
-
-  Compare("pt", "Sta");
-  Compare("pt", "Trk");
-  Compare("pt", "Glb");
-
-  Compare("vr", "Gen", 50);
+  DrawTH2("phi", "Sta");
+  //  DrawTH2("phi", "Trk");
+  //  DrawTH2("phi", "Glb");
+//
+//  Compare("dR", "Sta");
+//  Compare("dR", "Trk");
+//  Compare("dR", "Glb");
+//
+//  Compare("pt", "Sta");
+//  Compare("pt", "Trk");
+//  Compare("pt", "Glb");
+//
+//  Compare("vr", "Gen", 50);
 }
 
 
@@ -262,22 +268,24 @@ void DrawResolution(TString muonType)
 // Draw TH2
 //
 //------------------------------------------------------------------------------
-void DrawTH2(TString variable)
+void DrawTH2(TString variable,
+	     TString muonType)
 {
-  TH2F* h2 = (TH2F*)file_PU200->Get("muonAnalysis/GenStaMuons_" + variable);
+  TH2F* h2 = (TH2F*)file_noPU->Get("muonAnalysis/Gen" + muonType + "Muons_" + variable);
 
-  TCanvas* canvas = new TCanvas(variable, variable);
+  TCanvas* canvas = new TCanvas("Gen vs. " + muonType + " " + variable,
+				"Gen vs. " + muonType + " " + variable);
 
   h2->SetTitle("");
   h2->GetXaxis()->SetTitle("gen #" + variable);
-  h2->GetYaxis()->SetTitle("sta #" + variable);
+  h2->GetYaxis()->SetTitle("(no PU) " + muonType + " #" + variable);
   h2->GetXaxis()->SetTitleOffset(1.5);
   h2->GetYaxis()->SetTitleOffset(2.0);
 
   h2->Draw("colz");
 
-  if (doSavePdf) canvas->SaveAs("pdf/" + variable + ".pdf");
-  if (doSavePng) canvas->SaveAs("png/" + variable + ".png");
+  if (doSavePdf) canvas->SaveAs("pdf/Gen_vs_" + muonType + "_" + variable + ".pdf");
+  if (doSavePng) canvas->SaveAs("png/Gen_vs_" + muonType + "_" + variable + ".png");
 }
 
 
