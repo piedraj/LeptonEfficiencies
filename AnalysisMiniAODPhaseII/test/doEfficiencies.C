@@ -19,10 +19,10 @@ const Int_t nbinspt = 3;
 
 Color_t     ptcolor[nbinspt] = {kRed+1, kBlue, kBlack};
 
-Bool_t      doRebin        = true;
-Bool_t      doSetRangeUser = true;
-Bool_t      doSavePdf      = true;
-Bool_t      doSavePng      = true;
+Bool_t      doRebin     = true;
+Bool_t      doSetRanges = true;
+Bool_t      doSavePdf   = true;
+Bool_t      doSavePng   = true;
 
 TFile*      file_PU200 = NULL;
 TFile*      file_noPU  = NULL;
@@ -155,10 +155,13 @@ void DrawEfficiency()
   mg->Draw("apz");
 
   // Ranges
-  if (doSetRangeUser) mg->GetXaxis()->SetRangeUser(0, 49);
+  if (doSetRanges)
+    {
+      mg->GetXaxis()->SetRangeUser(0, 49);
 
-  mg->SetMinimum(-0.05);
-  mg->SetMaximum( 1.05);
+      mg->SetMinimum(-0.05);
+      mg->SetMaximum( 1.05);
+    }
 
   // Cosmetics
   canvas->SetGridx();
