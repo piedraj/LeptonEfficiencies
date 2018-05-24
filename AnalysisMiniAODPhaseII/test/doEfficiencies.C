@@ -41,11 +41,10 @@ void               DrawResolution(TString muonType);
 void               DrawTH2       (TString variable);
 
 void               Compare       (TString variable,
-				  TString muonType);
+				  TString muonType,
+				  Float_t xmax = -999);
 
-void               PaintOverflow (TH1*    h,
-				  TString option,
-				  TString xtitle = "");
+TH1F*              AddOverflow   (TH1F*   h);
 
 
 //------------------------------------------------------------------------------
@@ -87,6 +86,8 @@ void doEfficiencies()
   Compare("pt", "Sta");
   Compare("pt", "Trk");
   Compare("pt", "Glb");
+
+  Compare("vr", "Gen", 50);
 }
 
 
@@ -286,13 +287,17 @@ void DrawTH2(TString variable)
 //
 //------------------------------------------------------------------------------
 void Compare(TString variable,
-	     TString muonType)
+	     TString muonType,
+	     Float_t xmax)
 {
   TH1F* h_noPU  = (TH1F*)(file_noPU ->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("h_" + muonType + "_noPU_"  + variable);
   TH1F* h_PU200 = (TH1F*)(file_PU200->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("h_" + muonType + "_PU200_" + variable);
 
-  h_noPU ->Rebin(2);
-  h_PU200->Rebin(2);
+  if (!muonType.Contains("Gen"))
+    {
+      h_noPU ->Rebin(2);
+      h_PU200->Rebin(2);
+    }
 
   h_noPU ->Scale(1. / h_noPU ->Integral(-1, -1));
   h_PU200->Scale(1. / h_PU200->Integral(-1, -1));
@@ -310,21 +315,26 @@ void Compare(TString variable,
 				"compare " + muonType + " " + variable);
 
   if (variable.Contains("dR")) canvas->SetLogy();
+  if (variable.Contains("vr")) canvas->SetLogy();
 
-  Int_t nx = h_noPU->GetNbinsX() + 1;
+  TH1F* h_noPU_overflow  = AddOverflow(h_noPU);
+  TH1F* h_PU200_overflow = AddOverflow(h_PU200);
 
-  Float_t ymax_noPU  = (h_noPU ->GetMaximum() > h_noPU ->GetBinContent(nx)) ? h_noPU ->GetMaximum() : h_noPU ->GetBinContent(nx);
-  Float_t ymax_PU200 = (h_PU200->GetMaximum() > h_PU200->GetBinContent(nx)) ? h_PU200->GetMaximum() : h_PU200->GetBinContent(nx);
-
-  if (ymax_noPU > ymax_PU200)
+  if (h_noPU_overflow->GetMaximum() > h_PU200_overflow->GetMaximum())
     {
-      PaintOverflow(h_noPU,  "hist", muonType + " " + variable);
-      PaintOverflow(h_PU200, "hist,same");
+      h_noPU_overflow ->Draw("hist");
+      h_PU200_overflow->Draw("hist,same");
+      h_noPU_overflow ->GetXaxis()->SetTitle(muonType + " " + variable);
+      
+      if (xmax > -999) h_noPU_overflow->GetXaxis()->SetRangeUser(-1, xmax);
     }
   else
     {
-      PaintOverflow(h_PU200, "hist", muonType + " " + variable);
-      PaintOverflow(h_noPU,  "hist,same");
+      h_PU200_overflow->Draw("hist");
+      h_noPU_overflow ->Draw("hist,same");
+      h_PU200_overflow->GetXaxis()->SetTitle(muonType + " " + variable);
+
+      if (xmax > -999) h_PU200_overflow->GetXaxis()->SetRangeUser(-1, xmax);
     }
 
   canvas->GetFrame()->DrawClone();
@@ -335,11 +345,9 @@ void Compare(TString variable,
 
 
 //------------------------------------------------------------------------------
-// Paint overflow
+// Add overflow
 //------------------------------------------------------------------------------
-void PaintOverflow(TH1*    h,
-		   TString option,
-		   TString xtitle)
+TH1F* AddOverflow(TH1F* h)
 {
   TString  name = h->GetName();
   Int_t    nx   = h->GetNbinsX()+1;
@@ -347,12 +355,8 @@ void PaintOverflow(TH1*    h,
   Double_t x1   = h->GetBinLowEdge(1);
   Double_t x2   = h->GetBinLowEdge(nx) + bw;
   
-  // Book a temporary histogram having an extra bin for overflows
+  // Book a new histogram having an extra bin for overflows
   TH1F* htmp = new TH1F(name + "_overflow", "", nx, x1, x2);
-
-  // Set line color and width
-  htmp->SetLineColor(h->GetLineColor());
-  htmp->SetLineWidth(h->GetLineWidth());
 
   // Fill the new histogram including the extra bin for overflows
   for (Int_t i=1; i<=nx; i++) {
@@ -365,13 +369,10 @@ void PaintOverflow(TH1*    h,
   // Restore the number of entries
   htmp->SetEntries(h->GetEntries());
 
-  // Draw the temporary histogram
-  htmp->Draw(option);
+  // Cosmetics
+  htmp->SetLineColor(h->GetLineColor());
+  htmp->SetLineWidth(h->GetLineWidth());
+  htmp->GetXaxis()->SetTitleOffset(1.5);
 
-  // Draw x-title
-  if (!option.Contains("same"))
-    {
-      htmp->GetXaxis()->SetTitle      (xtitle);
-      htmp->GetXaxis()->SetTitleOffset(   1.5);
-    }
+  return htmp;
 }
