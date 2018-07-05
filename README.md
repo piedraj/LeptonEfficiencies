@@ -20,11 +20,17 @@
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
     mkdir rootfiles
 
-    cmsRun MuonAnalyzer_cfg.py inputDataset='PU200'
-    mv MyMuonPlots.root rootfiles/MyMuonPlots_PU200.root
+    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedMuons_PU200' maxEvents=-1
+    mv MyMuonPlots.root rootfiles/DisplacedMuons_PU200.root
 
-    cmsRun MuonAnalyzer_cfg.py inputDataset='noPU'
-    mv MyMuonPlots.root rootfiles/MyMuonPlots_noPU.root
+    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedMuons_noPU' maxEvents=-1
+    mv MyMuonPlots.root rootfiles/DisplacedMuons_noPU.root
+
+    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_PU200' maxEvents=-1
+    mv MyMuonPlots.root rootfiles/DisplacedSUSY_PU200.root
+
+    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_noPU' maxEvents=-1
+    mv MyMuonPlots.root rootfiles/DisplacedSUSY_noPU.root
 
 
 # Read histograms and draw distributions
