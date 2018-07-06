@@ -1,4 +1,4 @@
-#include "MuonAnalyzer.h" 
+#include "MuonAnalyzer.h"
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
@@ -45,80 +45,76 @@ void ExampleMuonAnalyzer::beginJob()
 
   edm::Service<TFileService> fileService;
 
-  // TH1 histograms
-  hGenMuons_eta = fileService->make<TH1F>("GenMuons_eta", "gen muons eta", 100, -2.5, 2.5);
-  hGenMuons_phi = fileService->make<TH1F>("GenMuons_phi", "gen muons phi", 100, -3.2, 3.2);
-  hGenMuons_pt  = fileService->make<TH1F>("GenMuons_pt",  "gen muons pt",  100,    0, 100); 
-  hGenMuons_vx  = fileService->make<TH1F>("GenMuons_vx",  "gen muons vx",  150,    0, 750);
-  hGenMuons_vy  = fileService->make<TH1F>("GenMuons_vy",  "gen muons vy",  150,    0, 750);
-  hGenMuons_vz  = fileService->make<TH1F>("GenMuons_vz",  "gen muons vz",  150,    0, 750);
-  hGenMuons_vr  = fileService->make<TH1F>("GenMuons_vr",  "gen muons vr",  750,    0, 750);
+  hGenMuons_vx         = fileService->make<TH1F>("GenMuons_vx",         "", 750, 0, 750);
+  hGenMuons_vy         = fileService->make<TH1F>("GenMuons_vy",         "", 750, 0, 750);
+  hGenMuons_vz         = fileService->make<TH1F>("GenMuons_vz",         "", 750, 0, 750);
+  hGenMuons_vr         = fileService->make<TH1F>("GenMuons_vr",         "", 750, 0, 750);
+  hStaMuons_vr         = fileService->make<TH1F>("StaMuons_vr",         "", 750, 0, 750);
+  hTrkMuons_vr         = fileService->make<TH1F>("TrkMuons_vr",         "", 750, 0, 750);
+  hGlbMuons_vr         = fileService->make<TH1F>("GlbMuons_vr",         "", 750, 0, 750);
+  hTightMuons_vr       = fileService->make<TH1F>("TightMuons_vr",       "", 750, 0, 750);
+  hSoftMuons_vr        = fileService->make<TH1F>("SoftMuons_vr",        "", 750, 0, 750);
+  hStaMuons_noGen_vr   = fileService->make<TH1F>("StaMuons_noGen_vr",   "", 750, 0, 750);
+  hTrkMuons_noGen_vr   = fileService->make<TH1F>("TrkMuons_noGen_vr",   "", 750, 0, 750);
+  hGlbMuons_noGen_vr   = fileService->make<TH1F>("GlbMuons_noGen_vr",   "", 750, 0, 750);
+  hTightMuons_noGen_vr = fileService->make<TH1F>("TightMuons_noGen_vr", "", 750, 0, 750);
+  hSoftMuons_noGen_vr  = fileService->make<TH1F>("SoftMuons_noGen_vr",  "", 750, 0, 750);
 
-  hStaMuons_eta = fileService->make<TH1F>("StaMuons_eta", "sta-gen dR-matched eta",         100, -2.5, 2.5);
-  hStaMuons_phi = fileService->make<TH1F>("StaMuons_phi", "sta muons phi",         100, -3.2, 3.2);
-  hStaMuons_dR  = fileService->make<TH1F>("StaMuons_dR",  "sta-gen dR",            100,    0,   4);
-  hStaMuons_pt  = fileService->make<TH1F>("StaMuons_pt",  "sta-gen dR-matched pt", 100,    0, 100);
-  hStaMuons_vr  = fileService->make<TH1F>("StaMuons_vr",  "sta-gen dR-matched vr", 750,    0, 750);
+  hGenMuons_eta         = fileService->make<TH1F>("GenMuons_eta",         "", 100, -2.5, 2.5);
+  hStaMuons_eta         = fileService->make<TH1F>("StaMuons_eta",         "", 100, -2.5, 2.5);
+  hTrkMuons_eta         = fileService->make<TH1F>("TrkMuons_eta",         "", 100, -2.5, 2.5);
+  hGlbMuons_eta         = fileService->make<TH1F>("GlbMuons_eta",         "", 100, -2.5, 2.5);
+  hTightMuons_eta       = fileService->make<TH1F>("TightMuons_eta",       "", 100, -2.5, 2.5);
+  hSoftMuons_eta        = fileService->make<TH1F>("SoftMuons_eta",        "", 100, -2.5, 2.5);
+  hStaMuons_noGen_eta   = fileService->make<TH1F>("StaMuons_noGen_eta",   "", 100, -2.5, 2.5);
+  hTrkMuons_noGen_eta   = fileService->make<TH1F>("TrkMuons_noGen_eta",   "", 100, -2.5, 2.5);
+  hGlbMuons_noGen_eta   = fileService->make<TH1F>("GlbMuons_noGen_eta",   "", 100, -2.5, 2.5);
+  hTightMuons_noGen_eta = fileService->make<TH1F>("TightMuons_noGen_eta", "", 100, -2.5, 2.5);
+  hSoftMuons_noGen_eta  = fileService->make<TH1F>("SoftMuons_noGen_eta",  "", 100, -2.5, 2.5);
 
-  hStaMuons_noGen_eta = fileService->make<TH1F>("StaMuons_noGen_eta", "sta-gen NO dR-matched eta",         100, -2.5, 2.5);
-  hStaMuons_noGen_vr  = fileService->make<TH1F>("StaMuons_noGen_vr",  "sta-gen NO dR-matched vr", 750,    0, 750);
-  hStaMuons_noGen_pt  = fileService->make<TH1F>("StaMuons_noGen_pt",  "sta-gen NO dR-matched pt", 100,    0, 100);
+  hGenMuons_phi         = fileService->make<TH1F>("GenMuons_phi",         "", 100, -3.2, 3.2);
+  hStaMuons_phi         = fileService->make<TH1F>("StaMuons_phi",         "", 100, -3.2, 3.2);
+  hTrkMuons_phi         = fileService->make<TH1F>("TrkMuons_phi",         "", 100, -3.2, 3.2);
+  hGlbMuons_phi         = fileService->make<TH1F>("GlbMuons_phi",         "", 100, -3.2, 3.2);
+  hTightMuons_phi       = fileService->make<TH1F>("TightMuons_phi",       "", 100, -3.2, 3.2);
+  hSoftMuons_phi        = fileService->make<TH1F>("SoftMuons_phi",        "", 100, -3.2, 3.2);
+  hStaMuons_noGen_phi   = fileService->make<TH1F>("StaMuons_noGen_phi",   "", 100, -3.2, 3.2);
+  hTrkMuons_noGen_phi   = fileService->make<TH1F>("TrkMuons_noGen_phi",   "", 100, -3.2, 3.2);
+  hGlbMuons_noGen_phi   = fileService->make<TH1F>("GlbMuons_noGen_phi",   "", 100, -3.2, 3.2);
+  hTightMuons_noGen_phi = fileService->make<TH1F>("TightMuons_noGen_phi", "", 100, -3.2, 3.2);
+  hSoftMuons_noGen_phi  = fileService->make<TH1F>("SoftMuons_noGen_phi",  "", 100, -3.2, 3.2);
 
-  hTrkMuons_eta = fileService->make<TH1F>("TrkMuons_eta", "trk-gen dR-matched eta",         100, -2.5, 2.5);
-  hTrkMuons_phi = fileService->make<TH1F>("TrkMuons_phi", "trk muons phi",         100, -3.2, 3.2);
-  hTrkMuons_dR  = fileService->make<TH1F>("TrkMuons_dR",  "trk-gen dR",            100,    0,   4);
-  hTrkMuons_pt  = fileService->make<TH1F>("TrkMuons_pt",  "trk-gen dR-matched pt", 100,    0, 100);
-  hTrkMuons_vr  = fileService->make<TH1F>("TrkMuons_vr",  "trk-gen dR-matched vr", 750,    0, 750);
+  hGenMuons_pt         = fileService->make<TH1F>("GenMuons_pt",         "", 500, 0, 500);
+  hStaMuons_pt         = fileService->make<TH1F>("StaMuons_pt",         "", 500, 0, 500);
+  hTrkMuons_pt         = fileService->make<TH1F>("TrkMuons_pt",         "", 500, 0, 500);
+  hGlbMuons_pt         = fileService->make<TH1F>("GlbMuons_pt",         "", 500, 0, 500);
+  hTightMuons_pt       = fileService->make<TH1F>("TightMuons_pt",       "", 500, 0, 500);
+  hSoftMuons_pt        = fileService->make<TH1F>("SoftMuons_pt",        "", 500, 0, 500);
+  hStaMuons_noGen_pt   = fileService->make<TH1F>("StaMuons_noGen_pt",   "", 500, 0, 500);
+  hTrkMuons_noGen_pt   = fileService->make<TH1F>("TrkMuons_noGen_pt",   "", 500, 0, 500);
+  hGlbMuons_noGen_pt   = fileService->make<TH1F>("GlbMuons_noGen_pt",   "", 500, 0, 500);
+  hTightMuons_noGen_pt = fileService->make<TH1F>("TightMuons_noGen_pt", "", 500, 0, 500);
+  hSoftMuons_noGen_pt  = fileService->make<TH1F>("SoftMuons_noGen_pt",  "", 500, 0, 500);
 
-  hTrkMuons_noGen_eta = fileService->make<TH1F>("TrkMuons_noGen_eta", "trk-gen NO dR-matched eta",         100, -2.5, 2.5);
-  hTrkMuons_noGen_vr  = fileService->make<TH1F>("TrkMuons_noGen_vr",  "trk-gen NO dR-matched vr", 750,    0, 750);
-  hTrkMuons_noGen_pt  = fileService->make<TH1F>("TrkMuons_noGen_pt",  "trk-gen NO dR-matched pt", 100,    0, 100);
-
-
-  hGlbMuons_eta = fileService->make<TH1F>("GlbMuons_eta", "glb-gen dR-matched eta",         100, -2.5, 2.5);
-  hGlbMuons_phi = fileService->make<TH1F>("GlbMuons_phi", "glb muons phi",         100, -3.2, 3.2);
-  hGlbMuons_dR  = fileService->make<TH1F>("GlbMuons_dR",  "glb-gen dR",            100,    0,   4);
-  hGlbMuons_pt  = fileService->make<TH1F>("GlbMuons_pt",  "glb-gen dR-matched pt", 100,    0, 100);
-  hGlbMuons_vr  = fileService->make<TH1F>("GlbMuons_vr",  "glb-gen dR-matched vr", 750,    0, 750);
-
-  hGlbMuons_noGen_eta = fileService->make<TH1F>("GlbMuons_noGen_eta", "glb-gen NO dR-matched eta",         100, -2.5, 2.5);
-  hGlbMuons_noGen_vr  = fileService->make<TH1F>("GlbMuons_noGen_vr",  "glb-gen NO dR-matched vr", 750,    0, 750);
-  hGlbMuons_noGen_pt  = fileService->make<TH1F>("GlbMuons_noGen_pt",  "glb-gen NO dR-matched pt", 100,    0, 100);
-
-  hTightMuons_eta = fileService->make<TH1F>("TightMuons_eta", "ID-gen dR-matched eta",         100, -2.5, 2.5);
-  hTightMuons_phi = fileService->make<TH1F>("TightMuons_phi", "ID muons phi",         100, -3.2, 3.2);
-  hTightMuons_dR  = fileService->make<TH1F>("TightMuons_dR",  "ID-gen dR",            100,    0,   4);
-  hTightMuons_pt  = fileService->make<TH1F>("TightMuons_pt",  "ID-gen dR-matched pt", 100,    0, 100);
-  hTightMuons_vr  = fileService->make<TH1F>("TightMuons_vr",  "ID-gen dR-matched vr", 750,    0, 750);
-
-  hIDMuons_noGen_eta = fileService->make<TH1F>("IDMuons_noGen_eta", "glb-gen NO dR-matched eta",         100, -2.5, 2.5);
-  hIDMuons_noGen_vr  = fileService->make<TH1F>("IDMuons_noGen_vr",  "glb-gen NO dR-matched vr", 750,    0, 750);
-  hIDMuons_noGen_pt  = fileService->make<TH1F>("IDMuons_noGen_pt",  "glb-gen NO dR-matched pt", 100,    0, 100);
-
-
+  hStaMuons_dR   = fileService->make<TH1F>("StaMuons_dR",   "", 100, 0, 4);
+  hTrkMuons_dR   = fileService->make<TH1F>("TrkMuons_dR",   "", 100, 0, 4);
+  hGlbMuons_dR   = fileService->make<TH1F>("GlbMuons_dR",   "", 100, 0, 4);
+  hTightMuons_dR = fileService->make<TH1F>("TightMuons_dR", "", 100, 0, 4);
+  hSoftMuons_dR  = fileService->make<TH1F>("SoftMuons_dR",  "", 100, 0, 4);
 
   for (Int_t i=0; i<nbinspt; i++) {
-    hStaMuons_res[i] = fileService->make<TH1F>(Form("StaMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -1, 1);
-    hTrkMuons_res[i] = fileService->make<TH1F>(Form("TrkMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -0.1, 0.1);
-    hGlbMuons_res[i] = fileService->make<TH1F>(Form("GlbMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 60, -0.1, 0.1);
+    hStaMuons_res[i]   = fileService->make<TH1F>(Form("StaMuons_res_%d",   i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
+    hTrkMuons_res[i]   = fileService->make<TH1F>(Form("TrkMuons_res_%d",   i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
+    hGlbMuons_res[i]   = fileService->make<TH1F>(Form("GlbMuons_res_%d",   i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
+    hTightMuons_res[i] = fileService->make<TH1F>(Form("TightMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
+    hSoftMuons_res[i]  = fileService->make<TH1F>(Form("SoftMuons_res_%d",  i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
   }
 
-  // TH2 histograms
-  hGenStaMuons_eta = fileService->make<TH2F>("GenStaMuons_eta", "sta-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
-  hGenTrkMuons_eta = fileService->make<TH2F>("GenTrkMuons_eta", "trk-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
-  hGenGlbMuons_eta = fileService->make<TH2F>("GenGlbMuons_eta", "glb-gen dR-matched eta", 50, -2.5, 2.5, 50, -2.5, 2.5);
-
-  hGenStaMuons_phi = fileService->make<TH2F>("GenStaMuons_phi", "sta-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
-  hGenTrkMuons_phi = fileService->make<TH2F>("GenTrkMuons_phi", "trk-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
-  hGenGlbMuons_phi = fileService->make<TH2F>("GenGlbMuons_phi", "glb-gen dR-matched phi", 50, -3.2, 3.2, 50, -3.2, 3.2);
-
-  // Isolation                                                                                                                     
-  hMuPFChargeIso = fileService->make<TH1F>("MuPFChargeIso","Isolation #Delta(R)=0.4: PFCharge",200,0,1);   
-  hMuPFNeutralIso = fileService->make<TH1F>("MuPFNeutralIso","Isolation #Delta(R)=0.4: PFNeutral",200,0,1);
-  hMuPFPhotonIso = fileService->make<TH1F>("MuPFPhotonIso","Isolation #Delta(R)=0.4: PFPhoton",200,0,1);
-  hMuPFPUIso = fileService->make<TH1F>("MuPFPUIso","Isolation #Delta(R)=0.4: PFPU",200,0,1);
-  hMuPFIso = fileService->make<TH1F>("MuPFIso","Isolation #Delta(R)=0.4: SumPt",200,0,1); 
-  hMuPFIso_R = fileService->make<TH2F>("MuPFIso_R","Isolation #Delta(R)=0.4: SumPt vs R",100,0, 15, 100,0,0.5);  
+  hMuPFChargeIso  = fileService->make<TH1F>("MuPFChargeIso",  "#DeltaR=0.4 PFChargeIso",  200, 0, 1);
+  hMuPFNeutralIso = fileService->make<TH1F>("MuPFNeutralIso", "#DeltaR=0.4 PFNeutralIso", 200, 0, 1);
+  hMuPFPhotonIso  = fileService->make<TH1F>("MuPFPhotonIso",  "#DeltaR=0.4 PFPhotonIso",  200, 0, 1);
+  hMuPFPUIso      = fileService->make<TH1F>("MuPFPUIso",      "#DeltaR=0.4 PFPUIso",      200, 0, 1);
+  hMuPFIso        = fileService->make<TH1F>("MuPFIso",        "#DeltaR=0.4 SumPtIso",     200, 0, 1); 
 }
 
 
@@ -140,41 +136,36 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
   event.getByToken(vtxToken, vertices);
 
 
-
-  // =================================================================================
-  // Look for the Primary Vertex (and use the BeamSpot instead, if you can't find it):
+  // Look for the PrimaryVertex and use the BeamSpot if you can't find it
+  //----------------------------------------------------------------------------
   reco::Vertex::Point posVtx;
   reco::Vertex::Error errVtx;
-  unsigned int theIndexOfThePrimaryVertex = 999.;
-  if (vertices.isValid()){
+
+  UInt_t theIndexOfThePrimaryVertex = 999.;
+
+  if (vertices.isValid()) {
     for (unsigned int ind=0; ind<vertices->size(); ++ind) {
-      if ( (*vertices)[ind].isValid() && !((*vertices)[ind].isFake()) ) {
+      if ((*vertices)[ind].isValid() && !((*vertices)[ind].isFake())) {
 	theIndexOfThePrimaryVertex = ind;
 	break;
       }
     }
   }
   
-  if (theIndexOfThePrimaryVertex<100) {
+  if (theIndexOfThePrimaryVertex < 100) {
     posVtx = ((*vertices)[theIndexOfThePrimaryVertex]).position();
     errVtx = ((*vertices)[theIndexOfThePrimaryVertex]).error();
-  }   
-  else {
-    LogInfo("RecoMuonValidator") << "reco::PrimaryVertex not found, use BeamSpot position instead\n";
+  }
+  else if (beamSpot.isValid()) {
+    LogInfo("ExampleMuonAnalyzer") << "reco::PrimaryVertex not found, use BeamSpot position instead\n";
     
-    edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
-    event.getByToken(beamSpotToken,recoBeamSpotHandle);
-    reco::BeamSpot bs = *recoBeamSpotHandle;
-    
-    posVtx = bs.position();
+    posVtx      = bs.position();
     errVtx(0,0) = bs.BeamWidthX();
     errVtx(1,1) = bs.BeamWidthY();
     errVtx(2,2) = bs.sigmaZ();
   }
     
   const reco::Vertex thePrimaryVertex(posVtx,errVtx);
-  
-  // ==========================================================
 
 
   // Pruned particles are the ones containing "important" stuff
@@ -217,89 +208,31 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 
     // Loop over reconstructed muons
     //--------------------------------------------------------------------------
-    Float_t sta_min_deltaR =  999;   
-    Float_t sta_eta        = -999;
-    Float_t sta_phi        = -999;
-    Float_t sta_pt         = -999;
-    Float_t sta_res        = -999;
+    Float_t sta_min_deltaR   = 999;   
+    Float_t trk_min_deltaR   = 999; 
+    Float_t glb_min_deltaR   = 999; 
+    Float_t tight_min_deltaR = 999;   
+    Float_t soft_min_deltaR  = 999;   
+
+    Float_t sta_res   = -999;
+    Float_t trk_res   = -999;
+    Float_t glb_res   = -999;
+    Float_t tight_res = -999;
+    Float_t soft_res  = -999;
     
-    Float_t tight_min_deltaR =  999;   
-    Float_t tight_eta        = -999;
-    Float_t tight_phi        = -999;
-    Float_t tight_pt         = -999;
-    
-    Float_t trk_min_deltaR =  999; 
-    Float_t trk_eta        = -999;
-    Float_t trk_phi        = -999;
-    Float_t trk_pt         = -999;
-    Float_t trk_res        = -999;
-
-    Float_t glb_min_deltaR =  999; 
-    Float_t glb_eta        = -999;
-    Float_t glb_phi        = -999;
-    Float_t glb_pt         = -999;
-    Float_t glb_res        = -999;
-
-
     for (pat::MuonCollection::const_iterator muon=muons->begin(); muon!=muons->end(); ++muon) {
 
-      Float_t iso =  (muon->pfIsolationR04().sumChargedHadronPt + max(0., muon->pfIsolationR04().sumNeutralHadronEt + muon->pfIsolationR04().sumPhotonEt - 0.5*muon->pfIsolationR04().sumPUPt))/muon->pt();
+      Float_t chargeIso  = muon->pfIsolationR04().sumChargedHadronPt;
+      Float_t neutralIso = muon->pfIsolationR04().sumNeutralHadronEt;
+      Float_t photonIso  = muon->pfIsolationR04().sumPhotonEt;
+      Float_t puIso      = muon->pfIsolationR04().sumPUPt;
+      Float_t iso        = chargeIso + max(0., neutralIso + photonIso - 0.5*puIso);
 
-      float chargeIso = (muon->pfIsolationR04().sumChargedHadronPt)/muon->pt();
-      float neutralIso = (muon->pfIsolationR04().sumNeutralHadronEt)/muon->pt();
-      float photonIso = (muon->pfIsolationR04().sumPhotonEt)/muon->pt();
-      float puIso = (muon->pfIsolationR04().sumPUPt)/muon->pt();
-
-      hMuPFChargeIso->Fill(chargeIso);
-      hMuPFNeutralIso->Fill(neutralIso);
-      hMuPFPhotonIso->Fill(photonIso);
-      hMuPFPUIso->Fill(puIso);
-
-      hMuPFIso->Fill(iso);
-
-      hMuPFIso_R->Fill(vr, iso);
-
-      //if ( chargeIso > 0.15) continue;
-
-      /* 
-      bool passID = false; 
-      float nValidHits =  0;
-      float nValidPixelHits = 0; 
-
-      if (muon->isGlobalMuon()) nValidHits = muon->globalTrack()->hitPattern().numberOfValidMuonHits();
-      float nMatched = muon->numberOfMatchedStations();
-      if (muon->isTrackerMuon()) nValidPixelHits =  muon->innerTrack()->hitPattern().numberOfValidPixelHits();
-
-      if ( nValidHits > 1 && nMatched > 1 && nValidPixelHits > 0) passID = true; 
-      */
-
-      // isTightMuon
-      //------------------------------------------------------------------------
-      //if (muon::isTightMuon(*muon, thePrimaryVertex)) {
-      //if ( passID) { 
-      if (muon::isMediumMuon(*muon)) {
-	
-	Float_t muEta    = muon->eta();
-	Float_t muPhi    = muon->phi();
-	Float_t muPt     = muon->pt();
-	//	Float_t muCharge = muon->charge();
-
-	if (fabs(muEta) > 2.4) continue;
-	if (muPt < ptbins[0])  continue;
- 
-
-	Float_t dPhi = muPhi - phi;
-	Float_t dEta = muEta - eta;
-
-	Float_t dR = sqrt(dPhi*dPhi + dEta*dEta); 
-
-	if (dR < tight_min_deltaR) {
-	  tight_min_deltaR = dR;
-	  tight_eta        = muEta;
-	  tight_phi        = muPhi;
-	  tight_pt         = muPt;
-	}
-      }
+      hMuPFChargeIso ->Fill(chargeIso  / muon->pt());
+      hMuPFNeutralIso->Fill(neutralIso / muon->pt());
+      hMuPFPhotonIso ->Fill(photonIso  / muon->pt());
+      hMuPFPUIso     ->Fill(puIso      / muon->pt());
+      hMuPFIso       ->Fill(iso        / muon->pt());
 
 
       // isStandAloneMuon
@@ -313,7 +246,6 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 
 	if (fabs(muEta) > 2.4) continue;
 	if (muPt < ptbins[0])  continue;
- 
 
 	Float_t dPhi = muPhi - phi;
 	Float_t dEta = muEta - eta;
@@ -322,14 +254,11 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 
 	if (dR < sta_min_deltaR) {
 	  sta_min_deltaR = dR;
-	  sta_eta        = muEta;
-	  sta_phi        = muPhi;
-	  sta_pt         = muPt;
 	  sta_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
 
-      
+
       // isTrackerMuon
       //------------------------------------------------------------------------
       if (muon->isTrackerMuon()) {
@@ -349,15 +278,12 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	
 	if (dR < trk_min_deltaR) {
 	  trk_min_deltaR = dR;
-	  trk_eta        = muEta;
-	  trk_phi        = muPhi;
-	  trk_pt         = muPt;
 	  trk_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
 
 
-      // isGlobalMuon && isStandAloneMuon
+      // isGlobalMuon
       //------------------------------------------------------------------------
       if (muon->isGlobalMuon() && muon->isStandAloneMuon()) {
 
@@ -376,75 +302,97 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	
 	if (dR < glb_min_deltaR) {
 	  glb_min_deltaR = dR;
-	  glb_eta        = muEta;
-	  glb_phi        = muPhi;
-	  glb_pt         = muPt;
 	  glb_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
+	}
+      }
+
+
+      // isTightMuon
+      //------------------------------------------------------------------------
+      if (muon::isTightMuon(*muon, thePrimaryVertex)) {
+	
+	Float_t muEta    = muon->eta();
+	Float_t muPhi    = muon->phi();
+	Float_t muPt     = muon->pt();
+	Float_t muCharge = muon->charge();
+
+	if (fabs(muEta) > 2.4) continue;
+	if (muPt < ptbins[0])  continue;
+ 
+	Float_t dPhi = muPhi - phi;
+	Float_t dEta = muEta - eta;
+
+	Float_t dR = sqrt(dPhi*dPhi + dEta*dEta); 
+
+	if (dR < tight_min_deltaR) {
+	  tight_min_deltaR = dR;
+	  tight_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
+	}
+      }
+
+
+      // isSoftMuon
+      //------------------------------------------------------------------------
+      if (muon::isSoftMuon(*muon, thePrimaryVertex)) {
+	
+	Float_t muEta    = muon->eta();
+	Float_t muPhi    = muon->phi();
+	Float_t muPt     = muon->pt();
+	Float_t muCharge = muon->charge();
+
+	if (fabs(muEta) > 2.4) continue;
+	if (muPt < ptbins[0])  continue;
+ 
+	Float_t dPhi = muPhi - phi;
+	Float_t dEta = muEta - eta;
+
+	Float_t dR = sqrt(dPhi*dPhi + dEta*dEta); 
+
+	if (dR < soft_min_deltaR) {
+	  soft_min_deltaR = dR;
+	  soft_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
     }  // for..muons
 
 
-  if (vr > max_vr) continue;
+    if (vr > max_vr) continue;
   
 
     // Fill gen histograms
     //--------------------------------------------------------------------------
-    hGenMuons_eta->Fill(eta);
-    hGenMuons_phi->Fill(phi);
-    hGenMuons_pt ->Fill(pt);
     hGenMuons_vx ->Fill(fabs(vx));
     hGenMuons_vy ->Fill(fabs(vy));
     hGenMuons_vz ->Fill(fabs(vz));
     hGenMuons_vr ->Fill(vr);
-
+    hGenMuons_eta->Fill(eta);
+    hGenMuons_phi->Fill(phi);
+    hGenMuons_pt ->Fill(pt);
 
 
     // Fill sta histograms
     //--------------------------------------------------------------------------
-    
-    if (tight_min_deltaR < 999)
-      {
-
-	hTightMuons_phi->Fill(tight_phi);
-	hTightMuons_dR ->Fill(tight_min_deltaR);
-	
-	if (tight_min_deltaR < max_deltaR)
-	  {
-	    hTightMuons_eta->Fill(tight_eta);	
-	    hTightMuons_pt->Fill(tight_pt);
-	    hTightMuons_vr->Fill(vr);
-	  } else {
-
-	  hIDMuons_noGen_eta->Fill(tight_eta);	
-	  hIDMuons_noGen_pt->Fill(tight_pt);
-	  hIDMuons_noGen_vr->Fill(vr);
-	}
-      }
-
     if (sta_min_deltaR < 999)
       {
-	//hStaMuons_eta->Fill(sta_eta);
-	hStaMuons_phi->Fill(sta_phi);
-	hStaMuons_dR ->Fill(sta_min_deltaR);
+	hStaMuons_dR->Fill(sta_min_deltaR);
 
 	if (sta_min_deltaR < max_deltaR)
 	  {
-	    hStaMuons_pt->Fill(sta_pt);
-	    hStaMuons_vr->Fill(vr);
-	    hStaMuons_eta->Fill(sta_eta);
-
-	    hGenStaMuons_eta->Fill(eta, sta_eta);
-	    hGenStaMuons_phi->Fill(phi, sta_phi);
+	    hStaMuons_vr ->Fill(vr);
+	    hStaMuons_eta->Fill(eta);
+	    hStaMuons_phi->Fill(phi);
+	    hStaMuons_pt ->Fill(pt);
 
 	    for (Int_t i=0; i<nbinspt; i++)
-	      if (pt > ptbins[i] && pt < ptbins[i+1]) hStaMuons_res[i]->Fill(sta_res);
-	  } else {
-	  
-	  hStaMuons_noGen_pt->Fill(sta_pt);
-	  hStaMuons_noGen_vr->Fill(vr);
-	  hStaMuons_noGen_eta->Fill(sta_eta);
-	}
+	      if (pt >= ptbins[i] && pt < ptbins[i+1]) hStaMuons_res[i]->Fill(sta_res);
+	  }
+	else
+	  {
+	    hStaMuons_noGen_vr ->Fill(vr);
+	    hStaMuons_noGen_eta->Fill(eta);
+	    hStaMuons_noGen_phi->Fill(phi);
+	    hStaMuons_noGen_pt ->Fill(pt);
+	  }
       }
 
 
@@ -452,28 +400,25 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     //--------------------------------------------------------------------------
     if (trk_min_deltaR < 999)
       {
-
-	hTrkMuons_phi->Fill(trk_phi);
-	hTrkMuons_dR ->Fill(trk_min_deltaR);
-
+	hTrkMuons_dR->Fill(trk_min_deltaR);
+	
 	if (trk_min_deltaR < max_deltaR)
 	  {
-	    hTrkMuons_eta->Fill(trk_eta);
-	    hTrkMuons_pt->Fill(trk_pt);
-	    hTrkMuons_vr->Fill(vr);
+	    hTrkMuons_vr ->Fill(vr);
+	    hTrkMuons_eta->Fill(eta);
+	    hTrkMuons_phi->Fill(phi);
+	    hTrkMuons_pt ->Fill(pt);
 	
-	    hGenTrkMuons_eta->Fill(eta, trk_eta);
-	    hGenTrkMuons_phi->Fill(phi, trk_phi);
-
 	    for (Int_t i=0; i<nbinspt; i++)
-	      if (pt > ptbins[i] && pt < ptbins[i+1]) hTrkMuons_res[i]->Fill(trk_res);
-	  } else {
-
-	  hTrkMuons_noGen_pt->Fill(trk_pt);
-	  hTrkMuons_noGen_vr->Fill(vr);
-	  hTrkMuons_noGen_eta->Fill(trk_eta);
-	}
-
+	      if (pt >= ptbins[i] && pt < ptbins[i+1]) hTrkMuons_res[i]->Fill(trk_res);
+	  }
+	else
+	  {
+	    hTrkMuons_noGen_vr ->Fill(vr);
+	    hTrkMuons_noGen_eta->Fill(eta);
+	    hTrkMuons_noGen_phi->Fill(phi);
+	    hTrkMuons_noGen_pt ->Fill(pt);
+	  }
       }
 
 
@@ -481,42 +426,79 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     //--------------------------------------------------------------------------
     if (glb_min_deltaR < 999)
       {
-	
-	hGlbMuons_phi->Fill(glb_phi);
-	hGlbMuons_dR ->Fill(glb_min_deltaR);
+	hGlbMuons_dR->Fill(glb_min_deltaR);
 
 	if (glb_min_deltaR < max_deltaR)
 	  {
-	    hGlbMuons_eta->Fill(glb_eta);	
-	    hGlbMuons_pt->Fill(glb_pt);
-	    hGlbMuons_vr->Fill(vr);
-
-	    hGenGlbMuons_eta->Fill(eta, glb_eta);
-	    hGenGlbMuons_phi->Fill(phi, glb_phi);
+	    hGlbMuons_vr ->Fill(vr);
+	    hGlbMuons_eta->Fill(eta);	
+	    hGlbMuons_phi->Fill(phi);
+	    hGlbMuons_pt ->Fill(pt);
 
 	    for (Int_t i=0; i<nbinspt; i++)
-	      if (pt > ptbins[i] && pt < ptbins[i+1]) hGlbMuons_res[i]->Fill(glb_res);
-	  } else {
-
-	  hGlbMuons_noGen_eta->Fill(glb_eta);	
-	  hGlbMuons_noGen_pt->Fill(glb_pt);
-	  hGlbMuons_noGen_vr->Fill(vr);
-	}
+	      if (pt >= ptbins[i] && pt < ptbins[i+1]) hGlbMuons_res[i]->Fill(glb_res);
+	  }
+	else
+	  {
+	    hGlbMuons_noGen_vr ->Fill(vr);
+	    hGlbMuons_noGen_eta->Fill(eta);	
+	    hGlbMuons_noGen_phi->Fill(phi);
+	    hGlbMuons_noGen_pt ->Fill(pt);
+	  }
       }
 
-    // } else  {
+
+    // Fill tight histograms
+    //--------------------------------------------------------------------------
+    if (tight_min_deltaR < 999)
+      {
+	hTightMuons_dR->Fill(tight_min_deltaR);
+	
+	if (tight_min_deltaR < max_deltaR)
+	  {
+	    hTightMuons_vr ->Fill(vr);
+	    hTightMuons_eta->Fill(eta);	
+	    hTightMuons_phi->Fill(phi);
+	    hTightMuons_pt ->Fill(pt);
+
+	    for (Int_t i=0; i<nbinspt; i++)
+	      if (pt >= ptbins[i] && pt < ptbins[i+1]) hTightMuons_res[i]->Fill(tight_res);
+	  }
+	else
+	  {
+	    hTightMuons_noGen_vr ->Fill(vr);
+	    hTightMuons_noGen_eta->Fill(eta);
+	    hTightMuons_noGen_phi->Fill(phi);
+	    hTightMuons_noGen_pt ->Fill(pt);
+	  }
+      }
 
 
+    // Fill soft histograms
+    //--------------------------------------------------------------------------
+    if (soft_min_deltaR < 999)
+      {
+	hSoftMuons_dR->Fill(soft_min_deltaR);
+	
+	if (soft_min_deltaR < max_deltaR)
+	  {
+	    hSoftMuons_vr ->Fill(vr);
+	    hSoftMuons_eta->Fill(eta);	
+	    hSoftMuons_phi->Fill(phi);
+	    hSoftMuons_pt ->Fill(pt);
 
-      //    }
-
-
-
-
+	    for (Int_t i=0; i<nbinspt; i++)
+	      if (pt >= ptbins[i] && pt < ptbins[i+1]) hSoftMuons_res[i]->Fill(soft_res);
+	  }
+	else
+	  {
+	    hSoftMuons_noGen_vr ->Fill(vr);
+	    hSoftMuons_noGen_eta->Fill(eta);
+	    hSoftMuons_noGen_phi->Fill(phi);
+	    hSoftMuons_noGen_pt ->Fill(pt);
+	  }
+      }
   } // for..pruned
 } 
-
-
-
 
 DEFINE_FWK_MODULE(ExampleMuonAnalyzer);
