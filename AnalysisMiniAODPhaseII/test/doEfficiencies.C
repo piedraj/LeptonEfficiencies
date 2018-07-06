@@ -89,19 +89,19 @@ void doEfficiencies()
   // Do the work
   //----------------------------------------------------------------------------
   DrawEfficiency("vr");
-  DrawEfficiency("pt",  4);
-  DrawEfficiency("eta", 4);
+  DrawEfficiency("eta");
+  DrawEfficiency("pt", 10);
 
-  DrawFakes("vr");
-  DrawFakes("pt",  4);
-  DrawFakes("eta", 4);
+  //  DrawFakes("vr");
+  //  DrawFakes("eta");
+  //  DrawFakes("pt", 10);
 
   if (draw_sta)   DrawResolution("Sta");
   if (draw_trk)   DrawResolution("Trk");
   if (draw_glb)   DrawResolution("Glb");
   if (draw_tight) DrawResolution("Tight");
   if (draw_soft)  DrawResolution("Soft");
-
+  
   if (draw_sta)   Compare("dR", "Sta");
   if (draw_trk)   Compare("dR", "Trk");
   if (draw_glb)   Compare("dR", "Glb");
@@ -115,7 +115,7 @@ void doEfficiencies()
   if (draw_soft)  Compare("pt", "Soft");
   
   Compare("vr", "Gen", 25);
-
+  
   Compare("MuPFIso");
   Compare("MuPFChargeIso");
   Compare("MuPFNeutralIso");
