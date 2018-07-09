@@ -10,6 +10,8 @@
 #include "TString.h"
 #include "TSystem.h"
 
+#include <fstream>
+
 
 // Data members
 //------------------------------------------------------------------------------
@@ -88,7 +90,10 @@ void doEfficiencies()
 
   // Do the work
   //----------------------------------------------------------------------------
-  DrawEfficiency("vr");
+  DrawEfficiency("vr", 2);
+
+  return;
+
   DrawEfficiency("eta");
   DrawEfficiency("pt", 10);
 
@@ -157,6 +162,36 @@ TGraphAsymmErrors* MakeEfficiency(TString type,
   tgae->SetLineWidth  (    1);
   tgae->SetMarkerColor(color);
   tgae->SetMarkerStyle(style);
+
+
+  // Print
+  //----------------------------------------------------------------------------
+  std::ofstream efficiency_tcl;
+
+  TString pu_string = (PU == noPU) ? "noPU" : "PU200";
+  
+  efficiency_tcl.open(Form("muon%sId_vs_%s_%s.tcl",
+			   type.Data(),
+			   variable.Data(),
+			   pu_string.Data()),
+		      std::ofstream::out);
+
+  efficiency_tcl << Form("# %s muons efficiency vs. %s with PU = %d\n", type.Data(), variable.Data(), (PU == 0) ? 0 : 200); 
+
+  efficiency_tcl << "set EfficiencyFormula {\n";
+
+  for (int i=0; i<tgae->GetN(); i++)
+    {
+      efficiency_tcl << Form("    (vr > %.0f && vr < %.0f) * %.3f +\n",
+			     tgae->GetX()[i] - tgae->GetEXlow()[i],
+			     tgae->GetX()[i] + tgae->GetEXhigh()[i],
+			     tgae->GetY()[i]);
+    }
+
+  efficiency_tcl << "}\n";
+  
+  efficiency_tcl.close();
+
 
   return tgae;
 }
