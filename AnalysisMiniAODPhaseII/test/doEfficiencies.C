@@ -92,7 +92,7 @@ void doEfficiencies()
   //----------------------------------------------------------------------------
   DrawEfficiency("vr", 2);
 
-  return;
+  return;  // Debug
 
   DrawEfficiency("eta");
   DrawEfficiency("pt", 10);
@@ -164,8 +164,10 @@ TGraphAsymmErrors* MakeEfficiency(TString type,
   tgae->SetMarkerStyle(style);
 
 
-  // Print
   //----------------------------------------------------------------------------
+  //
+  // Print
+  //
   std::ofstream efficiency_tcl;
 
   TString pu_string = (PU == noPU) ? "noPU" : "PU200";
@@ -182,15 +184,25 @@ TGraphAsymmErrors* MakeEfficiency(TString type,
 
   for (int i=0; i<tgae->GetN(); i++)
     {
-      efficiency_tcl << Form("    (vr > %.0f && vr < %.0f) * %.3f +\n",
+      efficiency_tcl << Form("    (%s > %.0f && %s < %.0f) * %.3f",
+			     variable.Data(),
 			     tgae->GetX()[i] - tgae->GetEXlow()[i],
+			     variable.Data(),
 			     tgae->GetX()[i] + tgae->GetEXhigh()[i],
 			     tgae->GetY()[i]);
+
+      if (i < tgae->GetN() - 1) efficiency_tcl << " +";
+
+      efficiency_tcl << "\n";
     }
 
   efficiency_tcl << "}\n";
   
   efficiency_tcl.close();
+  //
+  // Print
+  //
+  //----------------------------------------------------------------------------
 
 
   return tgae;
