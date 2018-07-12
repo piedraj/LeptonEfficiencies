@@ -28,7 +28,7 @@ const Int_t nbinspt = 6;
 
 Color_t     ptcolor[nbinspt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
 
-Bool_t      doSavePdf = false;
+Bool_t      doSavePdf = true;
 Bool_t      doSavePng = true;
 Bool_t      doSaveTcl = true;
 
@@ -76,9 +76,9 @@ void doEfficiencies()
 {
   gInterpreter->ExecuteMacro("PaperStyle.C");
 
-  if (doSavePdf) gSystem->mkdir("pdf", kTRUE);
-  if (doSavePng) gSystem->mkdir("png", kTRUE);
-  if (doSaveTcl) gSystem->mkdir("tcl", kTRUE);
+  if (doSavePdf) gSystem->mkdir("efficiencies",     kTRUE);
+  if (doSavePng) gSystem->mkdir("efficiencies",     kTRUE);
+  if (doSaveTcl) gSystem->mkdir("efficiencies/tcl", kTRUE);
 
   TH1::SetDefaultSumw2();
 
@@ -170,13 +170,21 @@ TGraphAsymmErrors* MakeEfficiency(TString effType,
   //
   // Print
   //
-  if (doSaveTcl)
+  Bool_t pickMe = false;
+
+  if (muonType.EqualTo("Sta")   && draw_sta)   pickMe = true;
+  if (muonType.EqualTo("Trk")   && draw_trk)   pickMe = true;
+  if (muonType.EqualTo("Glb")   && draw_glb)   pickMe = true;
+  if (muonType.EqualTo("Tight") && draw_tight) pickMe = true;
+  if (muonType.EqualTo("Soft")  && draw_soft)  pickMe = true;
+
+  if (doSaveTcl && pickMe && effType.EqualTo("efficiency"))
     {
       std::ofstream efficiency_tcl;
 
       TString pu_string = (PU == noPU) ? "noPU" : "PU200";
   
-      efficiency_tcl.open(Form("tcl/muon%sId_vs_%s_%s_%s.tcl",
+      efficiency_tcl.open(Form("efficiencies/tcl/muon%sId_vs_%s_%s_%s.tcl",
 			       muonType.Data(),
 			       variable.Data(),
 			       pu_string.Data(),
@@ -299,8 +307,8 @@ void DrawEfficiency(TString effType,
   canvas->Modified();
   canvas->Update();
 
-  if (doSavePdf) canvas->SaveAs("pdf/" + effType + "_" + variable + ".pdf");
-  if (doSavePng) canvas->SaveAs("png/" + effType + "_" + variable + ".png");
+  if (doSavePdf) canvas->SaveAs("efficiencies/" + effType + "_" + variable + ".pdf");
+  if (doSavePng) canvas->SaveAs("efficiencies/" + effType + "_" + variable + ".png");
 }
 
 
@@ -359,8 +367,8 @@ void DrawResolution(TString muonType,
 
   c2->GetFrame()->DrawClone();
 
-  if (doSavePdf) c2->SaveAs("pdf/resolution_" + muonType + ".pdf");
-  if (doSavePng) c2->SaveAs("png/resolution_" + muonType + ".png");
+  if (doSavePdf) c2->SaveAs("efficiencies/resolution_" + muonType + ".pdf");
+  if (doSavePng) c2->SaveAs("efficiencies/resolution_" + muonType + ".png");
 }
 
 
@@ -450,8 +458,8 @@ void Compare(TString variable,
   // Save
   canvas->GetFrame()->DrawClone();
 
-  if (doSavePdf) canvas->SaveAs("pdf/compare_" + label + ".pdf");
-  if (doSavePng) canvas->SaveAs("png/compare_" + label + ".png");
+  if (doSavePdf) canvas->SaveAs("efficiencies/compare_" + label + ".pdf");
+  if (doSavePng) canvas->SaveAs("efficiencies/compare_" + label + ".png");
 }
 
 
