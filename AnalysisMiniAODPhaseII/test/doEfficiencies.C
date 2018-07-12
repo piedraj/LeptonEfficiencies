@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------------
+//
+// Compare displaced muons histograms for samples with no PU and 200 PU
+//
+// root -l -b -q doEfficiencies.C+
+//
+//------------------------------------------------------------------------------
 #include "TCanvas.h"
 #include "TFile.h"
 #include "TFrame.h"
