@@ -21,9 +21,9 @@ const Int_t nbinspt = 6;
 
 Color_t     ptcolor[nbinspt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
 
-Bool_t      doSetRanges = false;
-Bool_t      doSavePdf   = false;
-Bool_t      doSavePng   = true;
+Bool_t      doSavePdf = false;
+Bool_t      doSavePng = true;
+Bool_t      doSaveTcl = true;
 
 TFile*      file_PU200 = NULL;
 TFile*      file_noPU  = NULL;
@@ -37,31 +37,24 @@ Bool_t      draw_soft  = true;
 
 // Member functions
 //------------------------------------------------------------------------------
-TGraphAsymmErrors* MakeEfficiency(TString type,
+TGraphAsymmErrors* MakeEfficiency(TString effType,
+				  TString muonType,
 				  TString variable,
 				  Int_t   PU,
 				  Color_t color,
 				  Int_t   rebin);
 
-TGraphAsymmErrors* MakeFakes     (TString type,
+void               DrawEfficiency(TString effType,
 				  TString variable,
-				  Int_t   PU,
-				  Color_t color,
-				  Int_t   rebin);
-
-void               DrawEfficiency(TString variable,
+				  TString xtitle,
 				  Int_t   rebin = -1);
 
-void               DrawFakes     (TString variable,
-				  Int_t   rebin = -1);
-
-void               DrawResolution(TString muonType);
-
-void               DrawTH2       (TString variable,
-				  TString muonType);
+void               DrawResolution(TString muonType,
+				  TString xtitle);
 
 void               Compare       (TString variable,
-				  TString muonType = "ANY",
+				  TString muonType,
+				  TString xtitle,
 				  Float_t xmax     = -999);
 
 TH1F*              AddOverflow   (TH1F*   h);
@@ -78,6 +71,7 @@ void doEfficiencies()
 
   if (doSavePdf) gSystem->mkdir("pdf", kTRUE);
   if (doSavePng) gSystem->mkdir("png", kTRUE);
+  if (doSaveTcl) gSystem->mkdir("tcl", kTRUE);
 
   TH1::SetDefaultSumw2();
 
@@ -90,42 +84,39 @@ void doEfficiencies()
 
   // Do the work
   //----------------------------------------------------------------------------
-  DrawEfficiency("vr", 2);
+  DrawEfficiency("efficiency", "vr",  "gen production radius [cm]", 2);
+  DrawEfficiency("efficiency", "eta", "gen #eta");
+  DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]", 10);
 
-  return;  // Debug
+  DrawEfficiency("fakes", "vr",  "gen production radius [cm]", 2);
+  DrawEfficiency("fakes", "eta", "gen #eta");
+  DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]", 10);
 
-  DrawEfficiency("eta");
-  DrawEfficiency("pt", 10);
+  if (draw_sta)   DrawResolution("Sta",   "standalone muons");
+  if (draw_trk)   DrawResolution("Trk",   "tracker muons");
+  if (draw_glb)   DrawResolution("Glb",   "global muons");
+  if (draw_tight) DrawResolution("Tight", "tight muons");
+  if (draw_soft)  DrawResolution("Soft",  "soft muons");
+  
+  if (draw_sta)   Compare("dR", "Sta",   "#DeltaR(gen, standalone)");
+  if (draw_trk)   Compare("dR", "Trk",   "#DeltaR(gen, tracker)");
+  if (draw_glb)   Compare("dR", "Glb",   "#DeltaR(gen, global)");
+  if (draw_tight) Compare("dR", "Tight", "#DeltaR(gen, tight)");
+  if (draw_soft)  Compare("dR", "Soft",  "#DeltaR(gen, soft)");
+  
+  if (draw_sta)   Compare("pt", "Sta",   "standalone-matched gen p_{T} [GeV]");
+  if (draw_trk)   Compare("pt", "Trk",   "tracker-matched gen p_{T} [GeV]");
+  if (draw_glb)   Compare("pt", "Glb",   "global-matched gen p_{T} [GeV]");
+  if (draw_tight) Compare("pt", "Tight", "tight-matched gen p_{T} [GeV]");
+  if (draw_soft)  Compare("pt", "Soft",  "soft-matched gen p_{T} [GeV]");
+  
+  Compare("vr", "Gen", "gen production radius [cm]", 25);
 
-  //  DrawFakes("vr");
-  //  DrawFakes("eta");
-  //  DrawFakes("pt", 10);
-
-  if (draw_sta)   DrawResolution("Sta");
-  if (draw_trk)   DrawResolution("Trk");
-  if (draw_glb)   DrawResolution("Glb");
-  if (draw_tight) DrawResolution("Tight");
-  if (draw_soft)  DrawResolution("Soft");
-  
-  if (draw_sta)   Compare("dR", "Sta");
-  if (draw_trk)   Compare("dR", "Trk");
-  if (draw_glb)   Compare("dR", "Glb");
-  if (draw_tight) Compare("dR", "Tight");
-  if (draw_soft)  Compare("dR", "Soft");
-  
-  if (draw_sta)   Compare("pt", "Sta");
-  if (draw_trk)   Compare("pt", "Trk");
-  if (draw_glb)   Compare("pt", "Glb");
-  if (draw_tight) Compare("pt", "Tight");
-  if (draw_soft)  Compare("pt", "Soft");
-  
-  Compare("vr", "Gen", 25);
-  
-  Compare("MuPFIso");
-  Compare("MuPFChargeIso");
-  Compare("MuPFNeutralIso");
-  Compare("MuPFPhotonIso");
-  Compare("MuPFPUIso");
+  Compare("MuPFIso",        "NA", "muon PF isolation");
+  Compare("MuPFChargeIso",  "NA", "muon charged PF isolation");
+  Compare("MuPFNeutralIso", "NA", "muon neutral PF isolation");
+  Compare("MuPFPhotonIso",  "NA", "muon photon PF isolation");
+  Compare("MuPFPUIso",      "NA", "muon PU PF isolation");
 }
 
 
@@ -134,7 +125,8 @@ void doEfficiencies()
 // Make efficiency
 //
 //------------------------------------------------------------------------------
-TGraphAsymmErrors* MakeEfficiency(TString type,
+TGraphAsymmErrors* MakeEfficiency(TString effType,
+				  TString muonType,
 				  TString variable,
 				  Int_t   PU,
 				  Color_t color,
@@ -144,11 +136,14 @@ TGraphAsymmErrors* MakeEfficiency(TString type,
 
   Style_t style = (PU == noPU) ? kOpenCircle : kFullCircle;
 
-  TString num_name = "muonAnalysis/" + type + "Muons_" + variable;
-  TString den_name = "muonAnalysis/GenMuons_" + variable;
+  TString num_name = "muonAnalysis/" + muonType + "Muons_";
 
-  TH1F* hnum = (TH1F*)(file->Get(num_name))->Clone("hnum");
-  TH1F* hden = (TH1F*)(file->Get(den_name))->Clone("hden");
+  if (effType.Contains("fakes")) num_name = num_name + "noGen_";
+
+  TString den_name = "muonAnalysis/GenMuons_";
+
+  TH1F* hnum = (TH1F*)(file->Get(num_name + variable))->Clone("hnum");
+  TH1F* hden = (TH1F*)(file->Get(den_name + variable))->Clone("hden");
 
   if (rebin > -1)
     {
@@ -168,80 +163,46 @@ TGraphAsymmErrors* MakeEfficiency(TString type,
   //
   // Print
   //
-  std::ofstream efficiency_tcl;
-
-  TString pu_string = (PU == noPU) ? "noPU" : "PU200";
-  
-  efficiency_tcl.open(Form("muon%sId_vs_%s_%s.tcl",
-			   type.Data(),
-			   variable.Data(),
-			   pu_string.Data()),
-		      std::ofstream::out);
-
-  efficiency_tcl << Form("# %s muons efficiency vs. %s with PU = %d\n", type.Data(), variable.Data(), (PU == 0) ? 0 : 200); 
-
-  efficiency_tcl << "set EfficiencyFormula {\n";
-
-  for (int i=0; i<tgae->GetN(); i++)
+  if (doSaveTcl)
     {
-      efficiency_tcl << Form("    (%s > %.0f && %s < %.0f) * %.3f",
-			     variable.Data(),
-			     tgae->GetX()[i] - tgae->GetEXlow()[i],
-			     variable.Data(),
-			     tgae->GetX()[i] + tgae->GetEXhigh()[i],
-			     tgae->GetY()[i]);
+      std::ofstream efficiency_tcl;
 
-      if (i < tgae->GetN() - 1) efficiency_tcl << " +";
-
-      efficiency_tcl << "\n";
-    }
-
-  efficiency_tcl << "}\n";
+      TString pu_string = (PU == noPU) ? "noPU" : "PU200";
   
-  efficiency_tcl.close();
+      efficiency_tcl.open(Form("tcl/muon%sId_vs_%s_%s_%s.tcl",
+			       muonType.Data(),
+			       variable.Data(),
+			       pu_string.Data(),
+			       effType.Data()),
+			  std::ofstream::out);
+
+      efficiency_tcl << Form("# %s muons %s vs. %s with PU = %d\n", muonType.Data(), effType.Data(), variable.Data(), (PU == 0) ? 0 : 200); 
+
+      efficiency_tcl << "set EfficiencyFormula {\n";
+  
+      for (int i=0; i<tgae->GetN(); i++)
+	{
+	  efficiency_tcl << Form("    (%s > %.0f && %s < %.0f) * %.3f",
+				 variable.Data(),
+				 tgae->GetX()[i] - tgae->GetEXlow()[i],
+				 variable.Data(),
+				 tgae->GetX()[i] + tgae->GetEXhigh()[i],
+				 tgae->GetY()[i]);
+
+	  if (i < tgae->GetN() - 1) efficiency_tcl << " +";
+
+	  efficiency_tcl << "\n";
+	}
+
+      efficiency_tcl << "}\n";
+  
+      efficiency_tcl.close();
+    }
   //
   // Print
   //
   //----------------------------------------------------------------------------
 
-
-  return tgae;
-}
-
-
-//------------------------------------------------------------------------------
-//
-// Make fakes
-//
-//------------------------------------------------------------------------------
-TGraphAsymmErrors* MakeFakes(TString type,
-			     TString variable,
-			     Int_t   PU,
-			     Color_t color,
-			     Int_t   rebin)
-{
-  TFile* file = (PU == noPU) ? file_noPU : file_PU200;
-
-  Style_t style = (PU == noPU) ? kOpenCircle : kFullCircle;
-
-  TString num_name = "muonAnalysis/" + type + "Muons_noGen_" + variable;
-  TString den_name = "muonAnalysis/GenMuons_" + variable;
-
-  TH1F* hnum = (TH1F*)(file->Get(num_name))->Clone("hnum");
-  TH1F* hden = (TH1F*)(file->Get(den_name))->Clone("hden");
-
-  if (rebin > -1)
-    {
-      hnum->Rebin(rebin);
-      hden->Rebin(rebin);
-    }
-
-  TGraphAsymmErrors* tgae = new TGraphAsymmErrors(hnum, hden);
-
-  tgae->SetLineColor  (color);
-  tgae->SetLineWidth  (    1);
-  tgae->SetMarkerColor(color);
-  tgae->SetMarkerStyle(style);
 
   return tgae;
 }
@@ -252,25 +213,30 @@ TGraphAsymmErrors* MakeFakes(TString type,
 // Draw efficiency
 //
 //------------------------------------------------------------------------------
-void DrawEfficiency(TString variable,
+void DrawEfficiency(TString effType,
+		    TString variable,
+		    TString xtitle,
 		    Int_t   rebin)
 {
-  TGraphAsymmErrors* sta_efficiency   = MakeEfficiency("Sta",   variable, PU200, kBlack,    rebin);
-  TGraphAsymmErrors* trk_efficiency   = MakeEfficiency("Trk",   variable, PU200, kRed+1,    rebin);
-  TGraphAsymmErrors* glb_efficiency   = MakeEfficiency("Glb",   variable, PU200, kBlue,     rebin);
-  TGraphAsymmErrors* tight_efficiency = MakeEfficiency("Tight", variable, PU200, kGreen+2,  rebin);
-  TGraphAsymmErrors* soft_efficiency  = MakeEfficiency("Soft",  variable, PU200, kOrange+7, rebin);
+  TGraphAsymmErrors* sta_efficiency   = MakeEfficiency(effType, "Sta",   variable, PU200, kBlack,    rebin);
+  TGraphAsymmErrors* trk_efficiency   = MakeEfficiency(effType, "Trk",   variable, PU200, kRed+1,    rebin);
+  TGraphAsymmErrors* glb_efficiency   = MakeEfficiency(effType, "Glb",   variable, PU200, kBlue,     rebin);
+  TGraphAsymmErrors* tight_efficiency = MakeEfficiency(effType, "Tight", variable, PU200, kGreen+2,  rebin);
+  TGraphAsymmErrors* soft_efficiency  = MakeEfficiency(effType, "Soft",  variable, PU200, kOrange+7, rebin);
 
-  TGraphAsymmErrors* sta_efficiency_noPU   = MakeEfficiency("Sta",   variable, noPU, kBlack,    rebin);
-  TGraphAsymmErrors* trk_efficiency_noPU   = MakeEfficiency("Trk",   variable, noPU, kRed+1,    rebin);
-  TGraphAsymmErrors* glb_efficiency_noPU   = MakeEfficiency("Glb",   variable, noPU, kBlue,     rebin);
-  TGraphAsymmErrors* tight_efficiency_noPU = MakeEfficiency("Tight", variable, noPU, kGreen+2,  rebin);
-  TGraphAsymmErrors* soft_efficiency_noPU  = MakeEfficiency("Soft",  variable, noPU, kOrange+7, rebin);
+  TGraphAsymmErrors* sta_efficiency_noPU   = MakeEfficiency(effType, "Sta",   variable, noPU, kBlack,    rebin);
+  TGraphAsymmErrors* trk_efficiency_noPU   = MakeEfficiency(effType, "Trk",   variable, noPU, kRed+1,    rebin);
+  TGraphAsymmErrors* glb_efficiency_noPU   = MakeEfficiency(effType, "Glb",   variable, noPU, kBlue,     rebin);
+  TGraphAsymmErrors* tight_efficiency_noPU = MakeEfficiency(effType, "Tight", variable, noPU, kGreen+2,  rebin);
+  TGraphAsymmErrors* soft_efficiency_noPU  = MakeEfficiency(effType, "Soft",  variable, noPU, kOrange+7, rebin);
 
-  TCanvas* canvas = new TCanvas("efficiency " + variable, "efficiency " + variable, 600, 600);
+  TCanvas* canvas = new TCanvas(effType + " vs. " + xtitle,
+				effType + " vs. " + xtitle,
+				600,
+				600);
 
-  canvas->SetLeftMargin (0.13);
-  canvas->SetRightMargin(0.24);
+  canvas->SetLeftMargin (0.14);
+  canvas->SetRightMargin(0.23);
 
   TMultiGraph* mg = new TMultiGraph();
 
@@ -287,12 +253,8 @@ void DrawEfficiency(TString variable,
 
   mg->Draw("apz");
 
-  // Ranges
-  if (doSetRanges)
-    {
-      mg->SetMinimum(-0.05);
-      mg->SetMaximum( 1.05);
-    }
+  mg->SetMinimum(-0.05);
+  mg->SetMaximum( 1.05);
 
   // Cosmetics
   canvas->SetGridx();
@@ -300,17 +262,13 @@ void DrawEfficiency(TString variable,
 
   // Labels
   mg->SetTitle("");
-
-  if (variable == "vr")  mg->GetXaxis()->SetTitle("production radius [cm]");
-  if (variable == "pt")  mg->GetXaxis()->SetTitle("p_{T} [GeV]");
-  if (variable == "eta") mg->GetXaxis()->SetTitle("#eta");
- 
-  mg->GetYaxis()->SetTitle("reconstruction efficiency");
+  mg->GetXaxis()->SetTitle(xtitle);
+  mg->GetYaxis()->SetTitle(effType);
   mg->GetXaxis()->SetTitleOffset(1.5);
-  mg->GetYaxis()->SetTitleOffset(1.5);
+  mg->GetYaxis()->SetTitleOffset(1.6);
 
   // Legend
-  TLegend* legend = new TLegend(0.775, 0.5, 0.95, 0.91);
+  TLegend* legend = new TLegend(0.79, 0.5, 0.95, 0.91);
 
   legend->SetBorderSize(    0);
   legend->SetFillColor (    0);
@@ -334,100 +292,8 @@ void DrawEfficiency(TString variable,
   canvas->Modified();
   canvas->Update();
 
-  if (doSavePdf) canvas->SaveAs("pdf/efficiency_" + variable + ".pdf");
-  if (doSavePng) canvas->SaveAs("png/efficiency_" + variable + ".png");
-}
-
-
-//------------------------------------------------------------------------------
-//
-// Draw fakes
-//
-//------------------------------------------------------------------------------
-void DrawFakes(TString variable,
-	       Int_t   rebin)
-{
-  TGraphAsymmErrors* sta_efficiency   = MakeFakes("Sta",   variable, PU200, kBlack,    rebin);
-  TGraphAsymmErrors* trk_efficiency   = MakeFakes("Trk",   variable, PU200, kRed+1,    rebin);
-  TGraphAsymmErrors* glb_efficiency   = MakeFakes("Glb",   variable, PU200, kBlue,     rebin);
-  TGraphAsymmErrors* tight_efficiency = MakeFakes("Tight", variable, PU200, kGreen+2,  rebin);
-  TGraphAsymmErrors* soft_efficiency  = MakeFakes("Soft",  variable, PU200, kOrange+7, rebin);
-
-  TGraphAsymmErrors* sta_efficiency_noPU   = MakeFakes("Sta",   variable, noPU, kBlack,    rebin);
-  TGraphAsymmErrors* trk_efficiency_noPU   = MakeFakes("Trk",   variable, noPU, kRed+1,    rebin);
-  TGraphAsymmErrors* glb_efficiency_noPU   = MakeFakes("Glb",   variable, noPU, kBlue,     rebin);
-  TGraphAsymmErrors* tight_efficiency_noPU = MakeFakes("Tight", variable, noPU, kGreen+2,  rebin);
-  TGraphAsymmErrors* soft_efficiency_noPU  = MakeFakes("Soft",  variable, noPU, kOrange+7, rebin);
-
-  TCanvas* canvas = new TCanvas("fakes " + variable, "fakes " + variable, 600, 600);
-
-  canvas->SetLeftMargin (0.13);
-  canvas->SetRightMargin(0.24);
-
-  TMultiGraph* mg = new TMultiGraph();
-
-  if (draw_sta)   mg->Add(sta_efficiency);
-  if (draw_sta)   mg->Add(sta_efficiency_noPU);
-  if (draw_trk)   mg->Add(trk_efficiency);
-  if (draw_trk)   mg->Add(trk_efficiency_noPU);
-  if (draw_glb)   mg->Add(glb_efficiency);
-  if (draw_glb)   mg->Add(glb_efficiency_noPU);
-  if (draw_tight) mg->Add(tight_efficiency);
-  if (draw_tight) mg->Add(tight_efficiency_noPU);
-  if (draw_soft)  mg->Add(soft_efficiency);
-  if (draw_soft)  mg->Add(soft_efficiency_noPU);
-
-  mg->Draw("apz");
-
-  // Ranges
-  if (doSetRanges)
-    {
-      mg->SetMinimum(-0.05);
-      mg->SetMaximum( 1.05);
-    }
-
-  // Cosmetics
-  canvas->SetGridx();
-  canvas->SetGridy();
-
-  // Labels
-  mg->SetTitle("");
-
-  if (variable == "vr")  mg->GetXaxis()->SetTitle("production radius [cm]");
-  if (variable == "pt")  mg->GetXaxis()->SetTitle("p_{T} [GeV]");
-  if (variable == "eta") mg->GetXaxis()->SetTitle("#eta");
-
-  mg->GetYaxis()->SetTitle("reconstruction fake rate");
-  mg->GetXaxis()->SetTitleOffset(1.5);
-  mg->GetYaxis()->SetTitleOffset(1.5);
-
-  // Legend
-  TLegend* legend = new TLegend(0.775, 0.5, 0.95, 0.91);
-
-  legend->SetBorderSize(    0);
-  legend->SetFillColor (    0);
-  legend->SetTextAlign (   12);
-  legend->SetTextFont  (   42);
-  legend->SetTextSize  (0.025);
-
-  if (draw_sta)   legend->AddEntry(sta_efficiency_noPU,   "(no PU) sta",    "lp");
-  if (draw_trk)   legend->AddEntry(trk_efficiency_noPU,   "(no PU) trk",    "lp");
-  if (draw_glb)   legend->AddEntry(glb_efficiency_noPU,   "(no PU) glb",    "lp");
-  if (draw_tight) legend->AddEntry(tight_efficiency_noPU, "(no PU) tight",  "lp"); 
-  if (draw_soft)  legend->AddEntry(soft_efficiency_noPU,  "(no PU) soft",   "lp"); 
-  if (draw_sta)   legend->AddEntry(sta_efficiency,        "(200 PU) sta",   "lp");
-  if (draw_trk)   legend->AddEntry(trk_efficiency,        "(200 PU) trk",   "lp");
-  if (draw_glb)   legend->AddEntry(glb_efficiency,        "(200 PU) glb",   "lp");
-  if (draw_tight) legend->AddEntry(tight_efficiency,      "(200 PU) tight", "lp");
-  if (draw_soft)  legend->AddEntry(soft_efficiency,       "(200 PU) soft",  "lp");
-
-  legend->Draw();
-
-  canvas->Modified();
-  canvas->Update();
-
-  if (doSavePdf) canvas->SaveAs("pdf/fakes_" + variable + ".pdf");
-  if (doSavePng) canvas->SaveAs("png/fakes_" + variable + ".png");
+  if (doSavePdf) canvas->SaveAs("pdf/" + effType + "_" + variable + ".pdf");
+  if (doSavePng) canvas->SaveAs("png/" + effType + "_" + variable + ".png");
 }
 
 
@@ -436,9 +302,10 @@ void DrawFakes(TString variable,
 // Draw resolution
 //
 //------------------------------------------------------------------------------
-void DrawResolution(TString muonType)
+void DrawResolution(TString muonType,
+		    TString xtitle)
 {
-  TCanvas* c2 = new TCanvas("resolution " + muonType, "resolution " + muonType);
+  TCanvas* c2 = new TCanvas(xtitle + " resolution", xtitle + " resolution");
 
   TH1F* h_resolution[nbinspt];
 
@@ -459,7 +326,7 @@ void DrawResolution(TString muonType)
   }
 
   h_resolution[0]->SetTitle("");
-  h_resolution[0]->SetXTitle(muonType + " #Deltaq/p_{T} / (q/p_{T})");
+  h_resolution[0]->SetXTitle(xtitle + " #Deltaq/p_{T} / (q/p_{T})");
   h_resolution[0]->SetYTitle("entries / bin");
   h_resolution[0]->SetMaximum(1.1 * ymax);
   h_resolution[0]->GetXaxis()->SetTitleOffset(1.5);
@@ -492,37 +359,12 @@ void DrawResolution(TString muonType)
 
 //------------------------------------------------------------------------------
 //
-// Draw TH2
-//
-//------------------------------------------------------------------------------
-void DrawTH2(TString variable,
-	     TString muonType)
-{
-  TH2F* h2 = (TH2F*)file_noPU->Get("muonAnalysis/Gen" + muonType + "Muons_" + variable);
-
-  TCanvas* canvas = new TCanvas("Gen vs. " + muonType + " " + variable,
-				"Gen vs. " + muonType + " " + variable);
-
-  h2->SetTitle("");
-  h2->GetXaxis()->SetTitle("gen #" + variable);
-  h2->GetYaxis()->SetTitle("(no PU) " + muonType + " #" + variable);
-  h2->GetXaxis()->SetTitleOffset(1.5);
-  h2->GetYaxis()->SetTitleOffset(2.0);
-
-  h2->Draw("colz");
-
-  if (doSavePdf) canvas->SaveAs("pdf/Gen_vs_" + muonType + "_" + variable + ".pdf");
-  if (doSavePng) canvas->SaveAs("png/Gen_vs_" + muonType + "_" + variable + ".png");
-}
-
-
-//------------------------------------------------------------------------------
-//
 // Compare
 //
 //------------------------------------------------------------------------------
 void Compare(TString variable,
 	     TString muonType,
+	     TString xtitle,
 	     Float_t xmax)
 {
   TH1F* h_noPU  = NULL;
@@ -557,11 +399,9 @@ void Compare(TString variable,
 
   // Draw
   //----------------------------------------------------------------------------
-  TString the_title = (muonType.Contains("ANY")) ? variable : muonType + " " + variable;
-  TString the_label = (muonType.Contains("ANY")) ? variable : muonType + "_" + variable;
+  TString label = (muonType.EqualTo("NA")) ? variable : muonType + "_" + variable;
 
-  TCanvas* canvas = new TCanvas("compare " + the_title,
-				"compare " + the_title);
+  TCanvas* canvas = new TCanvas("compare " + xtitle, "compare " + xtitle);
 
   if (variable.Contains("dR"))   canvas->SetLogy();
   if (variable.Contains("MuPF")) canvas->SetLogy();
@@ -573,7 +413,7 @@ void Compare(TString variable,
     {
       h_noPU_overflow ->Draw("hist");
       h_PU200_overflow->Draw("hist,same");
-      h_noPU_overflow ->GetXaxis()->SetTitle(the_title);
+      h_noPU_overflow ->GetXaxis()->SetTitle(xtitle);
       
       if (xmax > -999) h_noPU_overflow->GetXaxis()->SetRangeUser(-1, xmax);
     }
@@ -581,15 +421,30 @@ void Compare(TString variable,
     {
       h_PU200_overflow->Draw("hist");
       h_noPU_overflow ->Draw("hist,same");
-      h_PU200_overflow->GetXaxis()->SetTitle(the_title);
+      h_PU200_overflow->GetXaxis()->SetTitle(xtitle);
       
       if (xmax > -999) h_PU200_overflow->GetXaxis()->SetRangeUser(-1, xmax);
     }
-  
+
+  // Legend
+  TLegend* legend = new TLegend(0.77, 0.78, 0.93, 0.89);
+
+  legend->SetBorderSize(   0);
+  legend->SetFillColor (   0);
+  legend->SetTextAlign (  12);
+  legend->SetTextFont  (  42);
+  legend->SetTextSize  (0.03);
+
+  legend->AddEntry(h_PU200_overflow, " 200 PU", "l");
+  legend->AddEntry(h_noPU_overflow,  " no PU",  "l");
+
+  legend->Draw();
+
+  // Save
   canvas->GetFrame()->DrawClone();
 
-  if (doSavePdf) canvas->SaveAs("pdf/compare_" + the_label + ".pdf");
-  if (doSavePng) canvas->SaveAs("png/compare_" + the_label + ".png");
+  if (doSavePdf) canvas->SaveAs("pdf/compare_" + label + ".pdf");
+  if (doSavePng) canvas->SaveAs("png/compare_" + label + ".png");
 }
 
 
@@ -609,7 +464,7 @@ TH1F* AddOverflow(TH1F* h)
   // Book a new histogram having an extra bin for overflows
   TH1F* htmp = new TH1F(name + "_overflow", "", nx, x1, x2);
 
-  // Fill the new hisogram including the extra bin for overflows
+  // Fill the new histogram including the extra bin for overflows
   for (Int_t i=1; i<=nx; i++) {
     htmp->Fill(htmp->GetBinCenter(i), h->GetBinContent(i));
   }
