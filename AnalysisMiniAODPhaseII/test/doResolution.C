@@ -33,7 +33,7 @@ TFile*      file_noPU  = NULL;
 Bool_t      draw_sta   = false;
 Bool_t      draw_trk   = false;
 Bool_t      draw_glb   = false;
-Bool_t      draw_tight = false;
+Bool_t      draw_tight = true;
 Bool_t      draw_soft  = true;
 
 TString     directory = "displaced-muons";

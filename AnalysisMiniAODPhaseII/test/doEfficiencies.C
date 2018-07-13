@@ -239,9 +239,7 @@ void DrawEfficiency(TString effType,
   TGraphAsymmErrors* soft_efficiency_noPU  = MakeEfficiency(effType, "Soft",  variable, noPU, kOrange+7, rebin);
 
   TCanvas* canvas = new TCanvas(effType + " vs. " + xtitle,
-				effType + " vs. " + xtitle,
-				600,
-				600);
+				effType + " vs. " + xtitle);
 
   canvas->SetLeftMargin (0.14);
   canvas->SetRightMargin(0.23);
@@ -349,7 +347,8 @@ void Compare(TString variable,
   //----------------------------------------------------------------------------
   TString label = (muonType.EqualTo("NA")) ? variable : muonType + "_" + variable;
 
-  TCanvas* canvas = new TCanvas("compare " + xtitle, "compare " + xtitle);
+  TCanvas* canvas = new TCanvas("compare " + xtitle,
+				"compare " + xtitle);
 
   if (variable.Contains("dR"))   canvas->SetLogy();
   if (variable.Contains("MuPF")) canvas->SetLogy();
