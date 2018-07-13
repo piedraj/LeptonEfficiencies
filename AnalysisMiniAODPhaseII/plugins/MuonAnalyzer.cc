@@ -136,7 +136,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
   event.getByToken(vtxToken, vertices);
 
 
-  // Look for the PrimaryVertex and use the BeamSpot if you can't find it
+  // Look for the PrimaryVertex and use the BeamSpot if you can't find it. Code snippet taken from
+  // https://github.com/cms-sw/cmssw/blob/master/DQMOffline/Muon/src/EfficiencyAnalyzer.cc#L186-L218
   //----------------------------------------------------------------------------
   reco::Vertex::Point posVtx;
   reco::Vertex::Error errVtx;
