@@ -43,7 +43,8 @@ TString     directory = "displaced-muons";
 // Member functions
 //------------------------------------------------------------------------------
 void        DrawResolution(TString muonType,
-			   TString xtitle);
+			   TString xtitle,
+			   Int_t   PU);
 
 
 //------------------------------------------------------------------------------
@@ -68,11 +69,17 @@ void doResolution()
 
   // Do the work
   //----------------------------------------------------------------------------
-  if (draw_sta)   DrawResolution("Sta",   "standalone muons");
-  if (draw_trk)   DrawResolution("Trk",   "tracker muons");
-  if (draw_glb)   DrawResolution("Glb",   "global muons");
-  if (draw_tight) DrawResolution("Tight", "tight muons");
-  if (draw_soft)  DrawResolution("Soft",  "soft muons");
+  if (draw_sta)   DrawResolution("Sta",   "standalone muons", noPU);
+  if (draw_trk)   DrawResolution("Trk",   "tracker muons",    noPU);
+  if (draw_glb)   DrawResolution("Glb",   "global muons",     noPU);
+  if (draw_tight) DrawResolution("Tight", "tight muons",      noPU);
+  if (draw_soft)  DrawResolution("Soft",  "soft muons",       noPU);
+
+  if (draw_sta)   DrawResolution("Sta",   "standalone muons", PU200);
+  if (draw_trk)   DrawResolution("Trk",   "tracker muons",    PU200);
+  if (draw_glb)   DrawResolution("Glb",   "global muons",     PU200);
+  if (draw_tight) DrawResolution("Tight", "tight muons",      PU200);
+  if (draw_soft)  DrawResolution("Soft",  "soft muons",       PU200);
 }
 
 
@@ -82,9 +89,15 @@ void doResolution()
 //
 //------------------------------------------------------------------------------
 void DrawResolution(TString muonType,
-		    TString xtitle)
+		    TString xtitle,
+		    Int_t   PU)
 {
-  TCanvas* canvas = new TCanvas(xtitle + " resolution", xtitle + " resolution");
+  TFile* file = (PU == noPU) ? file_noPU : file_PU200;
+
+  TString pu_string = (PU == noPU) ? "noPU" : "PU200";
+
+  TCanvas* canvas = new TCanvas(xtitle + " resolution (" + pu_string + ")",
+				xtitle + " resolution (" + pu_string + ")");
 
   TH1F* h_resolution[nbinspt];
 
@@ -92,7 +105,7 @@ void DrawResolution(TString muonType,
 
   for (Int_t i=0; i<nbinspt; i++) {
 
-    h_resolution[i] = (TH1F*)file_PU200->Get(Form("muonAnalysis/%sMuons_res_%d", muonType.Data(), i));
+    h_resolution[i] = (TH1F*)file->Get(Form("muonAnalysis/%sMuons_res_%d", muonType.Data(), i));
 
     if (h_resolution[i]->GetMaximum() > ymax) ymax = h_resolution[i]->GetMaximum();
 
@@ -104,10 +117,12 @@ void DrawResolution(TString muonType,
     h_resolution[i]->Draw(option);
   }
 
-  h_resolution[0]->SetTitle("");
+  h_resolution[0]->SetMaximum(1.1 * ymax);
+
+  h_resolution[0]->SetTitle(pu_string);
+
   h_resolution[0]->SetXTitle(xtitle + " #Deltaq/p_{T} / (q/p_{T})");
   h_resolution[0]->SetYTitle("entries / bin");
-  h_resolution[0]->SetMaximum(1.1 * ymax);
   h_resolution[0]->GetXaxis()->SetTitleOffset(1.5);
   h_resolution[0]->GetYaxis()->SetTitleOffset(2.0);
 
@@ -131,6 +146,6 @@ void DrawResolution(TString muonType,
 
   canvas->GetFrame()->DrawClone();
 
-  if (doSavePdf) canvas->SaveAs(directory + "/resolution_" + muonType + ".pdf");
-  if (doSavePng) canvas->SaveAs(directory + "/resolution_" + muonType + ".png");
+  if (doSavePdf) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + pu_string + ".pdf");
+  if (doSavePng) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + pu_string + ".png");
 }
