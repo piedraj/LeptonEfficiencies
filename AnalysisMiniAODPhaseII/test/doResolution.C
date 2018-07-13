@@ -9,7 +9,6 @@
 #include "TFile.h"
 #include "TFrame.h"
 #include "TH1F.h"
-#include "TH2F.h"
 #include "TInterpreter.h"
 #include "TLegend.h"
 #include "TMultiGraph.h"
