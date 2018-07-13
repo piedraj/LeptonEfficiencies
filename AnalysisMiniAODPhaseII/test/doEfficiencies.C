@@ -161,6 +161,8 @@ TGraphAsymmErrors* MakeEfficiency(TString effType,
   //
   Bool_t pickMe = false;
 
+  TString delphes_variable = (variable.EqualTo("vr")) ? "sqrt(v0*v0 + vz*vz)" : variable;
+
   if (muonType.EqualTo("Sta")   && draw_sta)   pickMe = true;
   if (muonType.EqualTo("Trk")   && draw_trk)   pickMe = true;
   if (muonType.EqualTo("Glb")   && draw_glb)   pickMe = true;
@@ -180,23 +182,25 @@ TGraphAsymmErrors* MakeEfficiency(TString effType,
 			       effType.Data()),
 			  std::ofstream::out);
 
-      efficiency_tcl << Form("# %s muons %s vs. %s with PU = %d\n", muonType.Data(), effType.Data(), variable.Data(), (PU == 0) ? 0 : 200); 
+      efficiency_tcl << Form("# %s muons %s vs. %s with PU = %d\n", muonType.Data(), effType.Data(), delphes_variable.Data(), (PU == 0) ? 0 : 200); 
 
       efficiency_tcl << "set EfficiencyFormula {\n";
+
+      Int_t npoints = tgae->GetN();
   
-      for (int i=0; i<tgae->GetN(); i++)
-	{
-	  efficiency_tcl << Form("    (%s > %.0f && %s < %.0f) * %.3f",
-				 variable.Data(),
+      for (Int_t i=0; i<npoints; i++)
+	{	
+	  efficiency_tcl << Form("    (%s > %.2f && %s < %.2f) * %.3f +\n",
+				 delphes_variable.Data(),
 				 tgae->GetX()[i] - tgae->GetEXlow()[i],
-				 variable.Data(),
+				 delphes_variable.Data(),
 				 tgae->GetX()[i] + tgae->GetEXhigh()[i],
 				 tgae->GetY()[i]);
-
-	  if (i < tgae->GetN() - 1) efficiency_tcl << " +";
-
-	  efficiency_tcl << "\n";
 	}
+
+      efficiency_tcl << Form("    (%s > %.2f) * 0.000\n",
+			     delphes_variable.Data(),
+			     tgae->GetX()[npoints-1] + tgae->GetEXhigh()[npoints-1]);
 
       efficiency_tcl << "}\n";
   
