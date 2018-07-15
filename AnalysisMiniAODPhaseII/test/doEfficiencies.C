@@ -42,24 +42,27 @@ TString     directory = "displaced-muons";
 
 // Member functions
 //------------------------------------------------------------------------------
-TGraphAsymmErrors* MakeEfficiency(TString effType,
-				  TString muonType,
-				  TString variable,
-				  Int_t   PU,
-				  Color_t color,
-				  Int_t   rebin);
+TGraphAsymmErrors* MakeEfficiency(TString  effType,
+				  TString  muonType,
+				  TString  variable,
+				  Int_t    PU,
+				  Color_t  color,
+				  Int_t    rebin);
 
-void               DrawEfficiency(TString effType,
-				  TString variable,
-				  TString xtitle,
-				  Int_t   rebin = -1);
+void               DrawEfficiency(TString  effType,
+				  TString  variable,
+				  TString  xtitle,
+				  Int_t    rebin = -1);
 
-void               Compare       (TString variable,
-				  TString muonType,
-				  TString xtitle,
-				  Float_t xmax = -999);
+void               Compare       (TString  variable,
+				  TString  muonType,
+				  TString  xtitle,
+				  Float_t  xmax = -999);
 
-TH1F*              AddOverflow   (TH1F*   h);
+TH1F*              AddOverflow   (TH1F*    h);
+
+void               SetLegend     (TLegend* tl,
+				  Size_t   tsize);
 
 
 //------------------------------------------------------------------------------
@@ -276,11 +279,7 @@ void DrawEfficiency(TString effType,
   // Legend
   TLegend* legend = new TLegend(0.79, 0.5, 0.95, 0.91);
 
-  legend->SetBorderSize(    0);
-  legend->SetFillColor (    0);
-  legend->SetTextAlign (   12);
-  legend->SetTextFont  (   42);
-  legend->SetTextSize  (0.025);
+  SetLegend(legend, 0.025);
 
   if (draw_sta)   legend->AddEntry(sta_efficiency_noPU,   "(no PU) sta",    "lp");
   if (draw_trk)   legend->AddEntry(trk_efficiency_noPU,   "(no PU) trk",    "lp");
@@ -376,11 +375,7 @@ void Compare(TString variable,
   // Legend
   TLegend* legend = new TLegend(0.77, 0.78, 0.93, 0.89);
 
-  legend->SetBorderSize(   0);
-  legend->SetFillColor (   0);
-  legend->SetTextAlign (  12);
-  legend->SetTextFont  (  42);
-  legend->SetTextSize  (0.03);
+  SetLegend(legend, 0.03);
 
   legend->AddEntry(h_PU200_overflow, " 200 PU", "l");
   legend->AddEntry(h_noPU_overflow,  " no PU",  "l");
@@ -428,4 +423,17 @@ TH1F* AddOverflow(TH1F* h)
   htmp->GetXaxis()->SetTitleOffset(1.5);
 
   return htmp;
+}
+
+
+//------------------------------------------------------------------------------
+// SetLegend
+//------------------------------------------------------------------------------
+void SetLegend(TLegend* tl, Size_t tsize)
+{
+  tl->SetBorderSize(    0);
+  tl->SetFillColor (    0);
+  tl->SetTextAlign (   12);
+  tl->SetTextFont  (   42);
+  tl->SetTextSize  (tsize);
 }

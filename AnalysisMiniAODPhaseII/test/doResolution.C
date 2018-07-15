@@ -11,6 +11,7 @@
 #include "TGraphErrors.h"
 #include "TH1F.h"
 #include "TInterpreter.h"
+#include "TLatex.h"
 #include "TLegend.h"
 #include "TMultiGraph.h"
 #include "TString.h"
@@ -41,23 +42,32 @@ Bool_t        draw_soft  = true;
 
 TString       directory = "displaced-muons";
 
-TMultiGraph*  mg_mean  = NULL;
-TMultiGraph*  mg_width = NULL;
+TMultiGraph*  mg_mean           = NULL;
+TMultiGraph*  mg_width          = NULL;
+TLegend*      resolution_legend = NULL;
 
 
 // Member functions
 //------------------------------------------------------------------------------
-void          DrawResolution(TString  muonType,
-			     TString  xtitle,
-			     Int_t    PU,
-			     Color_t  color);
+void          DrawResolution(TString     muonType,
+			     TString     xtitle,
+			     Int_t       PU,
+			     Color_t     color);
 
-void          SetLegend     (TLegend* tl);
+void          SetLegend     (TLegend*    tl,
+			     Size_t      tsize);
 
-TGraphErrors* SetGraph      (Int_t    npoints,
-			     Color_t  color,
-			     Style_t  style);
+TGraphErrors* SetGraph      (Int_t       npoints,
+			     Color_t     color,
+			     Style_t     style);
 
+void          DrawLatex     (Font_t      tfont,
+			     Float_t     x,
+			     Float_t     y,
+			     Float_t     tsize,
+			     Short_t     align,
+			     const char* text,
+			     Bool_t      setndc = true);
 
 //------------------------------------------------------------------------------
 //
@@ -84,6 +94,10 @@ void doResolution()
   mg_mean  = new TMultiGraph();
   mg_width = new TMultiGraph();
 
+  resolution_legend = new TLegend(0.79, 0.5, 0.95, 0.91);
+
+  SetLegend(resolution_legend, 0.025);
+
   if (draw_sta)   DrawResolution("Sta",   "standalone muons", noPU, kBlack);
   if (draw_trk)   DrawResolution("Trk",   "tracker muons",    noPU, kRed+1);
   if (draw_glb)   DrawResolution("Glb",   "global muons",     noPU, kBlue);
@@ -101,13 +115,23 @@ void doResolution()
   //----------------------------------------------------------------------------
   TCanvas* c1 = new TCanvas("mean", "mean");
 
+  c1->SetLeftMargin (0.14);
+  c1->SetRightMargin(0.23);
+
+  c1->SetGridx();
+  c1->SetGridy();
+
   mg_mean->Draw("apz");
 
   mg_mean->GetXaxis()->SetTitle("gen p_{T} [GeV]");
-  mg_mean->GetYaxis()->SetTitle("#Deltaq/p_{T} / (q/p_{T}) mean");
+  mg_mean->GetYaxis()->SetTitle("");
+
+  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) mean");
 
   mg_mean->GetXaxis()->SetTitleOffset(1.6);
   mg_mean->GetYaxis()->SetTitleOffset(1.8);
+
+  resolution_legend->Draw("same");
 
   if (doSavePdf) c1->SaveAs(directory + "/resolution_mean.pdf");
   if (doSavePng) c1->SaveAs(directory + "/resolution_mean.png");
@@ -117,13 +141,23 @@ void doResolution()
   //----------------------------------------------------------------------------
   TCanvas* c2 = new TCanvas("width", "width");
 
+  c2->SetLeftMargin (0.14);
+  c2->SetRightMargin(0.23);
+
+  c2->SetGridx();
+  c2->SetGridy();
+
   mg_width->Draw("apz");
 
   mg_width->GetXaxis()->SetTitle("gen p_{T} [GeV]");
-  mg_width->GetYaxis()->SetTitle("#Deltaq/p_{T} / (q/p_{T}) RMS");
+  mg_width->GetYaxis()->SetTitle("");
+
+  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) RMS");
 
   mg_width->GetXaxis()->SetTitleOffset(1.6);
   mg_width->GetYaxis()->SetTitleOffset(2.3);
+
+  resolution_legend->Draw("same");
 
   if (doSavePdf) c2->SaveAs(directory + "/resolution_RMS.pdf");
   if (doSavePng) c2->SaveAs(directory + "/resolution_RMS.png");
@@ -140,30 +174,28 @@ void DrawResolution(TString muonType,
 		    Int_t   PU,
 		    Color_t color)
 {
-  // Input file
   TFile* file = (PU == noPU) ? file_noPU : file_PU200;
   
-  // PU string
   TString pu_string = (PU == noPU) ? "noPU" : "PU200";
 
-  // Drawing canvas
-  TCanvas* canvas = new TCanvas(xtitle + " resolution (" + pu_string + ")",
-				xtitle + " resolution (" + pu_string + ")");
+  TString pu_label = (PU == noPU) ? "no PU" : "200 PU";
+
+  Style_t pu_style = (PU == noPU) ? kOpenCircle : kFullCircle;
+
+  TCanvas* canvas = new TCanvas(xtitle + " resolution (" + pu_label + ")",
+				xtitle + " resolution (" + pu_label + ")");
   
   // One histogram per pt bin
   TH1F* h_resolution[nbinspt];
 
-  // PU marker style
-  Style_t style = (PU == noPU) ? kOpenCircle : kFullCircle;
-
   // Graphs that will store the mean and width of the resolution
-  TGraphErrors* gr_mean  = SetGraph(nbinspt, color, style);
-  TGraphErrors* gr_width = SetGraph(nbinspt, color, style);
+  TGraphErrors* gr_mean  = SetGraph(nbinspt, color, pu_style);
+  TGraphErrors* gr_width = SetGraph(nbinspt, color, pu_style);
 
   // Legend
   TLegend* legend = new TLegend(0.61, 0.6, 0.82, 0.89);
 
-  SetLegend(legend);
+  SetLegend(legend, 0.03);
 
   // Vertical maximum
   Float_t ymax = 0;
@@ -196,13 +228,24 @@ void DrawResolution(TString muonType,
   mg_mean ->Add(gr_mean);
   mg_width->Add(gr_width);
 
+  // Legend
+  Bool_t pickMe = false;
+
+  if (muonType.EqualTo("Sta")   && draw_sta)   resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") sta",   "lp");
+  if (muonType.EqualTo("Trk")   && draw_trk)   resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") trk",   "lp");
+  if (muonType.EqualTo("Glb")   && draw_glb)   resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") glb",   "lp");
+  if (muonType.EqualTo("Tight") && draw_tight) resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") tight", "lp");
+  if (muonType.EqualTo("Soft")  && draw_soft)  resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") soft",  "lp");
+
   // Cosmetics
   h_resolution[0]->SetMaximum(1.1 * ymax);
-  h_resolution[0]->SetTitle(pu_string);
+  h_resolution[0]->SetTitle("");
   h_resolution[0]->SetXTitle(xtitle + " #Deltaq/p_{T} / (q/p_{T})");
   h_resolution[0]->SetYTitle("entries / bin");
   h_resolution[0]->GetXaxis()->SetTitleOffset(1.5);
   h_resolution[0]->GetYaxis()->SetTitleOffset(2.0);
+
+  DrawLatex(42, 0.940, 0.945, 0.04, 31, pu_label);
 
   legend->Draw();
 
@@ -217,13 +260,13 @@ void DrawResolution(TString muonType,
 //------------------------------------------------------------------------------
 // SetLegend
 //------------------------------------------------------------------------------
-void SetLegend(TLegend* tl)
+void SetLegend(TLegend* tl, Size_t tsize)
 {
-  tl->SetBorderSize(   0);
-  tl->SetFillColor (   0);
-  tl->SetTextAlign (  12);
-  tl->SetTextFont  (  42);
-  tl->SetTextSize  (0.03);
+  tl->SetBorderSize(    0);
+  tl->SetFillColor (    0);
+  tl->SetTextAlign (   12);
+  tl->SetTextFont  (   42);
+  tl->SetTextSize  (tsize);
 }
 
 
@@ -237,8 +280,31 @@ TGraphErrors* SetGraph(Int_t   npoints,
   TGraphErrors* gr = new TGraphErrors(npoints);
 
   gr->SetLineColor  (color);
+  gr->SetLineWidth  (    1);
   gr->SetMarkerColor(color);
   gr->SetMarkerStyle(style);
 
   return gr;
+}
+
+
+//------------------------------------------------------------------------------
+// DrawLatex
+//------------------------------------------------------------------------------
+void DrawLatex(Font_t      tfont,
+	       Float_t     x,
+	       Float_t     y,
+	       Float_t     tsize,
+	       Short_t     align,
+	       const char* text,
+	       Bool_t      setndc)
+{
+  TLatex* tl = new TLatex(x, y, text);
+
+  tl->SetNDC      (setndc);
+  tl->SetTextAlign( align);
+  tl->SetTextFont ( tfont);
+  tl->SetTextSize ( tsize);
+
+  tl->Draw("same");
 }
