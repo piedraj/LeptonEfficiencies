@@ -94,7 +94,7 @@ void doResolution()
   mg_mean  = new TMultiGraph();
   mg_width = new TMultiGraph();
 
-  resolution_legend = new TLegend(0.79, 0.5, 0.95, 0.91);
+  resolution_legend = new TLegend(0.81, 0.5, 0.95, 0.91);
 
   SetLegend(resolution_legend, 0.025);
 
@@ -115,13 +115,16 @@ void doResolution()
   //----------------------------------------------------------------------------
   TCanvas* c1 = new TCanvas("mean", "mean");
 
-  c1->SetLeftMargin (0.14);
-  c1->SetRightMargin(0.23);
+  c1->SetLeftMargin (0.165);
+  c1->SetRightMargin(0.205);
 
   c1->SetGridx();
   c1->SetGridy();
 
   mg_mean->Draw("apz");
+
+  mg_mean->SetMinimum(-0.002);
+  mg_mean->SetMaximum(+0.002);
 
   mg_mean->GetXaxis()->SetTitle("gen p_{T} [GeV]");
   mg_mean->GetYaxis()->SetTitle("");
@@ -141,8 +144,8 @@ void doResolution()
   //----------------------------------------------------------------------------
   TCanvas* c2 = new TCanvas("width", "width");
 
-  c2->SetLeftMargin (0.14);
-  c2->SetRightMargin(0.23);
+  c2->SetLeftMargin (0.165);
+  c2->SetRightMargin(0.205);
 
   c2->SetGridx();
   c2->SetGridy();
