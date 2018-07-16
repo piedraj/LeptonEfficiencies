@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 //
 // Compare displaced muons resolution for samples with no PU and 200 PU
@@ -33,9 +32,6 @@ Color_t       ptcolor[nbinspt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1}
 Bool_t        doSavePdf = true;
 Bool_t        doSavePng = true;
 
-TFile*        file_PU200 = NULL;
-TFile*        file_noPU  = NULL;
-
 Bool_t        draw_sta   = false;
 Bool_t        draw_trk   = false;
 Bool_t        draw_glb   = false;
@@ -44,9 +40,13 @@ Bool_t        draw_soft  = true;
 
 TString       directory = "displaced-muons";
 
-TMultiGraph*  mg_mean           = NULL;
-TMultiGraph*  mg_width          = NULL;
+TFile*        file_PU200 = NULL;
+TFile*        file_noPU  = NULL;
+
 TLegend*      resolution_legend = NULL;
+
+TMultiGraph*  mg_mean  = NULL;
+TMultiGraph*  mg_width = NULL;
 
 
 // Member functions
@@ -164,8 +164,8 @@ void doResolution()
 
   resolution_legend->Draw("same");
 
-  if (doSavePdf) c2->SaveAs(directory + "/resolution_RMS.pdf");
-  if (doSavePng) c2->SaveAs(directory + "/resolution_RMS.png");
+  if (doSavePdf) c2->SaveAs(directory + "/resolution_width.pdf");
+  if (doSavePng) c2->SaveAs(directory + "/resolution_width.png");
 }
 
 
@@ -244,7 +244,7 @@ void DrawResolution(TString muonType,
 
     h_resolution[i]->Draw(option);
 
-    gfit->Draw("same");
+    //    gfit->Draw("same");
 
     legend->AddEntry(h_resolution[i], Form(" %.0f < p_{T} < %.0f GeV", ptbins[i], ptbins[i+1]), "l");
   }
