@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 //
 // Compare displaced muons resolution for samples with no PU and 200 PU
@@ -6,6 +7,7 @@
 //
 //------------------------------------------------------------------------------
 #include "TCanvas.h"
+#include "TF1.h"
 #include "TFile.h"
 #include "TFrame.h"
 #include "TGraphErrors.h"
@@ -129,7 +131,7 @@ void doResolution()
   mg_mean->GetXaxis()->SetTitle("gen p_{T} [GeV]");
   mg_mean->GetYaxis()->SetTitle("");
 
-  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) mean");
+  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) fit mean");
 
   mg_mean->GetXaxis()->SetTitleOffset(1.6);
   mg_mean->GetYaxis()->SetTitleOffset(1.8);
@@ -155,7 +157,7 @@ void doResolution()
   mg_width->GetXaxis()->SetTitle("gen p_{T} [GeV]");
   mg_width->GetYaxis()->SetTitle("");
 
-  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) RMS");
+  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) fit width");
 
   mg_width->GetXaxis()->SetTitleOffset(1.6);
   mg_width->GetYaxis()->SetTitleOffset(2.3);
@@ -203,17 +205,35 @@ void DrawResolution(TString muonType,
   // Vertical maximum
   Float_t ymax = 0;
 
+  printf("\n");
+
   // Loop
   for (Int_t i=0; i<nbinspt; i++) {
 
     h_resolution[i] = (TH1F*)file->Get(Form("muonAnalysis/%sMuons_res_%d", muonType.Data(), i));
 
-    // Get the mean and the width
-    gr_mean ->SetPoint(i, 0.5*(ptbins[i]+ptbins[i+1]), h_resolution[i]->GetMean());
-    gr_width->SetPoint(i, 0.5*(ptbins[i]+ptbins[i+1]), h_resolution[i]->GetRMS());
+    // Fit
+    TF1 *gfit = new TF1("gfit", "gaus", -0.035, 0.035);
 
-    gr_mean ->SetPointError(i, 0.5*(ptbins[i+1]-ptbins[i]), 1e-9);
-    gr_width->SetPointError(i, 0.5*(ptbins[i+1]-ptbins[i]), 1e-9);
+    gfit->SetParameters(1,0,1);
+
+    h_resolution[i]->Fit("gfit", "nqr");
+
+    printf(" %sMuons_res_%d (%s) Chisquare/NDF = %5.2f;  Prob = %5.2f%s\n",
+	   muonType.Data(), i, pu_label.Data(), gfit->GetChisquare()/gfit->GetNDF(), 1e2*gfit->GetProb(), "%");
+
+    Float_t mean_value  = gfit->GetParameter(1);  // h_resolution[i]->GetMean());
+    Float_t width_value = gfit->GetParameter(2);  // h_resolution[i]->GetRMS());
+
+    Float_t mean_error  = gfit->GetParError(1);   // h_resolution[i]->GetMeanError());
+    Float_t width_error = gfit->GetParError(2);   // h_resolution[i]->GetRMSError());
+
+    // Get the mean and the width
+    gr_mean ->SetPoint(i, 0.5*(ptbins[i]+ptbins[i+1]), mean_value);
+    gr_width->SetPoint(i, 0.5*(ptbins[i]+ptbins[i+1]), width_value);
+
+    gr_mean ->SetPointError(i, 0.5*(ptbins[i+1]-ptbins[i]), mean_error);
+    gr_width->SetPointError(i, 0.5*(ptbins[i+1]-ptbins[i]), width_error);
 
     if (h_resolution[i]->GetMaximum() > ymax) ymax = h_resolution[i]->GetMaximum();
 
@@ -224,8 +244,12 @@ void DrawResolution(TString muonType,
 
     h_resolution[i]->Draw(option);
 
+    gfit->Draw("same");
+
     legend->AddEntry(h_resolution[i], Form(" %.0f < p_{T} < %.0f GeV", ptbins[i], ptbins[i+1]), "l");
   }
+
+  printf("\n");
 
   // Save the mean and the width
   mg_mean ->Add(gr_mean);
