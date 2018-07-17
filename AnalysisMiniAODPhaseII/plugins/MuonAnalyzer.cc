@@ -169,24 +169,23 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
   const reco::Vertex thePrimaryVertex(posVtx,errVtx);
 
 
-  // Pruned particles are the ones containing "important" stuff
-  Handle<edm::View<reco::GenParticle> > pruned;
-  event.getByToken(prunedGenToken, pruned);
-
-
-  // Packed particles are all the status 1, so usable to remake jets
-  // The navigation from status 1 to pruned is possible (the other direction should be made by hand)
-  Handle<edm::View<pat::PackedGenParticle> > packed;
-  event.getByToken(packedGenToken, packed);
-
-
-  // Get the muon collection
+  // Muon collection
   Handle<pat::MuonCollection> muons;
   event.getByToken(muonToken, muons);
 
 
-  // Loop over pruned particles
+  // Packed particles are all the status 1, therefore usable to remake jets
+  // The navigation from status 1 to pruned is possible (the other direction should be made by hand)
   //----------------------------------------------------------------------------
+  Handle<edm::View<pat::PackedGenParticle> > packed;
+  event.getByToken(packedGenToken, packed);
+
+
+  // Pruned particles are the ones containing "important" stuff
+  //----------------------------------------------------------------------------
+  Handle<edm::View<reco::GenParticle> > pruned;
+  event.getByToken(prunedGenToken, pruned);
+
   for (size_t i=0; i<pruned->size(); i++) {
 
     if (abs((*pruned)[i].pdgId()) != 13)    continue;
@@ -200,6 +199,27 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     Float_t vx     = (*pruned)[i].vx();
     Float_t vy     = (*pruned)[i].vy();
     Float_t vz     = (*pruned)[i].vz();
+
+    
+    // Begin debug for dxy and dz
+    //--------------------------------------------------------------------------
+    pat::PackedGenParticle pks((*pruned)[i], reco::GenParticleRef());
+
+    for (size_t j=0; j<packed->size(); j++) {
+
+      if (abs((*packed)[j].pdgId()) != 13)   continue;
+      if ((*packed)[j].mother(0) == nullptr) continue;
+      if (pks.p4() != (*packed)[j].p4())     continue;
+      
+      printf(" [pt ] pruned: %8.4f;   packed-from-pruned: %8.4f;   packed: %8.4f\n", pt,   pks.pt(),  (*packed)[j].pt());
+      printf(" [eta] pruned: %8.4f;   packed-from-pruned: %8.4f;   packed: %8.4f\n", eta,  pks.eta(), (*packed)[j].eta());
+      printf(" [vx ] pruned: %8.4f;   packed-from-pruned: %8.4f;   packed: %8.4f\n", vx,   pks.vx(),  (*packed)[j].vx());
+      printf(" [dxy] pruned: %8s;   packed-from-pruned: %8.4f;   packed: %8.4f\n",   "NA", pks.dxy(), (*packed)[j].dxy());
+      printf(" [dz]  pruned: %8s;   packed-from-pruned: %8.4f;   packed: %8.4f\n",   "NA", pks.dz(),  (*packed)[j].dz());
+    }
+    //--------------------------------------------------------------------------
+    // End debug for dxy and dz
+
 
     if (fabs(eta) > 2.4) continue;
     if (pt < ptbins[0])  continue;
