@@ -45,6 +45,9 @@ void ExampleMuonAnalyzer::beginJob()
 
   edm::Service<TFileService> fileService;
 
+  hGenMuons_dxy = fileService->make<TH1F>("GenMuons_dxy", "", 200, -0.1, 0.1);
+  hGenMuons_dz  = fileService->make<TH1F>("GenMuons_dz",  "", 200, -0.1, 0.1);
+
   hGenMuons_vx         = fileService->make<TH1F>("GenMuons_vx",         "", 750, 0, 750);
   hGenMuons_vy         = fileService->make<TH1F>("GenMuons_vy",         "", 750, 0, 750);
   hGenMuons_vz         = fileService->make<TH1F>("GenMuons_vz",         "", 750, 0, 750);
@@ -199,32 +202,15 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     Float_t vx     = (*pruned)[i].vx();
     Float_t vy     = (*pruned)[i].vy();
     Float_t vz     = (*pruned)[i].vz();
-
-    
-    // Begin debug for dxy and dz
-    //--------------------------------------------------------------------------
-    pat::PackedGenParticle pks((*pruned)[i], reco::GenParticleRef());
-
-    for (size_t j=0; j<packed->size(); j++) {
-
-      if (abs((*packed)[j].pdgId()) != 13)   continue;
-      if ((*packed)[j].mother(0) == nullptr) continue;
-      if (pks.p4() != (*packed)[j].p4())     continue;
-      
-      printf(" [pt ] pruned: %8.4f;   packed-from-pruned: %8.4f;   packed: %8.4f\n", pt,   pks.pt(),  (*packed)[j].pt());
-      printf(" [eta] pruned: %8.4f;   packed-from-pruned: %8.4f;   packed: %8.4f\n", eta,  pks.eta(), (*packed)[j].eta());
-      printf(" [vx ] pruned: %8.4f;   packed-from-pruned: %8.4f;   packed: %8.4f\n", vx,   pks.vx(),  (*packed)[j].vx());
-      printf(" [dxy] pruned: %8s;   packed-from-pruned: %8.4f;   packed: %8.4f\n",   "NA", pks.dxy(), (*packed)[j].dxy());
-      printf(" [dz]  pruned: %8s;   packed-from-pruned: %8.4f;   packed: %8.4f\n",   "NA", pks.dz(),  (*packed)[j].dz());
-    }
-    //--------------------------------------------------------------------------
-    // End debug for dxy and dz
-
+    Float_t vr     = sqrt(vx*vx + vy*vy + vz*vz);
 
     if (fabs(eta) > 2.4) continue;
-    if (pt < ptbins[0])  continue;
+    if (pt < ptbins[0])  continue;  // The value of ptbins[0] is 10 GeV
+    
+    pat::PackedGenParticle pks((*pruned)[i], reco::GenParticleRef());
 
-    Float_t vr = sqrt(vx*vx + vy*vy + vz*vz);
+    Float_t dxy = pks.dxy(posVtx);
+    Float_t dz  = pks.dz(posVtx);
 
 
     // Loop over reconstructed muons
@@ -377,11 +363,10 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     }  // for..muons
 
 
-    if (vr > max_vr) continue;
-  
-
     // Fill gen histograms
     //--------------------------------------------------------------------------
+    hGenMuons_dxy->Fill(dxy);
+    hGenMuons_dz ->Fill(dz);
     hGenMuons_vx ->Fill(fabs(vx));
     hGenMuons_vy ->Fill(fabs(vy));
     hGenMuons_vz ->Fill(fabs(vz));

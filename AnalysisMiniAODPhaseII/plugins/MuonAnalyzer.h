@@ -23,7 +23,6 @@ const Int_t   nbinspt = 6;
 const Float_t ptbins[nbinspt+1] = {10, 20, 35, 50, 100, 200, 500};
 
 const Float_t max_deltaR = 0.3;
-const Float_t max_vr     =  50;  // [cm]
 
 
 class ExampleMuonAnalyzer: public edm::EDAnalyzer {
@@ -48,6 +47,8 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
   edm::EDGetTokenT<edm::View<reco::GenParticle>>      prunedGenToken;
   edm::EDGetTokenT<reco::VertexCollection>            vtxToken;
 
+  TH1F* hGenMuons_dxy;
+  TH1F* hGenMuons_dz;
   TH1F* hGenMuons_vx;
   TH1F* hGenMuons_vy;
   TH1F* hGenMuons_vz;
