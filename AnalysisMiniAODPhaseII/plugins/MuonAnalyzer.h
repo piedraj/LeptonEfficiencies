@@ -18,15 +18,15 @@ class TH1F;
 class TH2F;
 
 
-const Int_t nbins_pt  = 6;
-const Int_t nbins_vxy = 5;
-const Int_t nbins_vz  = 5;
+const Int_t nbins_pt  =  6;
+const Int_t nbins_vxy = 10;
+const Int_t nbins_vz  = 10;
 
 const Float_t pt_bins[nbins_pt+1] = {10, 20, 35, 50, 100, 200, 500};
 
-const Float_t vxy_bins[nbins_vxy+1] = {0.0, 0.02, 0.05, 0.097, 0.1895, 3.0};
+const Float_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0088, 0.0200, 0.0334, 0.0498, 0.0704, 0.0968, 0.1332, 0.1892, 0.2988, 3.0000};
 
-const Float_t vz_bins[nbins_vz+1] = {0.0, 1.03, 2.19, 3.62, 5.50, 20.0};
+const Float_t vz_bins[nbins_vz+1] = {0.0000, 0.5080, 1.0364, 1.5974, 2.1970, 2.8732, 3.6246, 4.4544, 5.5000, 7.0216, 20.0000};
 
 const Float_t max_deltaR = 0.3;
 
@@ -53,8 +53,10 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
   edm::EDGetTokenT<edm::View<reco::GenParticle>>      prunedGenToken;
   edm::EDGetTokenT<reco::VertexCollection>            vtxToken;
 
-  TH1F* hGenMuons_dxy;
-  TH1F* hGenMuons_dz;
+  TH1F* h_dxy;
+  TH1F* h_dz;
+  TH1F* h_vxy;
+  TH1F* h_vz;
 
   TH2F* hGenMuons_vxy_vz;
   TH2F* hStaMuons_vxy_vz;

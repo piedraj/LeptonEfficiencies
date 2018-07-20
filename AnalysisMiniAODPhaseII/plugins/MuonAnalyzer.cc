@@ -45,8 +45,11 @@ void ExampleMuonAnalyzer::beginJob()
 
   edm::Service<TFileService> fileService;
 
-  hGenMuons_dxy = fileService->make<TH1F>("GenMuons_dxy", "", 100, -0.1, 0.1);
-  hGenMuons_dz  = fileService->make<TH1F>("GenMuons_dz",  "", 100, -0.1, 0.1);
+  h_dxy = fileService->make<TH1F>("dxy", "", 100, -0.1, 0.1);
+  h_dz  = fileService->make<TH1F>("dz",  "", 100, -0.1, 0.1);
+
+  h_vxy = fileService->make<TH1F>("vxy", "",  15000, 0,  3);
+  h_vz  = fileService->make<TH1F>("vz",  "", 100000, 0, 20);
 
   hGenMuons_vxy_vz         = fileService->make<TH2F>("GenMuons_vxy_vz",         "", nbins_vxy, vxy_bins, nbins_vz, vz_bins);
   hStaMuons_vxy_vz         = fileService->make<TH2F>("StaMuons_vxy_vz",         "", nbins_vxy, vxy_bins, nbins_vz, vz_bins);
@@ -399,8 +402,11 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 
     // Fill gen histograms
     //--------------------------------------------------------------------------
-    hGenMuons_dxy->Fill(dxy);
-    hGenMuons_dz ->Fill(dz);
+    h_dxy->Fill(dxy);
+    h_dz ->Fill(dz);
+    h_vxy->Fill(vxy);
+    h_vz ->Fill(fabs(vz));
+
     hGenMuons_vxy->Fill(vxy);
     hGenMuons_vz ->Fill(fabs(vz));
     hGenMuons_vr ->Fill(vr);

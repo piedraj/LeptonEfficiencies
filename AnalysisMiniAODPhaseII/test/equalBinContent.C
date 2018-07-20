@@ -7,15 +7,18 @@
 //------------------------------------------------------------------------------
 const Int_t nbins = 10;
 
-void equalBinContent(TString hname = "muonAnalysis/GenMuons_vxy",
+void equalBinContent(TString hname = "vxy",
 		     TString fname = "MyMuonPlots.root")
 {
-  printf("\n Finding %d bins with variable sizes for %s in %s\n",
+  printf("\n Finding %d bins with variable sizes for the histogram %s in %s\n",
 	 nbins, hname.Data(), fname.Data());
 
   TFile* file = new TFile(fname);
 
-  TH1F* h1 = (TH1F*)file->Get(hname);
+  TH1F* h1 = (TH1F*)file->Get("muonAnalysis/" + hname);
+
+  printf("\n %s has %d bins and the bin width is %f\n",
+	 hname.Data(), h1->GetNbinsX(), h1->GetBinWidth(0));
 
   TCanvas* c1 = new TCanvas("c1", "c1");
 
@@ -32,13 +35,18 @@ void equalBinContent(TString hname = "muonAnalysis/GenMuons_vxy",
 
   Int_t usedBins = 0;
 
-  printf("\n integral = %.1f; nbins = %d; target = %.1f\n\n",
-	 integral, nbins, binContent);
+  printf("\n integral = %.1f; target = %.1f\n\n",
+	 integral, binContent);
   
   Int_t i_begin = h1->GetNbinsX()+1;
   Int_t i_end   = 0;
 
   Double_t xbins[nbins+1];
+
+  xbins[0]     = h1->GetBinLowEdge(1);
+  xbins[nbins] = h1->GetBinLowEdge(h1->GetNbinsX()+1);
+
+  printf(" bin edge %2d = %7.4f\n", 0, xbins[0]);
 
   for (Int_t i=h1->GetNbinsX()+1; i>=0; i--)
     {
@@ -60,22 +68,27 @@ void equalBinContent(TString hname = "muonAnalysis/GenMuons_vxy",
 
 	  xbins[nbins-usedBins] = h1->GetBinLowEdge(i+1);
 
-	  printf(" bin edge = %f; integral = %.1f; target = %.1f\n",
-		 h1->GetBinLowEdge(i+1), h1->Integral(i_end, i_begin), binContent);
+	  printf(" bin edge %2d = %7.4f; integral = %.1f; target = %.1f\n",
+		 usedBins, h1->GetBinLowEdge(i+1), h1->Integral(i_end, i_begin), binContent);
 
 	  i_begin = i;
 	}
     }
 
+  printf(" bin edge %2d = %7.4f\n", nbins, xbins[nbins]);
+
 
   // Test the work
   //----------------------------------------------------------------------------
-  xbins[0]     = h1->GetBinLowEdge(1);
-  xbins[nbins] = h1->GetBinLowEdge(h1->GetNbinsX()+1);
+  printf("\n The new bin edges are:\n\n const Float_t %s_bins[nbins_%s+1] = {",
+	 hname.Data(), hname.Data());
 
-  printf("\n The new bin edges are:\n\n");
+  for (Int_t i=0; i<=nbins; i++) {
 
-  for (Int_t i=0; i<=nbins; i++) printf(" %f\n", xbins[i]);
+    printf("%.4f", xbins[i]);
+
+    (i < nbins) ? printf(", ") : printf("};\n");
+  }
 
   printf("\n");
 

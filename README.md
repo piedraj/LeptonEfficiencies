@@ -33,11 +33,23 @@
     mv MyMuonPlots.root rootfiles/DisplacedSUSY_noPU.root
 
 
+# Prepare variable bin sizes for vxy and vz
+
+    cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
+
+    root -l -b -q 'equalBinContent.C("vxy")'
+    root -l -b -q 'equalBinContent.C("vz")'
+
+
 # Read histograms and draw distributions
 
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
 
     root -l -b -q doEfficiencies.C+
     root -l -b -q doResolution.C+
-    root -l -b -q doEfficiencies2D.C
+
+    root -l -b -q 'doEfficiencies2D.C+("Soft",  "PU200", "soft muons efficiency (200 PU)")'
+    root -l -b -q 'doEfficiencies2D.C+("Soft",  "noPU",  "soft muons efficiency (no PU)")'
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "PU200", "tight muons efficiency (200 PU)")'
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "noPU",  "tight muons efficiency (no PU)")'
 

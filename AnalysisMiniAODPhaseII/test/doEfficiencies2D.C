@@ -8,6 +8,8 @@
 #include "TFrame.h"
 #include "TH2F.h"
 #include "TInterpreter.h"
+#include "TLatex.h"
+#include "TPaletteAxis.h"
 #include "TString.h"
 #include "TSystem.h"
 
@@ -17,6 +19,8 @@
 // Data members
 //------------------------------------------------------------------------------
 const Float_t bigLabelSize = 0.04;
+
+Bool_t printEfficiencies = false;
 
 TString directory = "displaced-muons";
 
@@ -46,7 +50,7 @@ void DrawTLatex   (Font_t      tfont,
 //------------------------------------------------------------------------------
 void doEfficiencies2D(TString muontype = "Soft",
 		      TString pileup   = "PU200",
-		      TString title    = "soft muons efficiency(200 PU)")
+		      TString title    = "soft muons efficiency (200 PU)")
 {
   gInterpreter->ExecuteMacro("PaperStyle.C");
 
@@ -61,7 +65,7 @@ void doEfficiencies2D(TString muontype = "Soft",
 
   hnum->Divide(hden);
 
-  TString hname = "efficiency_vxy_vz_" + muontype + "_" + pileup;
+  TString hname = "efficiency_vxy_vz_muon" + muontype + "Id_" + pileup;
 
   TH2F* h = (TH2F*)hnum->Clone(hname);
 
@@ -88,20 +92,16 @@ void doEfficiencies2D(TString muontype = "Soft",
   //
   std::ofstream efficiency_tcl;
 
-  efficiency_tcl.open(Form("%s/tcl/muon%sId_vxy_vz_%s.tcl",
-			   directory.Data(),
-			   muontype.Data(),
-			   pileup.Data()),
-		      std::ofstream::out);
+  efficiency_tcl.open(Form("%s/tcl/%s.tcl", directory.Data(), hname.Data()), std::ofstream::out);
 
-  efficiency_tcl << Form("# %s muons efficiency for dxy and dz with %s\n\n", muontype.Data(), pileup.Data()); 
+  efficiency_tcl << Form("# %s muons efficiency for d0 and dz with %s\n\n", muontype.Data(), pileup.Data()); 
 
   efficiency_tcl << "set EfficiencyFormula {\n";
 
   for (Int_t i=1; i<=h->GetNbinsX(); i++) {
     for (Int_t j=1; j<=h->GetNbinsX(); j++) {
 
-      efficiency_tcl << Form(" (abs(dxy) > %.4f && abs(dxy) <= %.4f) * (abs(dz) > %.4f && abs(dz) < %7.4f) * %.4f\n",
+      efficiency_tcl << Form(" (abs(d0) > %.4f && abs(d0) <= %.4f) * (abs(dz) > %.4f && abs(dz) < %7.4f) * %.4f\n",
 			     xaxis->GetBinLowEdge(i), xaxis->GetBinLowEdge(i+1),
 			     yaxis->GetBinLowEdge(j), yaxis->GetBinLowEdge(j+1),
 			     h->GetBinContent(i,j));
@@ -121,26 +121,29 @@ void doEfficiencies2D(TString muontype = "Soft",
 
   DrawTLatex(42, 0.940, 0.976, bigLabelSize, 33, title);
 
-  Double_t hmin = h->GetMinimum();
-  Double_t hmax = h->GetMaximum();
+  if (printEfficiencies) {
 
-  for (Int_t i=1; i<=h->GetNbinsX(); i++) {
-    for (Int_t j=1; j<=h->GetNbinsY(); j++) {
+    Double_t hmin = h->GetMinimum();
+    Double_t hmax = h->GetMaximum();
 
-      Double_t value = h->GetBinContent(i,j);
+    for (Int_t i=1; i<=h->GetNbinsX(); i++) {
+      for (Int_t j=1; j<=h->GetNbinsY(); j++) {
+
+	Double_t value = h->GetBinContent(i,j);
       
-      Double_t ypos = yaxis->GetBinCenter(j);
-      Double_t xpos = xaxis->GetBinCenter(i);
+	Double_t ypos = yaxis->GetBinCenter(j);
+	Double_t xpos = xaxis->GetBinCenter(i);
       
-      TLatex* latex = new TLatex(xpos, ypos, Form("%.2f", value));
+	TLatex* latex = new TLatex(xpos, ypos, Form("%.2f", value));
 
-      latex->SetTextAlign(   22);
-      latex->SetTextFont (   42);
-      latex->SetTextSize (0.027);
+	latex->SetTextAlign(   22);
+	latex->SetTextFont (   42);
+	latex->SetTextSize (0.027);
 
-      if (value < hmin + 0.3*(hmax - hmin)) latex->SetTextColor(kWhite);
+	if (value < hmin + 0.3*(hmax - hmin)) latex->SetTextColor(kWhite);
 	
-      latex->Draw();
+	latex->Draw();
+      }
     }
   }
 
