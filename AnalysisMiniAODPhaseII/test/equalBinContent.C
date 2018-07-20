@@ -8,7 +8,7 @@
 const Int_t nbins = 10;
 
 void equalBinContent(TString hname = "vxy",
-		     TString fname = "MyMuonPlots.root")
+		     TString fname = "rootfiles/DisplacedSUSY_PU200.root")
 {
   printf("\n Finding %d bins with variable sizes for the histogram %s in %s\n",
 	 nbins, hname.Data(), fname.Data());
