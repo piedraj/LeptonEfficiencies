@@ -36,5 +36,8 @@
 # Read histograms and draw distributions
 
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
+
     root -l -b -q doEfficiencies.C+
+    root -l -b -q doResolution.C+
+    root -l -b -q doEfficiencies2D.C
 

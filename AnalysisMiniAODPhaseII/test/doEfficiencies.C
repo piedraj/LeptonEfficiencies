@@ -26,7 +26,7 @@ enum        {noPU, PU200};
 
 Bool_t      doSavePdf = true;
 Bool_t      doSavePng = true;
-Bool_t      doSaveTcl = true;
+Bool_t      doSaveTcl = false;
 
 TFile*      file_PU200 = NULL;
 TFile*      file_noPU  = NULL;
@@ -89,11 +89,15 @@ void doEfficiencies()
 
   // Do the work
   //----------------------------------------------------------------------------
-  DrawEfficiency("efficiency", "vr",  "gen production radius [cm]", 2);
+  DrawEfficiency("efficiency", "vxy", "gen production distance in xy [cm]");
+  DrawEfficiency("efficiency", "vz",  "gen production distance in z [cm]");
+  DrawEfficiency("efficiency", "vr",  "gen production distance in xyz [cm]", 10);
   DrawEfficiency("efficiency", "eta", "gen #eta");
   DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]", 10);
 
-  DrawEfficiency("fakes", "vr",  "gen production radius [cm]", 2);
+  DrawEfficiency("fakes", "vxy", "gen production distance in xy [cm]");
+  DrawEfficiency("fakes", "vz",  "gen production distance in z [cm]");
+  DrawEfficiency("fakes", "vr",  "gen production distance in xyz [cm]", 10);
   DrawEfficiency("fakes", "eta", "gen #eta");
   DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]", 10);
 

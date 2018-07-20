@@ -18,9 +18,15 @@ class TH1F;
 class TH2F;
 
 
-const Int_t   nbinspt = 6;
+const Int_t nbins_pt  = 6;
+const Int_t nbins_vxy = 5;
+const Int_t nbins_vz  = 5;
 
-const Float_t ptbins[nbinspt+1] = {10, 20, 35, 50, 100, 200, 500};
+const Float_t pt_bins[nbins_pt+1] = {10, 20, 35, 50, 100, 200, 500};
+
+const Float_t vxy_bins[nbins_vxy+1] = {0.0, 0.02, 0.05, 0.097, 0.1895, 3.0};
+
+const Float_t vz_bins[nbins_vz+1] = {0.0, 1.03, 2.19, 3.62, 5.50, 20.0};
 
 const Float_t max_deltaR = 0.3;
 
@@ -49,9 +55,42 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
 
   TH1F* hGenMuons_dxy;
   TH1F* hGenMuons_dz;
-  TH1F* hGenMuons_vx;
-  TH1F* hGenMuons_vy;
+
+  TH2F* hGenMuons_vxy_vz;
+  TH2F* hStaMuons_vxy_vz;
+  TH2F* hTrkMuons_vxy_vz;
+  TH2F* hGlbMuons_vxy_vz;
+  TH2F* hTightMuons_vxy_vz;
+  TH2F* hSoftMuons_vxy_vz;
+  TH2F* hStaMuons_noGen_vxy_vz;
+  TH2F* hTrkMuons_noGen_vxy_vz;
+  TH2F* hGlbMuons_noGen_vxy_vz;
+  TH2F* hTightMuons_noGen_vxy_vz;
+  TH2F* hSoftMuons_noGen_vxy_vz;
+
+  TH1F* hGenMuons_vxy;
+  TH1F* hStaMuons_vxy;
+  TH1F* hTrkMuons_vxy;
+  TH1F* hGlbMuons_vxy;
+  TH1F* hTightMuons_vxy;
+  TH1F* hSoftMuons_vxy;
+  TH1F* hStaMuons_noGen_vxy;
+  TH1F* hTrkMuons_noGen_vxy; 
+  TH1F* hGlbMuons_noGen_vxy; 
+  TH1F* hTightMuons_noGen_vxy; 
+  TH1F* hSoftMuons_noGen_vxy; 
+
   TH1F* hGenMuons_vz;
+  TH1F* hStaMuons_vz;
+  TH1F* hTrkMuons_vz;
+  TH1F* hGlbMuons_vz;
+  TH1F* hTightMuons_vz;
+  TH1F* hSoftMuons_vz;
+  TH1F* hStaMuons_noGen_vz;
+  TH1F* hTrkMuons_noGen_vz; 
+  TH1F* hGlbMuons_noGen_vz; 
+  TH1F* hTightMuons_noGen_vz; 
+  TH1F* hSoftMuons_noGen_vz; 
 
   TH1F* hGenMuons_vr;
   TH1F* hStaMuons_vr;
@@ -107,11 +146,11 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
   TH1F* hTightMuons_dR;                                                                                                            
   TH1F* hSoftMuons_dR;
 
-  TH1F* hStaMuons_res  [nbinspt];
-  TH1F* hTrkMuons_res  [nbinspt];
-  TH1F* hGlbMuons_res  [nbinspt];
-  TH1F* hTightMuons_res[nbinspt];
-  TH1F* hSoftMuons_res [nbinspt];
+  TH1F* hStaMuons_res  [nbins_pt];
+  TH1F* hTrkMuons_res  [nbins_pt];
+  TH1F* hGlbMuons_res  [nbins_pt];
+  TH1F* hTightMuons_res[nbins_pt];
+  TH1F* hSoftMuons_res [nbins_pt];
 
   TH1F* hMuPFChargeIso; 
   TH1F* hMuPFNeutralIso;
