@@ -5,10 +5,10 @@
 //  the bins are defined from the right, where the statistics is smaller.
 //
 //------------------------------------------------------------------------------
-const Int_t nbins = 10;
+const Int_t nbins = 4;
 
-void equalBinContent(TString hname = "vxy",
-		     TString fname = "rootfiles/DisplacedSUSY_PU200.root")
+void equalBinContent(TString hname = "vr",
+		     TString fname = "MyMuonPlots.root")
 {
   printf("\n Finding %d bins with variable sizes for the histogram %s in %s\n",
 	 nbins, hname.Data(), fname.Data());
@@ -46,7 +46,7 @@ void equalBinContent(TString hname = "vxy",
   xbins[0]     = h1->GetBinLowEdge(1);
   xbins[nbins] = h1->GetBinLowEdge(h1->GetNbinsX()+1);
 
-  printf(" bin edge %2d = %7.4f\n", 0, xbins[0]);
+  printf(" bin edge %2d = %8.4f\n", nbins, xbins[nbins]);
 
   for (Int_t i=h1->GetNbinsX()+1; i>=0; i--)
     {
@@ -68,14 +68,14 @@ void equalBinContent(TString hname = "vxy",
 
 	  xbins[nbins-usedBins] = h1->GetBinLowEdge(i+1);
 
-	  printf(" bin edge %2d = %7.4f; integral = %.1f; target = %.1f\n",
-		 usedBins, h1->GetBinLowEdge(i+1), h1->Integral(i_end, i_begin), binContent);
+	  printf(" bin edge %2d = %8.4f; integral = %.1f; target = %.1f\n",
+		 nbins-usedBins, h1->GetBinLowEdge(i+1), h1->Integral(i_end, i_begin), binContent);
 
 	  i_begin = i;
 	}
     }
 
-  printf(" bin edge %2d = %7.4f\n", nbins, xbins[nbins]);
+  printf(" bin edge %2d = %8.4f\n", 0, xbins[0]);
 
 
   // Test the work

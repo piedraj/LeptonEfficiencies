@@ -45,11 +45,12 @@ void ExampleMuonAnalyzer::beginJob()
 
   edm::Service<TFileService> fileService;
 
-  h_dxy = fileService->make<TH1F>("dxy", "", 100, -0.1, 0.1);
-  h_dz  = fileService->make<TH1F>("dz",  "", 100, -0.1, 0.1);
-
-  h_vxy = fileService->make<TH1F>("vxy", "",  15000, 0,  3);
-  h_vz  = fileService->make<TH1F>("vz",  "", 100000, 0, 20);
+  h_dxy = fileService->make<TH1F>("dxy", "",    100, -0.1, 0.1);
+  h_dz  = fileService->make<TH1F>("dz",  "",    100, -0.1, 0.1);
+  h_vxy = fileService->make<TH1F>("vxy", "",  15000,    0,   3);
+  h_vz  = fileService->make<TH1F>("vz",  "", 100000,    0,  20);
+  h_vr  = fileService->make<TH1F>("vr",  "", 100000,    0,  20);
+  h_pt  = fileService->make<TH1F>("pt",  "", 100000,    0, 500);
 
   hGenMuons_vxy_vz         = fileService->make<TH2F>("GenMuons_vxy_vz",         "", nbins_vxy, vxy_bins, nbins_vz, vz_bins);
   hStaMuons_vxy_vz         = fileService->make<TH2F>("StaMuons_vxy_vz",         "", nbins_vxy, vxy_bins, nbins_vz, vz_bins);
@@ -87,17 +88,17 @@ void ExampleMuonAnalyzer::beginJob()
   hTightMuons_noGen_vz = fileService->make<TH1F>("TightMuons_noGen_vz", "", nbins_vz, vz_bins);
   hSoftMuons_noGen_vz  = fileService->make<TH1F>("SoftMuons_noGen_vz",  "", nbins_vz, vz_bins);
 
-  hGenMuons_vr         = fileService->make<TH1F>("GenMuons_vr",         "", 100, 0, 20);
-  hStaMuons_vr         = fileService->make<TH1F>("StaMuons_vr",         "", 100, 0, 20);
-  hTrkMuons_vr         = fileService->make<TH1F>("TrkMuons_vr",         "", 100, 0, 20);
-  hGlbMuons_vr         = fileService->make<TH1F>("GlbMuons_vr",         "", 100, 0, 20);
-  hTightMuons_vr       = fileService->make<TH1F>("TightMuons_vr",       "", 100, 0, 20);
-  hSoftMuons_vr        = fileService->make<TH1F>("SoftMuons_vr",        "", 100, 0, 20);
-  hStaMuons_noGen_vr   = fileService->make<TH1F>("StaMuons_noGen_vr",   "", 100, 0, 20);
-  hTrkMuons_noGen_vr   = fileService->make<TH1F>("TrkMuons_noGen_vr",   "", 100, 0, 20);
-  hGlbMuons_noGen_vr   = fileService->make<TH1F>("GlbMuons_noGen_vr",   "", 100, 0, 20);
-  hTightMuons_noGen_vr = fileService->make<TH1F>("TightMuons_noGen_vr", "", 100, 0, 20);
-  hSoftMuons_noGen_vr  = fileService->make<TH1F>("SoftMuons_noGen_vr",  "", 100, 0, 20);
+  hGenMuons_vr         = fileService->make<TH1F>("GenMuons_vr",         "", nbins_vr, vr_bins);
+  hStaMuons_vr         = fileService->make<TH1F>("StaMuons_vr",         "", nbins_vr, vr_bins);
+  hTrkMuons_vr         = fileService->make<TH1F>("TrkMuons_vr",         "", nbins_vr, vr_bins);
+  hGlbMuons_vr         = fileService->make<TH1F>("GlbMuons_vr",         "", nbins_vr, vr_bins);
+  hTightMuons_vr       = fileService->make<TH1F>("TightMuons_vr",       "", nbins_vr, vr_bins);
+  hSoftMuons_vr        = fileService->make<TH1F>("SoftMuons_vr",        "", nbins_vr, vr_bins);
+  hStaMuons_noGen_vr   = fileService->make<TH1F>("StaMuons_noGen_vr",   "", nbins_vr, vr_bins);
+  hTrkMuons_noGen_vr   = fileService->make<TH1F>("TrkMuons_noGen_vr",   "", nbins_vr, vr_bins);
+  hGlbMuons_noGen_vr   = fileService->make<TH1F>("GlbMuons_noGen_vr",   "", nbins_vr, vr_bins);
+  hTightMuons_noGen_vr = fileService->make<TH1F>("TightMuons_noGen_vr", "", nbins_vr, vr_bins);
+  hSoftMuons_noGen_vr  = fileService->make<TH1F>("SoftMuons_noGen_vr",  "", nbins_vr, vr_bins);
 
   hGenMuons_eta         = fileService->make<TH1F>("GenMuons_eta",         "", 100, -2.5, 2.5);
   hStaMuons_eta         = fileService->make<TH1F>("StaMuons_eta",         "", 100, -2.5, 2.5);
@@ -406,6 +407,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     h_dz ->Fill(dz);
     h_vxy->Fill(vxy);
     h_vz ->Fill(fabs(vz));
+    h_vr ->Fill(vr);
+    h_pt ->Fill(pt);
 
     hGenMuons_vxy->Fill(vxy);
     hGenMuons_vz ->Fill(fabs(vz));
