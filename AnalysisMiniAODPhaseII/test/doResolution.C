@@ -37,6 +37,7 @@ Bool_t        draw_trk   = false;
 Bool_t        draw_glb   = false;
 Bool_t        draw_tight = true;
 Bool_t        draw_soft  = true;
+Bool_t        draw_fits  = false;
 
 TString       directory = "displaced-muons";
 
@@ -51,25 +52,30 @@ TMultiGraph*  mg_width = NULL;
 
 // Member functions
 //------------------------------------------------------------------------------
-void          DrawResolution(TString     muonType,
-			     TString     xtitle,
-			     Int_t       PU,
-			     Color_t     color);
+void          DrawResolution(TString       muonType,
+			     TString       xtitle,
+			     Int_t         PU,
+			     Color_t       color);
 
-void          SetLegend     (TLegend*    tl,
-			     Size_t      tsize);
+void          SetLegend     (TLegend*      tl,
+			     Size_t        tsize);
 
-TGraphErrors* SetGraph      (Int_t       npoints,
-			     Color_t     color,
-			     Style_t     style);
+TGraphErrors* SetGraph      (Int_t         npoints,
+			     Color_t       color,
+			     Style_t       style);
 
-void          DrawLatex     (Font_t      tfont,
-			     Float_t     x,
-			     Float_t     y,
-			     Float_t     tsize,
-			     Short_t     align,
-			     const char* text,
-			     Bool_t      setndc = true);
+void          DrawLatex     (Font_t        tfont,
+			     Float_t       x,
+			     Float_t       y,
+			     Float_t       tsize,
+			     Short_t       align,
+			     const char*   text,
+			     Bool_t        setndc = true);
+
+void          PrintContent  (TGraphErrors* gr,
+			     TString       variable,
+			     TString       title);
+
 
 //------------------------------------------------------------------------------
 //
@@ -218,9 +224,9 @@ void DrawResolution(TString muonType,
     gfit->SetParameters(1,0,1);
 
     h_resolution[i]->Fit("gfit", "nqr");
-
-    printf(" %sMuons_res_%d (%s) Chisquare/NDF = %5.2f;  Prob = %5.2f%s\n",
-	   muonType.Data(), i, pu_label.Data(), gfit->GetChisquare()/gfit->GetNDF(), 1e2*gfit->GetProb(), "%");
+    
+    if (draw_fits) printf(" %sMuons_res_%d (%s) Chisquare/NDF = %5.2f;  Prob = %5.2f%s\n",
+			  muonType.Data(), i, pu_label.Data(), gfit->GetChisquare()/gfit->GetNDF(), 1e2*gfit->GetProb(), "%");
 
     Float_t mean_value  = gfit->GetParameter(1);  // h_resolution[i]->GetMean());
     Float_t width_value = gfit->GetParameter(2);  // h_resolution[i]->GetRMS());
@@ -244,16 +250,20 @@ void DrawResolution(TString muonType,
 
     h_resolution[i]->Draw(option);
 
-    //    gfit->Draw("same");
+    if (draw_fits) gfit->Draw("same");
 
     legend->AddEntry(h_resolution[i], Form(" %.0f < p_{T} < %.0f GeV", ptbins[i], ptbins[i+1]), "l");
   }
 
-  printf("\n");
 
   // Save the mean and the width
   mg_mean ->Add(gr_mean);
   mg_width->Add(gr_width);
+
+  // Print the mean and the width
+  PrintContent(gr_mean,  "mean",  muonType + "Muons_" + pu_string);
+  PrintContent(gr_width, "width", muonType + "Muons_" + pu_string);
+
 
   // Legend
   Bool_t pickMe = false;
@@ -334,4 +344,26 @@ void DrawLatex(Font_t      tfont,
   tl->SetTextSize ( tsize);
 
   tl->Draw("same");
+}
+
+
+//------------------------------------------------------------------------------
+// PrintContent
+//------------------------------------------------------------------------------
+void PrintContent(TGraphErrors* gr,
+		  TString       variable,
+		  TString       title)
+{
+  printf(" Resolution %s for %s\n\n", variable.Data(), title.Data());
+
+  for (Int_t i=0; i<gr->GetN(); i++) {
+
+    printf(" [ %3.0f < ptgen < %3.0f]  %s = %9.6f +- %8.6f\n",
+	   gr->GetX()[i] - gr->GetErrorX(i),
+	   gr->GetX()[i] + gr->GetErrorX(i),
+	   variable.Data(),
+	   gr->GetY()[i], gr->GetErrorY(i));
+  }
+
+  printf("\n");
 }
