@@ -91,13 +91,13 @@ void doEfficiencies()
   //----------------------------------------------------------------------------
   DrawEfficiency("efficiency", "vxy", "gen production distance in xy [cm]");
   DrawEfficiency("efficiency", "vz",  "gen production distance in z [cm]");
-  DrawEfficiency("efficiency", "vr",  "gen production distance in xyz [cm]", 10);
+  DrawEfficiency("efficiency", "vr",  "gen production distance in xyz [cm]");
   DrawEfficiency("efficiency", "eta", "gen #eta");
   DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]", 10);
 
   DrawEfficiency("fakes", "vxy", "gen production distance in xy [cm]");
   DrawEfficiency("fakes", "vz",  "gen production distance in z [cm]");
-  DrawEfficiency("fakes", "vr",  "gen production distance in xyz [cm]", 10);
+  DrawEfficiency("fakes", "vr",  "gen production distance in xyz [cm]");
   DrawEfficiency("fakes", "eta", "gen #eta");
   DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]", 10);
 

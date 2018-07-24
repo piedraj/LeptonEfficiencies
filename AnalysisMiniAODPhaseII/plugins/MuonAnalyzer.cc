@@ -100,6 +100,18 @@ void ExampleMuonAnalyzer::beginJob()
   hTightMuons_noGen_vr = fileService->make<TH1F>("TightMuons_noGen_vr", "", nbins_vr, vr_bins);
   hSoftMuons_noGen_vr  = fileService->make<TH1F>("SoftMuons_noGen_vr",  "", nbins_vr, vr_bins);
 
+  hGenMuons_pt         = fileService->make<TH1F>("GenMuons_pt",         "", nbins_pt, pt_bins);
+  hStaMuons_pt         = fileService->make<TH1F>("StaMuons_pt",         "", nbins_pt, pt_bins);
+  hTrkMuons_pt         = fileService->make<TH1F>("TrkMuons_pt",         "", nbins_pt, pt_bins);
+  hGlbMuons_pt         = fileService->make<TH1F>("GlbMuons_pt",         "", nbins_pt, pt_bins);
+  hTightMuons_pt       = fileService->make<TH1F>("TightMuons_pt",       "", nbins_pt, pt_bins);
+  hSoftMuons_pt        = fileService->make<TH1F>("SoftMuons_pt",        "", nbins_pt, pt_bins);
+  hStaMuons_noGen_pt   = fileService->make<TH1F>("StaMuons_noGen_pt",   "", nbins_pt, pt_bins);
+  hTrkMuons_noGen_pt   = fileService->make<TH1F>("TrkMuons_noGen_pt",   "", nbins_pt, pt_bins);
+  hGlbMuons_noGen_pt   = fileService->make<TH1F>("GlbMuons_noGen_pt",   "", nbins_pt, pt_bins);
+  hTightMuons_noGen_pt = fileService->make<TH1F>("TightMuons_noGen_pt", "", nbins_pt, pt_bins);
+  hSoftMuons_noGen_pt  = fileService->make<TH1F>("SoftMuons_noGen_pt",  "", nbins_pt, pt_bins);
+
   hGenMuons_eta         = fileService->make<TH1F>("GenMuons_eta",         "", 100, -2.5, 2.5);
   hStaMuons_eta         = fileService->make<TH1F>("StaMuons_eta",         "", 100, -2.5, 2.5);
   hTrkMuons_eta         = fileService->make<TH1F>("TrkMuons_eta",         "", 100, -2.5, 2.5);
@@ -124,18 +136,6 @@ void ExampleMuonAnalyzer::beginJob()
   hTightMuons_noGen_phi = fileService->make<TH1F>("TightMuons_noGen_phi", "", 100, -3.2, 3.2);
   hSoftMuons_noGen_phi  = fileService->make<TH1F>("SoftMuons_noGen_phi",  "", 100, -3.2, 3.2);
 
-  hGenMuons_pt         = fileService->make<TH1F>("GenMuons_pt",         "", 500, 0, 500);
-  hStaMuons_pt         = fileService->make<TH1F>("StaMuons_pt",         "", 500, 0, 500);
-  hTrkMuons_pt         = fileService->make<TH1F>("TrkMuons_pt",         "", 500, 0, 500);
-  hGlbMuons_pt         = fileService->make<TH1F>("GlbMuons_pt",         "", 500, 0, 500);
-  hTightMuons_pt       = fileService->make<TH1F>("TightMuons_pt",       "", 500, 0, 500);
-  hSoftMuons_pt        = fileService->make<TH1F>("SoftMuons_pt",        "", 500, 0, 500);
-  hStaMuons_noGen_pt   = fileService->make<TH1F>("StaMuons_noGen_pt",   "", 500, 0, 500);
-  hTrkMuons_noGen_pt   = fileService->make<TH1F>("TrkMuons_noGen_pt",   "", 500, 0, 500);
-  hGlbMuons_noGen_pt   = fileService->make<TH1F>("GlbMuons_noGen_pt",   "", 500, 0, 500);
-  hTightMuons_noGen_pt = fileService->make<TH1F>("TightMuons_noGen_pt", "", 500, 0, 500);
-  hSoftMuons_noGen_pt  = fileService->make<TH1F>("SoftMuons_noGen_pt",  "", 500, 0, 500);
-
   hStaMuons_dR   = fileService->make<TH1F>("StaMuons_dR",   "", 100, 0, 4);
   hTrkMuons_dR   = fileService->make<TH1F>("TrkMuons_dR",   "", 100, 0, 4);
   hGlbMuons_dR   = fileService->make<TH1F>("GlbMuons_dR",   "", 100, 0, 4);
@@ -143,11 +143,11 @@ void ExampleMuonAnalyzer::beginJob()
   hSoftMuons_dR  = fileService->make<TH1F>("SoftMuons_dR",  "", 100, 0, 4);
 
   for (Int_t i=0; i<nbins_pt; i++) {
-    hStaMuons_res[i]   = fileService->make<TH1F>(Form("StaMuons_res_%d",   i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
-    hTrkMuons_res[i]   = fileService->make<TH1F>(Form("TrkMuons_res_%d",   i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
-    hGlbMuons_res[i]   = fileService->make<TH1F>(Form("GlbMuons_res_%d",   i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
-    hTightMuons_res[i] = fileService->make<TH1F>(Form("TightMuons_res_%d", i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
-    hSoftMuons_res[i]  = fileService->make<TH1F>(Form("SoftMuons_res_%d",  i), "#Deltaq/p_{T} / q/p_{T}", 120, -0.15, 0.15);
+    hStaMuons_pt_resolution  [i] = fileService->make<TH2F>(Form("StaMuons_pt_resolution_pt%d",   i), "", nbins_vxy, vxy_bins, 120, -0.15, 0.15);
+    hTrkMuons_pt_resolution  [i] = fileService->make<TH2F>(Form("TrkMuons_pt_resolution_pt%d",   i), "", nbins_vxy, vxy_bins, 120, -0.15, 0.15);
+    hGlbMuons_pt_resolution  [i] = fileService->make<TH2F>(Form("GlbMuons_pt_resolution_pt%d",   i), "", nbins_vxy, vxy_bins, 120, -0.15, 0.15);
+    hTightMuons_pt_resolution[i] = fileService->make<TH2F>(Form("TightMuons_pt_resolution_pt%d", i), "", nbins_vxy, vxy_bins, 120, -0.15, 0.15);
+    hSoftMuons_pt_resolution [i] = fileService->make<TH2F>(Form("SoftMuons_pt_resolution_pt%d",  i), "", nbins_vxy, vxy_bins, 120, -0.15, 0.15);
   }
 
   hMuPFChargeIso  = fileService->make<TH1F>("MuPFChargeIso",  "#DeltaR=0.4 PFChargeIso",  200, 0, 1);
@@ -243,7 +243,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     Float_t vr     = sqrt(vx*vx + vy*vy + vz*vz);
 
     if (fabs(eta) > 2.4) continue;
-    if (pt < pt_bins[0])  continue;  // The value of pt_bins[0] is 10 GeV
+    if (pt < pt_bins[0]) continue;  // The value of pt_bins[0] is 10 GeV
     
     pat::PackedGenParticle pks((*pruned)[i], reco::GenParticleRef());
 
@@ -259,11 +259,11 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     Float_t tight_min_deltaR = 999;   
     Float_t soft_min_deltaR  = 999;   
 
-    Float_t sta_res   = -999;
-    Float_t trk_res   = -999;
-    Float_t glb_res   = -999;
-    Float_t tight_res = -999;
-    Float_t soft_res  = -999;
+    Float_t sta_pt_resolution   = -999;
+    Float_t trk_pt_resolution   = -999;
+    Float_t glb_pt_resolution   = -999;
+    Float_t tight_pt_resolution = -999;
+    Float_t soft_pt_resolution  = -999;
     
     for (pat::MuonCollection::const_iterator muon=muons->begin(); muon!=muons->end(); ++muon) {
 
@@ -290,7 +290,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t muCharge = muon->standAloneMuon()->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0])  continue;
+	if (muPt < pt_bins[0]) continue;
 
 	Float_t dPhi = muPhi - phi;
 	Float_t dEta = muEta - eta;
@@ -298,8 +298,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t dR = sqrt(dPhi*dPhi + dEta*dEta); 
 
 	if (dR < sta_min_deltaR) {
-	  sta_min_deltaR = dR;
-	  sta_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
+	  sta_min_deltaR    = dR;
+	  sta_pt_resolution = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
 
@@ -314,7 +314,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	float muCharge = muon->innerTrack()->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0])  continue;
+	if (muPt < pt_bins[0]) continue;
        
 	float dPhi = muPhi - phi;
 	float dEta = muEta - eta;
@@ -322,8 +322,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	float dR = sqrt(dPhi*dPhi + dEta*dEta); 
 	
 	if (dR < trk_min_deltaR) {
-	  trk_min_deltaR = dR;
-	  trk_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
+	  trk_min_deltaR    = dR;
+	  trk_pt_resolution = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
 
@@ -338,7 +338,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	float muCharge = muon->globalTrack()->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0])  continue;
+	if (muPt < pt_bins[0]) continue;
        
 	float dPhi = muPhi - phi;
 	float dEta = muEta - eta;
@@ -346,8 +346,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	float dR = sqrt(dPhi*dPhi + dEta*dEta); 
 	
 	if (dR < glb_min_deltaR) {
-	  glb_min_deltaR = dR;
-	  glb_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
+	  glb_min_deltaR    = dR;
+	  glb_pt_resolution = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
 
@@ -362,7 +362,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t muCharge = muon->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0])  continue;
+	if (muPt < pt_bins[0]) continue;
  
 	Float_t dPhi = muPhi - phi;
 	Float_t dEta = muEta - eta;
@@ -370,8 +370,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t dR = sqrt(dPhi*dPhi + dEta*dEta); 
 
 	if (dR < tight_min_deltaR) {
-	  tight_min_deltaR = dR;
-	  tight_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
+	  tight_min_deltaR    = dR;
+	  tight_pt_resolution = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
 
@@ -386,7 +386,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t muCharge = muon->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0])  continue;
+	if (muPt < pt_bins[0]) continue;
  
 	Float_t dPhi = muPhi - phi;
 	Float_t dEta = muEta - eta;
@@ -394,8 +394,8 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t dR = sqrt(dPhi*dPhi + dEta*dEta); 
 
 	if (dR < soft_min_deltaR) {
-	  soft_min_deltaR = dR;
-	  soft_res        = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
+	  soft_min_deltaR    = dR;
+	  soft_pt_resolution = ((muCharge/muPt) - (charge/pt)) / (charge/pt);
 	}
       }
     }  // for..muons
@@ -438,7 +438,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	    hStaMuons_vxy_vz->Fill(vxy,fabs(vz));
 
 	    for (Int_t i=0; i<nbins_pt; i++)
-	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hStaMuons_res[i]->Fill(sta_res);
+	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hStaMuons_pt_resolution[i]->Fill(vxy, sta_pt_resolution);
 	  }
 	else
 	  {
@@ -472,7 +472,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	    hTrkMuons_vxy_vz->Fill(vxy,fabs(vz));
 
 	    for (Int_t i=0; i<nbins_pt; i++)
-	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hTrkMuons_res[i]->Fill(trk_res);
+	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hTrkMuons_pt_resolution[i]->Fill(vxy, trk_pt_resolution);
 	  }
 	else
 	  {
@@ -506,7 +506,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	    hGlbMuons_vxy_vz->Fill(vxy,fabs(vz));
 
 	    for (Int_t i=0; i<nbins_pt; i++)
-	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hGlbMuons_res[i]->Fill(glb_res);
+	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hGlbMuons_pt_resolution[i]->Fill(vxy, glb_pt_resolution);
 	  }
 	else
 	  {
@@ -540,7 +540,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	    hTightMuons_vxy_vz->Fill(vxy,fabs(vz));
 
 	    for (Int_t i=0; i<nbins_pt; i++)
-	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hTightMuons_res[i]->Fill(tight_res);
+	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hTightMuons_pt_resolution[i]->Fill(vxy, tight_pt_resolution);
 	  }
 	else
 	  {
@@ -574,7 +574,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	    hSoftMuons_vxy_vz->Fill(vxy,fabs(vz));
 
 	    for (Int_t i=0; i<nbins_pt; i++)
-	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hSoftMuons_res[i]->Fill(soft_res);
+	      if (pt >= pt_bins[i] && pt < pt_bins[i+1]) hSoftMuons_pt_resolution[i]->Fill(vxy, soft_pt_resolution);
 	  }
 	else
 	  {

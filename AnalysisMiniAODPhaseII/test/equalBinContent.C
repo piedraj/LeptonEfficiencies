@@ -5,9 +5,9 @@
 //  the bins are defined from the right, where the statistics is smaller.
 //
 //------------------------------------------------------------------------------
-const Int_t nbins = 4;
+const Int_t nbins = 6;
 
-void equalBinContent(TString hname = "vr",
+void equalBinContent(TString hname = "pt",
 		     TString fname = "MyMuonPlots.root")
 {
   printf("\n Finding %d bins with variable sizes for the histogram %s in %s\n",
@@ -27,16 +27,16 @@ void equalBinContent(TString hname = "vr",
 
   // Do the work
   //----------------------------------------------------------------------------
-  Float_t integral = h1->Integral(-1, -1);
+  Float_t integral = h1->Integral(-1, -1);  // Includes overflow
 
-  Float_t binContent = integral / nbins;
+  Float_t targetBinContent = integral / nbins;
 
   Float_t partialContent = 0;
 
   Int_t usedBins = 0;
 
   printf("\n integral = %.1f; target = %.1f\n\n",
-	 integral, binContent);
+	 integral, targetBinContent);
   
   Int_t i_begin = h1->GetNbinsX()+1;
   Int_t i_end   = 0;
@@ -48,11 +48,17 @@ void equalBinContent(TString hname = "vr",
 
   printf(" bin edge %2d = %8.4f\n", nbins, xbins[nbins]);
 
-  for (Int_t i=h1->GetNbinsX()+1; i>=0; i--)
+  for (Int_t i=h1->GetNbinsX()+1; i>=0; i--)  // Includes overflow
     {
-      if (partialContent < binContent)
+      Float_t binContent = h1->GetBinContent(i);
+      
+      if (binContent <= 0)
 	{
-	  partialContent += h1->GetBinContent(i);
+	  i_end = i;
+	}
+      else if (partialContent < targetBinContent)
+	{
+	  partialContent += binContent;
 	  
 	  i_end = i;
 	}
@@ -64,12 +70,12 @@ void equalBinContent(TString hname = "vr",
 
 	  integral -= h1->Integral(i_end, i_begin);
 
-	  binContent = integral / (nbins - usedBins);
+	  targetBinContent = integral / (nbins - usedBins);
 
 	  xbins[nbins-usedBins] = h1->GetBinLowEdge(i+1);
 
 	  printf(" bin edge %2d = %8.4f; integral = %.1f; target = %.1f\n",
-		 nbins-usedBins, h1->GetBinLowEdge(i+1), h1->Integral(i_end, i_begin), binContent);
+		 nbins-usedBins, h1->GetBinLowEdge(i+1), h1->Integral(i_end, i_begin), targetBinContent);
 
 	  i_begin = i;
 	}

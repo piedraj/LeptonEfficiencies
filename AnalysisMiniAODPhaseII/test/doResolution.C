@@ -2,7 +2,7 @@
 //
 // Compare displaced muons resolution for samples with no PU and 200 PU
 //
-// root -l -b -q doResolution.C+
+// root -l -b -q 'doResolution.C+(-1)'
 //
 //------------------------------------------------------------------------------
 #include "TCanvas.h"
@@ -11,6 +11,7 @@
 #include "TFrame.h"
 #include "TGraphErrors.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TInterpreter.h"
 #include "TLatex.h"
 #include "TLegend.h"
@@ -23,11 +24,14 @@
 //------------------------------------------------------------------------------
 enum          {noPU, PU200};
 
-const Int_t   nbinspt = 6;
+const Int_t   nbins_pt  =  6;
+const Int_t   nbins_vxy = 10;
 
-const Float_t ptbins[nbinspt+1] = {10, 20, 35, 50, 100, 200, 500};
+const Float_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
 
-Color_t       ptcolor[nbinspt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
+const Float_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0088, 0.0200, 0.0334, 0.0498, 0.0704, 0.0968, 0.1332, 0.1892, 0.2988, 3.0000};
+
+Color_t       ptcolor[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
 
 Bool_t        doSavePdf = true;
 Bool_t        doSavePng = true;
@@ -48,6 +52,8 @@ TLegend*      resolution_legend = NULL;
 
 TMultiGraph*  mg_mean  = NULL;
 TMultiGraph*  mg_width = NULL;
+
+Int_t         vxy_bin;
 
 
 // Member functions
@@ -82,8 +88,12 @@ void          PrintContent  (TGraphErrors* gr,
 // doResolution
 //
 //------------------------------------------------------------------------------
-void doResolution()
+void doResolution(Int_t vxy = -1)
 {
+  if (vxy >= nbins_vxy) return;
+
+  vxy_bin = vxy;
+
   gInterpreter->ExecuteMacro("PaperStyle.C");
 
   if (doSavePdf) gSystem->mkdir(directory, kTRUE);
@@ -118,7 +128,7 @@ void doResolution()
   if (draw_tight) DrawResolution("Tight", "tight muons",      PU200, kGreen+2);
   if (draw_soft)  DrawResolution("Soft",  "soft muons",       PU200, kOrange+7);
 
-  
+
   // Draw mean
   //----------------------------------------------------------------------------
   TCanvas* c1 = new TCanvas("mean", "mean");
@@ -131,8 +141,8 @@ void doResolution()
 
   mg_mean->Draw("apz");
 
-  mg_mean->SetMinimum(-0.002);
-  mg_mean->SetMaximum(+0.002);
+  mg_mean->SetMinimum(-0.005);
+  mg_mean->SetMaximum(+0.005);
 
   mg_mean->GetXaxis()->SetTitle("gen p_{T} [GeV]");
   mg_mean->GetYaxis()->SetTitle("");
@@ -159,6 +169,9 @@ void doResolution()
   c2->SetGridy();
 
   mg_width->Draw("apz");
+
+  mg_width->SetMinimum(0.000);
+  mg_width->SetMaximum(0.025);
 
   mg_width->GetXaxis()->SetTitle("gen p_{T} [GeV]");
   mg_width->GetYaxis()->SetTitle("");
@@ -197,11 +210,11 @@ void DrawResolution(TString muonType,
 				xtitle + " resolution (" + pu_label + ")");
   
   // One histogram per pt bin
-  TH1F* h_resolution[nbinspt];
+  TH1F* h_resolution[nbins_pt];
 
   // Graphs that will store the mean and width of the resolution
-  TGraphErrors* gr_mean  = SetGraph(nbinspt, color, pu_style);
-  TGraphErrors* gr_width = SetGraph(nbinspt, color, pu_style);
+  TGraphErrors* gr_mean  = SetGraph(nbins_pt, color, pu_style);
+  TGraphErrors* gr_width = SetGraph(nbins_pt, color, pu_style);
 
   // Legend
   TLegend* legend = new TLegend(0.61, 0.6, 0.82, 0.89);
@@ -214,9 +227,17 @@ void DrawResolution(TString muonType,
   printf("\n");
 
   // Loop
-  for (Int_t i=0; i<nbinspt; i++) {
+  for (Int_t i=0; i<nbins_pt; i++) {
 
-    h_resolution[i] = (TH1F*)file->Get(Form("muonAnalysis/%sMuons_res_%d", muonType.Data(), i));
+    TH2F* h2 = (TH2F*)file->Get(Form("muonAnalysis/%sMuons_pt_resolution_pt%d", muonType.Data(), i));
+
+    // TH1D* ProjectionY(const char* name = "_py", Int_t firstxbin = 0, Int_t lastxbin = -1, Option_t* option = "")
+
+    TString vxy_suffix = (vxy_bin < 0) ? "all" : Form("%d", vxy_bin);
+
+    TString hname = Form("%s_%s_vxy_%s", h2->GetName(), pu_string.Data(), vxy_suffix.Data());
+
+    h_resolution[i] = (vxy_bin < 0) ? (TH1F*)h2->ProjectionY(hname) : (TH1F*)h2->ProjectionY(hname, vxy_bin, vxy_bin+1);
 
     // Fit
     TF1 *gfit = new TF1("gfit", "gaus", -0.035, 0.035);
@@ -235,25 +256,27 @@ void DrawResolution(TString muonType,
     Float_t width_error = gfit->GetParError(2);   // h_resolution[i]->GetRMSError());
 
     // Get the mean and the width
-    gr_mean ->SetPoint(i, 0.5*(ptbins[i]+ptbins[i+1]), mean_value);
-    gr_width->SetPoint(i, 0.5*(ptbins[i]+ptbins[i+1]), width_value);
+    gr_mean ->SetPoint(i, 0.5*(pt_bins[i]+pt_bins[i+1]), mean_value);
+    gr_width->SetPoint(i, 0.5*(pt_bins[i]+pt_bins[i+1]), width_value);
 
-    gr_mean ->SetPointError(i, 0.5*(ptbins[i+1]-ptbins[i]), mean_error);
-    gr_width->SetPointError(i, 0.5*(ptbins[i+1]-ptbins[i]), width_error);
+    gr_mean ->SetPointError(i, 0.5*(pt_bins[i+1]-pt_bins[i]), mean_error);
+    gr_width->SetPointError(i, 0.5*(pt_bins[i+1]-pt_bins[i]), width_error);
 
     if (h_resolution[i]->GetMaximum() > ymax) ymax = h_resolution[i]->GetMaximum();
 
     h_resolution[i]->SetLineColor(ptcolor[i]);
     h_resolution[i]->SetLineWidth(2);
 
-    TString option = (i == 0) ? "" : "same";
+    TString option = (i == 0) ? "hist" : "hist,same";
 
     h_resolution[i]->Draw(option);
 
     if (draw_fits) gfit->Draw("same");
 
-    legend->AddEntry(h_resolution[i], Form(" %.0f < p_{T} < %.0f GeV", ptbins[i], ptbins[i+1]), "l");
+    legend->AddEntry(h_resolution[i], Form(" %.0f < p_{T} < %.0f GeV", pt_bins[i], pt_bins[i+1]), "l");
   }
+
+  if (draw_fits) printf("\n");
 
 
   // Save the mean and the width

@@ -23,13 +23,13 @@ const Int_t nbins_vxy = 10;
 const Int_t nbins_vz  = 10;
 const Int_t nbins_vr  = 10;
 
-const Float_t pt_bins[nbins_pt+1] = {10, 20, 35, 50, 100, 200, 500};
+const Double_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
 
-const Float_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0088, 0.0200, 0.0334, 0.0498, 0.0704, 0.0968, 0.1332, 0.1892, 0.2988, 3.0000};
+const Double_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0088, 0.0200, 0.0334, 0.0498, 0.0704, 0.0968, 0.1332, 0.1892, 0.2988, 3.0000};
 
-const Float_t vz_bins[nbins_vz+1] = {0.0000, 0.5080, 1.0364, 1.5974, 2.1970, 2.8732, 3.6246, 4.4544, 5.5000, 7.0216, 20.0000};
+const Double_t vz_bins[nbins_vz+1] = {0.0000, 0.5080, 1.0364, 1.5974, 2.1970, 2.8732, 3.6246, 4.4544, 5.5000, 7.0216, 20.0000};
 
-const Float_t vr_bins[nbins_vr+1] = {0.0000, 0.5458, 1.0628, 1.6114, 2.2078, 2.8798, 3.6322, 4.4580, 5.5058, 7.0260, 20.0000};
+const Double_t vr_bins[nbins_vr+1] = {0.0000, 0.5458, 1.0628, 1.6114, 2.2078, 2.8798, 3.6322, 4.4580, 5.5058, 7.0260, 20.0000};
 
 const Float_t max_deltaR = 0.3;
 
@@ -153,11 +153,11 @@ class ExampleMuonAnalyzer: public edm::EDAnalyzer {
   TH1F* hTightMuons_dR;                                                                                                            
   TH1F* hSoftMuons_dR;
 
-  TH1F* hStaMuons_res  [nbins_pt];
-  TH1F* hTrkMuons_res  [nbins_pt];
-  TH1F* hGlbMuons_res  [nbins_pt];
-  TH1F* hTightMuons_res[nbins_pt];
-  TH1F* hSoftMuons_res [nbins_pt];
+  TH2F* hStaMuons_pt_resolution  [nbins_pt];
+  TH2F* hTrkMuons_pt_resolution  [nbins_pt];
+  TH2F* hGlbMuons_pt_resolution  [nbins_pt];
+  TH2F* hTightMuons_pt_resolution[nbins_pt];
+  TH2F* hSoftMuons_pt_resolution [nbins_pt];
 
   TH1F* hMuPFChargeIso; 
   TH1F* hMuPFNeutralIso;
