@@ -93,13 +93,13 @@ void doEfficiencies()
   DrawEfficiency("efficiency", "vz",  "gen production distance in z [cm]");
   DrawEfficiency("efficiency", "vr",  "gen production distance in xyz [cm]");
   DrawEfficiency("efficiency", "eta", "gen #eta");
-  DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]", 10);
+  DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]");
 
   DrawEfficiency("fakes", "vxy", "gen production distance in xy [cm]");
   DrawEfficiency("fakes", "vz",  "gen production distance in z [cm]");
   DrawEfficiency("fakes", "vr",  "gen production distance in xyz [cm]");
   DrawEfficiency("fakes", "eta", "gen #eta");
-  DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]", 10);
+  DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]");
 
   if (draw_sta)   Compare("dR", "Sta",   "#DeltaR(gen, standalone)");
   if (draw_trk)   Compare("dR", "Trk",   "#DeltaR(gen, tracker)");
@@ -107,14 +107,6 @@ void doEfficiencies()
   if (draw_tight) Compare("dR", "Tight", "#DeltaR(gen, tight)");
   if (draw_soft)  Compare("dR", "Soft",  "#DeltaR(gen, soft)");
   
-  if (draw_sta)   Compare("pt", "Sta",   "standalone-matched gen p_{T} [GeV]");
-  if (draw_trk)   Compare("pt", "Trk",   "tracker-matched gen p_{T} [GeV]");
-  if (draw_glb)   Compare("pt", "Glb",   "global-matched gen p_{T} [GeV]");
-  if (draw_tight) Compare("pt", "Tight", "tight-matched gen p_{T} [GeV]");
-  if (draw_soft)  Compare("pt", "Soft",  "soft-matched gen p_{T} [GeV]");
-  
-  Compare("vr", "Gen", "gen production radius [cm]", 25);
-
   Compare("MuPFIso",        "NA", "muon PF isolation");
   Compare("MuPFChargeIso",  "NA", "muon charged PF isolation");
   Compare("MuPFNeutralIso", "NA", "muon neutral PF isolation");
@@ -330,12 +322,6 @@ void Compare(TString variable,
       h_PU200 = (TH1F*)(file_PU200->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("h_" + muonType + "_PU200_" + variable);
     }
 
-  if (!muonType.Contains("Gen"))
-    {
-      h_noPU ->Rebin(2);
-      h_PU200->Rebin(2);
-    }
-  
   h_noPU ->Scale(1. / h_noPU ->Integral(-1, -1));
   h_PU200->Scale(1. / h_PU200->Integral(-1, -1));
 
