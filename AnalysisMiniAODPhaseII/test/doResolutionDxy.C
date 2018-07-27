@@ -185,10 +185,10 @@ void doResolutionDxy(TString name  = "Soft",
 //------------------------------------------------------------------------------
 void DrawResolution(Int_t vxy_bin)
 {
-  TString canvas_name = Form("%sMuons_%s_dxy_bin_%d",
+  TString canvas_name = Form("resolution_vs_dxy_bin_%d_%sMuons_%s",
+			     vxy_bin,
 			     muonType_name.Data(),
-			     pu_name.Data(),
-			     vxy_bin);
+			     pu_name.Data());
 
   TCanvas* canvas = new TCanvas(canvas_name, canvas_name);
 
@@ -269,8 +269,8 @@ void DrawResolution(Int_t vxy_bin)
   canvas->GetFrame()->DrawClone();
 
   // Save
-  //  if (doSavePdf) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + pu_string + ".pdf");
-  //  if (doSavePng) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + pu_string + ".png");
+  if (doSavePdf) canvas->SaveAs(directory + "/" + canvas_name + ".pdf");
+  if (doSavePng) canvas->SaveAs(directory + "/" + canvas_name + ".png");
 }
 
 
