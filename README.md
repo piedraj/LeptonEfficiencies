@@ -48,6 +48,11 @@
     root -l -b -q doEfficiencies.C+
     root -l -b -q doResolution.C+
 
+    root -l -b -q 'doResolutionDxy.C+("Soft",  "soft muons",  noPU)'
+    root -l -b -q 'doResolutionDxy.C+("Soft",  "soft muons",  PU200)'
+    root -l -b -q 'doResolutionDxy.C+("Tight", "tight muons", noPU)'
+    root -l -b -q 'doResolutionDxy.C+("Tight", "tight muons", PU200)'
+
     root -l -b -q 'doEfficiencies2D.C+("Soft",  "PU200", "soft muons efficiency (200 PU)")'
     root -l -b -q 'doEfficiencies2D.C+("Soft",  "noPU",  "soft muons efficiency (no PU)")'
     root -l -b -q 'doEfficiencies2D.C+("Tight", "PU200", "tight muons efficiency (200 PU)")'
