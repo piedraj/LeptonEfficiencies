@@ -35,8 +35,6 @@ Color_t       pt_colors[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed
 
 Color_t       vxy_colors[nbins_vxy] = {kRed-10, kRed-9, kRed-8, kRed-7, kRed-6, kRed-5, kRed-4, kRed-3, kRed-2, kRed-1};
 
-Style_t       vxy_styles[nbins_vxy] = {kFullCircle, kFullCircle, kFullCircle, kFullCircle, kFullCircle, kFullCircle, kFullCircle, kFullCircle, kFullCircle, kFullCircle};
-
 Bool_t        doSavePdf = true;
 Bool_t        doSavePng = true;
 
@@ -194,8 +192,8 @@ void DrawResolution(Int_t vxy_bin)
 
   TH1F* h_resolution[nbins_pt];
 
-  TGraphErrors* gr_mean  = SetGraph(nbins_pt, vxy_colors[vxy_bin], vxy_styles[vxy_bin]);
-  TGraphErrors* gr_width = SetGraph(nbins_pt, vxy_colors[vxy_bin], vxy_styles[vxy_bin]);
+  TGraphErrors* gr_mean  = SetGraph(nbins_pt, vxy_colors[vxy_bin], kFullCircle);
+  TGraphErrors* gr_width = SetGraph(nbins_pt, vxy_colors[vxy_bin], kFullCircle);
 
   TLegend* legend = new TLegend(0.61, 0.6, 0.82, 0.89);
 
