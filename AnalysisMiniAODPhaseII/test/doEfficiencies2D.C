@@ -94,16 +94,16 @@ void doEfficiencies2D(TString muontype = "Soft",
 
   efficiency_tcl.open(Form("%s/tcl/%s.tcl", directory.Data(), hname.Data()), std::ofstream::out);
 
-  efficiency_tcl << Form("# %s muons efficiency for d0 and dz with %s\n\n", muontype.Data(), pileup.Data()); 
+  efficiency_tcl << Form("# %s muons efficiency for d0 [mm] and dz [mm] with %s\n\n", muontype.Data(), pileup.Data()); 
 
   efficiency_tcl << "set EfficiencyFormula {\n";
 
   for (Int_t i=1; i<=h->GetNbinsX(); i++) {
     for (Int_t j=1; j<=h->GetNbinsX(); j++) {
 
-      efficiency_tcl << Form(" (abs(d0) > %.4f && abs(d0) <= %.4f) * (abs(dz) > %.4f && abs(dz) < %7.4f) * %.4f\n",
-			     xaxis->GetBinLowEdge(i), xaxis->GetBinLowEdge(i+1),
-			     yaxis->GetBinLowEdge(j), yaxis->GetBinLowEdge(j+1),
+      efficiency_tcl << Form(" (abs(d0) > %6.3f && abs(d0) <= %6.3f) * (abs(dz) > %7.3f && abs(dz) < %7.3f) * %.4f\n",
+			     10*xaxis->GetBinLowEdge(i), 10*xaxis->GetBinLowEdge(i+1),
+			     10*yaxis->GetBinLowEdge(j), 10*yaxis->GetBinLowEdge(j+1),
 			     h->GetBinContent(i,j));
     }
   }
