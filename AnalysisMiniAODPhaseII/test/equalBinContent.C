@@ -5,10 +5,11 @@
 //  the bins are defined from the right, where the statistics is smaller.
 //
 //------------------------------------------------------------------------------
-const Int_t nbins = 6;
 
-void equalBinContent(TString hname = "pt",
-		     TString fname = "MyMuonPlots.root")
+
+void equalBinContent(Int_t   nbins = 6,
+		     TString hname = "pt",
+		     TString fname = "rootfiles/DisplacedSUSY_CTau-1_PU200.root")
 {
   printf("\n Finding %d bins with variable sizes for the histogram %s in %s\n",
 	 nbins, hname.Data(), fname.Data());
@@ -27,11 +28,11 @@ void equalBinContent(TString hname = "pt",
 
   // Do the work
   //----------------------------------------------------------------------------
-  Float_t integral = h1->Integral(-1, -1);  // Includes overflow
+  Double_t integral = h1->Integral(-1, -1);  // Includes overflow
 
-  Float_t targetBinContent = integral / nbins;
+  Double_t targetBinContent = integral / nbins;
 
-  Float_t partialContent = 0;
+  Double_t partialContent = 0;
 
   Int_t usedBins = 0;
 
@@ -50,7 +51,7 @@ void equalBinContent(TString hname = "pt",
 
   for (Int_t i=h1->GetNbinsX()+1; i>=0; i--)  // Includes overflow
     {
-      Float_t binContent = h1->GetBinContent(i);
+      Double_t binContent = h1->GetBinContent(i);
       
       if (binContent <= 0)
 	{
@@ -86,7 +87,7 @@ void equalBinContent(TString hname = "pt",
 
   // Test the work
   //----------------------------------------------------------------------------
-  printf("\n The new bin edges are:\n\n const Float_t %s_bins[nbins_%s+1] = {",
+  printf("\n The new bin edges are:\n\n const Double_t %s_bins[nbins_%s+1] = {",
 	 hname.Data(), hname.Data());
 
   for (Int_t i=0; i<=nbins; i++) {

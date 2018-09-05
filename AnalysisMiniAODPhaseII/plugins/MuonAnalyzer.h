@@ -19,17 +19,17 @@ class TH2F;
 
 
 const Int_t nbins_pt  =  6;
-const Int_t nbins_vxy = 10;
-const Int_t nbins_vz  = 10;
-const Int_t nbins_vr  = 10;
+const Int_t nbins_vxy = 14;
+const Int_t nbins_vz  = 14;
+const Int_t nbins_vr  = 14;
 
 const Double_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
 
-const Double_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0088, 0.0200, 0.0334, 0.0498, 0.0704, 0.0968, 0.1332, 0.1892, 0.2988, 3.0000};
+const Double_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0072, 0.0160, 0.0260, 0.0384, 0.0526, 0.0702, 0.0916, 0.1194, 0.1576, 0.2168, 0.3292, 1.0, 2.0, 3.0000};  // 1.0 and 2.0 added by hand
 
-const Double_t vz_bins[nbins_vz+1] = {0.0000, 0.5080, 1.0364, 1.5974, 2.1970, 2.8732, 3.6246, 4.4544, 5.5000, 7.0216, 20.0000};
+const Double_t vz_bins[nbins_vz+1] = {0.0000, 0.4292, 0.8582, 1.3158, 1.7888, 2.3100, 2.8726, 3.4866, 4.1736, 4.9496, 5.9360, 7.3894, 10.0, 15.0, 20.0000};  // 10.0 and 15.0 added by hand
 
-const Double_t vr_bins[nbins_vr+1] = {0.0000, 0.5458, 1.0628, 1.6114, 2.2078, 2.8798, 3.6322, 4.4580, 5.5058, 7.0260, 20.0000};
+const Double_t vr_bins[nbins_vr+1] = {0.0000, 0.4706, 0.8794, 1.3364, 1.8032, 2.3190, 2.8786, 3.4920, 4.1806, 4.9548, 5.9422, 7.3908, 10.0, 15.0, 20.0000};  // 10.0 and 15.0 added by hand
 
 const Float_t max_deltaR = 0.3;
 

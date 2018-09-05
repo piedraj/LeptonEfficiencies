@@ -102,7 +102,7 @@ void doResolutionDxy(TString name  = "Soft",
 
   TH1::SetDefaultSumw2();
 
-  file = TFile::Open("rootfiles/DisplacedSUSY_" + pu_name + ".root");
+  file = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_" + pu_name + ".root");
 
 
   // Do the work

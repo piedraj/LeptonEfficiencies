@@ -58,7 +58,7 @@ void doEfficiencies2D(TString muontype = "Soft",
   
   TH1::SetDefaultSumw2();
 
-  inputfile = TFile::Open("rootfiles/DisplacedSUSY_" + pileup + ".root", "read");
+  inputfile = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_" + pileup + ".root", "read");
 
   TH2F* hnum = (TH2F*)inputfile->Get("muonAnalysis/" + muontype + "Muons_vxy_vz");
   TH2F* hden = (TH2F*)inputfile->Get("muonAnalysis/GenMuons_vxy_vz");

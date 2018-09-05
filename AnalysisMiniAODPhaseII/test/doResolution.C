@@ -103,8 +103,8 @@ void doResolution(Int_t vxy = -1)
 
   // Input files
   //----------------------------------------------------------------------------
-  file_PU200 = TFile::Open("rootfiles/DisplacedSUSY_PU200.root");
-  file_noPU  = TFile::Open("rootfiles/DisplacedSUSY_noPU.root");
+  file_PU200 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_PU200.root");
+  file_noPU  = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_noPU.root");
 
 
   // Do the work

@@ -51,7 +51,7 @@ if 'DisplacedMuons_noPU' in options.inputDataset :
         'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedMuons_Pt2to50_Dxy0to500-pythia8-gun/MINIAODSIM/noPUBX8_91X_upgrade2023_realistic_v3-v3/50000/FCEFF295-A27C-E711-92A6-0CC47AD98CEA.root'
 
 
-if 'DisplacedSUSY_PU200' in options.inputDataset :
+if 'DisplacedSUSY_CTau-1_PU200' in options.inputDataset :
     print '\n Will read /DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/PhaseIITDRSpring17MiniAOD-PU200_91X_upgrade2023_realistic_v3-v2/MINIAODSIM\n'
     options.inputFiles = \
         'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/110000/A2DEC450-707E-E711-BD0E-00259048AE50.root',\
@@ -69,7 +69,7 @@ if 'DisplacedSUSY_PU200' in options.inputDataset :
         'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/5AFDDB67-5F7B-E711-B319-3417EBE5062D.root'
 
 
-if 'DisplacedSUSY_noPU' in options.inputDataset :
+if 'DisplacedSUSY_CTau-1_noPU' in options.inputDataset :
     print '\n Will read /DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/PhaseIITDRSpring17MiniAOD_noPU_91X_upgrade2023_realistic_v3-v2/MINIAODSIM\n'
     options.inputFiles = \
         'file:/afs/cern.ch/work/p/piedra/public/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_91X_upgrade2023_realistic_v3-v2/50000/AA5A0677-FD7D-E711-AA69-48FD8EE73A8D.root',\

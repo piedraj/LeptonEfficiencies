@@ -26,19 +26,21 @@
     cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedMuons_noPU' maxEvents=-1
     mv MyMuonPlots.root rootfiles/DisplacedMuons_noPU.root
 
-    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_PU200' maxEvents=-1
-    mv MyMuonPlots.root rootfiles/DisplacedSUSY_PU200.root
+    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_CTau-1_PU200' maxEvents=-1
+    mv MyMuonPlots.root rootfiles/DisplacedSUSY_CTau-1_PU200.root
 
-    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_noPU' maxEvents=-1
-    mv MyMuonPlots.root rootfiles/DisplacedSUSY_noPU.root
+    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_CTau-1_noPU' maxEvents=-1
+    mv MyMuonPlots.root rootfiles/DisplacedSUSY_CTau-1_noPU.root
 
 
 # Prepare variable bin sizes for vxy and vz
 
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
 
-    root -l -b -q 'equalBinContent.C("vxy")'
-    root -l -b -q 'equalBinContent.C("vz")'
+    root -l -b -q 'equalBinContent.C(6,"pt")'
+    root -l -b -q 'equalBinContent.C(12,"vxy")'
+    root -l -b -q 'equalBinContent.C(12,"vz")'
+    root -l -b -q 'equalBinContent.C(12,"vr")'
 
 
 # Read histograms and draw distributions
