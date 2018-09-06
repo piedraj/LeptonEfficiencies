@@ -63,11 +63,11 @@ void doEfficiencies2D(TString muontype = "Soft",
   TH2F* hnum = (TH2F*)inputfile->Get("muonAnalysis/" + muontype + "Muons_vxy_vz");
   TH2F* hden = (TH2F*)inputfile->Get("muonAnalysis/GenMuons_vxy_vz");
 
-  hnum->Divide(hden);
-
   TString hname = "efficiency_vxy_vz_muon" + muontype + "Id_" + pileup;
 
   TH2F* h = (TH2F*)hnum->Clone(hname);
+
+  h->Divide(hnum, hden);
 
   h->SetDirectory(0);
 
@@ -92,7 +92,7 @@ void doEfficiencies2D(TString muontype = "Soft",
   //
   std::ofstream efficiency_tcl;
 
-  efficiency_tcl.open(Form("%s/tcl/%s.tcl", directory.Data(), hname.Data()), std::ofstream::out);
+  efficiency_tcl.open(Form("%s/tcl/%s_error.tcl", directory.Data(), hname.Data()), std::ofstream::out);
 
   efficiency_tcl << Form("# %s muons efficiency for d0 [mm] and dz [mm] with %s\n\n", muontype.Data(), pileup.Data()); 
 
@@ -101,10 +101,10 @@ void doEfficiencies2D(TString muontype = "Soft",
   for (Int_t i=1; i<=h->GetNbinsX(); i++) {
     for (Int_t j=1; j<=h->GetNbinsX(); j++) {
 
-      efficiency_tcl << Form(" (abs(d0) > %6.3f && abs(d0) <= %6.3f) * (abs(dz) > %7.3f && abs(dz) < %7.3f) * %.4f\n",
+      efficiency_tcl << Form(" (abs(d0) > %6.3f && abs(d0) <= %6.3f) * (abs(dz) > %7.3f && abs(dz) < %7.3f) * %.4f   (error = %.4f)\n",
 			     10*xaxis->GetBinLowEdge(i), 10*xaxis->GetBinLowEdge(i+1),
 			     10*yaxis->GetBinLowEdge(j), 10*yaxis->GetBinLowEdge(j+1),
-			     h->GetBinContent(i,j));
+			     h->GetBinContent(i,j), h->GetBinError(i,j));
     }
   }
 

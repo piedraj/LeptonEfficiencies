@@ -31,9 +31,9 @@ Bool_t      doSaveTcl = false;
 TFile*      file1 = NULL;
 TFile*      file2 = NULL;
 
-Bool_t      draw_sta   = true;
-Bool_t      draw_trk   = true;
-Bool_t      draw_glb   = true;
+Bool_t      draw_sta   = false;
+Bool_t      draw_trk   = false;
+Bool_t      draw_glb   = false;
 Bool_t      draw_tight = true;
 Bool_t      draw_soft  = true;
 Bool_t      draw_fakes = false;
@@ -111,7 +111,7 @@ void doEfficiencies()
   if (draw_glb)   Compare("dR", "Glb",   "#DeltaR(gen, global)");
   if (draw_tight) Compare("dR", "Tight", "#DeltaR(gen, tight)");
   if (draw_soft)  Compare("dR", "Soft",  "#DeltaR(gen, soft)");
-  
+
   Compare("MuPFIso",        "NA", "muon PF isolation");
   Compare("MuPFChargeIso",  "NA", "muon charged PF isolation");
   Compare("MuPFNeutralIso", "NA", "muon neutral PF isolation");
