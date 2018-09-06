@@ -22,38 +22,38 @@
 
 // Data members
 //------------------------------------------------------------------------------
-enum          {noPU, PU200};
+enum           {noPU, PU200};
 
-const Int_t   nbins_pt  =  6;
-const Int_t   nbins_vxy = 10;
+const Int_t    nbins_pt  =  6;
+const Int_t    nbins_vxy = 14;
 
-const Float_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
+const Double_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
 
-const Float_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0088, 0.0200, 0.0334, 0.0498, 0.0704, 0.0968, 0.1332, 0.1892, 0.2988, 3.0000};
+const Double_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0072, 0.0160, 0.0260, 0.0384, 0.0526, 0.0702, 0.0916, 0.1194, 0.1576, 0.2168, 0.3292, 1.0, 2.0, 3.0000};  // 1.0 and 2.0 added by hand
 
-Color_t       ptcolor[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
+Color_t        ptcolor[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
 
-Bool_t        doSavePdf = true;
-Bool_t        doSavePng = true;
+Bool_t         doSavePdf = true;
+Bool_t         doSavePng = true;
 
-Bool_t        draw_sta   = false;
-Bool_t        draw_trk   = false;
-Bool_t        draw_glb   = false;
-Bool_t        draw_tight = false;
-Bool_t        draw_soft  = true;
-Bool_t        draw_fits  = false;
+Bool_t         draw_sta   = true;
+Bool_t         draw_trk   = true;
+Bool_t         draw_glb   = true;
+Bool_t         draw_tight = true;
+Bool_t         draw_soft  = true;
+Bool_t         draw_fits  = false;
 
-TString       directory = "displaced-muons";
+TString        directory = "displaced-muons";
 
-TFile*        file_PU200 = NULL;
-TFile*        file_noPU  = NULL;
+TFile*         file1 = NULL;
+TFile*         file2 = NULL;
 
-TLegend*      resolution_legend = NULL;
+TLegend*       resolution_legend = NULL;
 
-TMultiGraph*  mg_mean  = NULL;
-TMultiGraph*  mg_width = NULL;
+TMultiGraph*   mg_mean  = NULL;
+TMultiGraph*   mg_width = NULL;
 
-Int_t         vxy_bin;
+Int_t          vxy_bin;
 
 
 // Member functions
@@ -103,8 +103,9 @@ void doResolution(Int_t vxy = -1)
 
   // Input files
   //----------------------------------------------------------------------------
-  file_PU200 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_PU200.root");
-  file_noPU  = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_noPU.root");
+  file1 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_PU200.root");
+//file1 = TFile::Open("rootfiles/DisplacedSUSY_CTau-10_noPU.root");
+  file2 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_noPU.root");
 
 
   // Do the work
@@ -198,7 +199,7 @@ void DrawResolution(TString muonType,
 		    Int_t   PU,
 		    Color_t color)
 {
-  TFile* file = (PU == noPU) ? file_noPU : file_PU200;
+  TFile* file = (PU == noPU) ? file2 : file1;
   
   TString pu_string = (PU == noPU) ? "noPU" : "PU200";
 

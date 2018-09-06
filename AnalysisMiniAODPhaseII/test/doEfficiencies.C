@@ -28,14 +28,15 @@ Bool_t      doSavePdf = true;
 Bool_t      doSavePng = true;
 Bool_t      doSaveTcl = false;
 
-TFile*      file_PU200 = NULL;
-TFile*      file_noPU  = NULL;
+TFile*      file1 = NULL;
+TFile*      file2 = NULL;
 
-Bool_t      draw_sta   = false;
-Bool_t      draw_trk   = false;
-Bool_t      draw_glb   = false;
+Bool_t      draw_sta   = true;
+Bool_t      draw_trk   = true;
+Bool_t      draw_glb   = true;
 Bool_t      draw_tight = true;
 Bool_t      draw_soft  = true;
+Bool_t      draw_fakes = false;
 
 TString     directory = "displaced-muons";
 
@@ -83,8 +84,9 @@ void doEfficiencies()
 
   // Input files
   //----------------------------------------------------------------------------
-  file_PU200 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_PU200.root");
-  file_noPU  = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_noPU.root");
+  file1 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_PU200.root");
+//file1 = TFile::Open("rootfiles/DisplacedSUSY_CTau-10_noPU.root");
+  file2 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_noPU.root");
 
 
   // Do the work
@@ -95,11 +97,14 @@ void doEfficiencies()
   DrawEfficiency("efficiency", "eta", "gen #eta");
   DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]");
 
-  DrawEfficiency("fakes", "vxy", "gen production distance in xy [cm]");
-  DrawEfficiency("fakes", "vz",  "gen production distance in z [cm]");
-  DrawEfficiency("fakes", "vr",  "gen production distance in xyz [cm]");
-  DrawEfficiency("fakes", "eta", "gen #eta");
-  DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]");
+  if (draw_fakes)
+    {
+      DrawEfficiency("fakes", "vxy", "gen production distance in xy [cm]");
+      DrawEfficiency("fakes", "vz",  "gen production distance in z [cm]");
+      DrawEfficiency("fakes", "vr",  "gen production distance in xyz [cm]");
+      DrawEfficiency("fakes", "eta", "gen #eta");
+      DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]");
+  }
 
   if (draw_sta)   Compare("dR", "Sta",   "#DeltaR(gen, standalone)");
   if (draw_trk)   Compare("dR", "Trk",   "#DeltaR(gen, tracker)");
@@ -127,7 +132,7 @@ TGraphAsymmErrors* MakeEfficiency(TString effType,
 				  Color_t color,
 				  Int_t   rebin)
 {
-  TFile* file = (PU == noPU) ? file_noPU : file_PU200;
+  TFile* file = (PU == noPU) ? file2 : file1;
 
   Style_t style = (PU == noPU) ? kOpenCircle : kFullCircle;
 
@@ -313,13 +318,13 @@ void Compare(TString variable,
 
   if (variable.Contains("MuPF"))
     {
-      h_noPU  = (TH1F*)(file_noPU ->Get("muonAnalysis/" + variable))->Clone("h_noPU_"  + variable);
-      h_PU200 = (TH1F*)(file_PU200->Get("muonAnalysis/" + variable))->Clone("h_PU200_" + variable);
+      h_PU200 = (TH1F*)(file1->Get("muonAnalysis/" + variable))->Clone("h_PU200_" + variable);
+      h_noPU  = (TH1F*)(file2->Get("muonAnalysis/" + variable))->Clone("h_noPU_"  + variable);
     }
   else
     {
-      h_noPU  = (TH1F*)(file_noPU ->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("h_" + muonType + "_noPU_"  + variable);
-      h_PU200 = (TH1F*)(file_PU200->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("h_" + muonType + "_PU200_" + variable);
+      h_PU200 = (TH1F*)(file1->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("h_" + muonType + "_PU200_" + variable);
+      h_noPU  = (TH1F*)(file2->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("h_" + muonType + "_noPU_"  + variable);
     }
 
   h_noPU ->Scale(1. / h_noPU ->Integral(-1, -1));

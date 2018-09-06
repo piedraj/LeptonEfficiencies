@@ -32,6 +32,9 @@
     cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_CTau-1_noPU' maxEvents=-1
     mv MyMuonPlots.root rootfiles/DisplacedSUSY_CTau-1_noPU.root
 
+    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_CTau-10_noPU' maxEvents=-1
+    mv MyMuonPlots.root rootfiles/DisplacedSUSY_CTau-10_noPU.root
+
 
 # Prepare variable bin sizes for vxy and vz
 
