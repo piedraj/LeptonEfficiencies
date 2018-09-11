@@ -57,6 +57,7 @@ void doEfficiencies2D(TString muontype = "Soft",
   gSystem->mkdir(directory + "/tcl", kTRUE);
   
   TH1::SetDefaultSumw2();
+  TH2::SetDefaultSumw2();
 
   inputfile = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_" + pileup + ".root", "read");
 
@@ -67,10 +68,21 @@ void doEfficiencies2D(TString muontype = "Soft",
 
   TH2F* h = (TH2F*)hnum->Clone(hname);
 
-  h->Divide(hnum, hden);
+  h->Divide(hnum, hden, 1, 1, "B");
 
   h->SetDirectory(0);
 
+
+  // Save
+  //  TFile* output_file = new TFile("th2_efficiency.root", "recreate");
+  //
+  //  hnum->Write("h_pass");
+  //  hden->Write("h_total");
+  //
+  //  output_file->Close();
+
+
+  // Draw
   TCanvas* canvas = new TCanvas(hname, hname);
 
   canvas->SetLeftMargin (0.9 * canvas->GetLeftMargin());
