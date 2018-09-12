@@ -43,6 +43,9 @@ void ExampleMuonAnalyzer::beginJob()
 {
   cout << "\n [ExampleMuonAnalyzer::beginJob]\n" << endl;
 
+  TH1::SetDefaultSumw2();
+  TH2::SetDefaultSumw2();
+
   edm::Service<TFileService> fileService;
 
   h_dxy = fileService->make<TH1F>("dxy", "",    100, -0.1, 0.1);

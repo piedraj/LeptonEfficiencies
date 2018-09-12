@@ -64,6 +64,8 @@ void doEfficiencies2D(TString muontype = "Soft",
   TH2F* hnum = (TH2F*)inputfile->Get("muonAnalysis/" + muontype + "Muons_vxy_vz");
   TH2F* hden = (TH2F*)inputfile->Get("muonAnalysis/GenMuons_vxy_vz");
 
+  hnum->Sumw2();  // TH2::SetDefaultSumw2() doesn't affect already existing histograms
+
   TString hname = "efficiency_vxy_vz_muon" + muontype + "Id_" + pileup;
 
   TH2F* h = (TH2F*)hnum->Clone(hname);
@@ -113,7 +115,7 @@ void doEfficiencies2D(TString muontype = "Soft",
   for (Int_t i=1; i<=h->GetNbinsX(); i++) {
     for (Int_t j=1; j<=h->GetNbinsX(); j++) {
 
-      efficiency_tcl << Form(" (abs(d0) > %6.3f && abs(d0) <= %6.3f) * (abs(dz) > %7.3f && abs(dz) < %7.3f) * %.4f   (error = %.4f)\n",
+      efficiency_tcl << Form(" (abs(d0) > %6.3f && abs(d0) <= %6.3f) * (abs(dz) > %7.3f && abs(dz) < %7.3f) * %.3f   (error = %.3f)\n",
 			     10*xaxis->GetBinLowEdge(i), 10*xaxis->GetBinLowEdge(i+1),
 			     10*yaxis->GetBinLowEdge(j), 10*yaxis->GetBinLowEdge(j+1),
 			     h->GetBinContent(i,j), h->GetBinError(i,j));
