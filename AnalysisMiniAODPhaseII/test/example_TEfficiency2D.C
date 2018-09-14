@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------------
+//
+//  Discussion in the ROOT forum
+//
+//  https://root-forum.cern.ch/t/th2-tefficiency-example/30578
+//
+//------------------------------------------------------------------------------
 #include "TCanvas.h"
 #include "TEfficiency.h"
 #include "TF2.h"
@@ -29,7 +36,7 @@ void example_TEfficiency2D(bool th1SetDefaultSumw2 = false,
   double x;
   double y;
 
-  for(int i=0; i<1000; ++i)
+  for(int i=0; i<100; ++i)
   {
     f2.GetRandom2(x,y); 
 
