@@ -8,6 +8,7 @@
 #include "TCanvas.h"
 #include "TEfficiency.h"
 #include "TF2.h"
+#include "TGraphAsymmErrors.h"
 #include "TH2.h"
 #include "TMath.h"
 #include "TRandom.h"
@@ -20,8 +21,6 @@ void example_TEfficiency2D(bool th1SetDefaultSumw2 = false,
 
   if (th1SetDefaultSumw2) {TH1::SetDefaultSumw2(); printf(" Executing TH1::SetDefaultSumw2();\n");}
   if (th2SetDefaultSumw2) {TH2::SetDefaultSumw2(); printf(" Executing TH2::SetDefaultSumw2();\n");}
-
-  if (th1SetDefaultSumw2 || th2SetDefaultSumw2) printf("\n");
 
   double xbins[] = {0, 1, 3, 7, 15};
   double ybins[] = {0, 5, 20};
@@ -36,7 +35,7 @@ void example_TEfficiency2D(bool th1SetDefaultSumw2 = false,
   double x;
   double y;
 
-  for(int i=0; i<100; ++i)
+  for(int i=0; i<200; ++i)
   {
     f2.GetRandom2(x,y); 
 
@@ -70,6 +69,8 @@ void example_TEfficiency2D(bool th1SetDefaultSumw2 = false,
   }
 
   h1_eff->Divide(h1_pass, h1_tot, 1, 1, "B");
+
+  TGraphAsymmErrors* graph = new TGraphAsymmErrors(h1_pass, h1_tot, "cp");  // Clopper-Pearson interval
 
 
   // Draw pass and total
@@ -112,41 +113,37 @@ void example_TEfficiency2D(bool th1SetDefaultSumw2 = false,
 
   // Compare the results
   //----------------------------------------------------------------------------
-  int verbose = 1;
+  k = 0;
 
-  if (verbose > 0) {
+  printf("\n");
 
-    k = 0;
+  for (int i=1; i<=hpass->GetNbinsX(); i++) {
+    for (int j=1; j<=hpass->GetNbinsY(); j++) {
 
-    printf("\n");
+      k++;
 
-    for (int i=1; i<=hpass->GetNbinsX(); i++) {
-      for (int j=1; j<=hpass->GetNbinsY(); j++) {
-
-	k++;
-
-	if (verbose > 1) {
-	  printf(" bin %d,%d | pass TH2 %3.0f(%2.0f)   TH1 %3.0f(%2.0f) | total TH2 %3.0f(%2.0f)   TH1 %3.0f(%2.0f) | eff TH2 %.3f +- %.3f   TH1 %.3f +- %.3f\n",
-		 i, j,
-		 hpass->GetBinContent(i,j), hpass->GetBinError(i,j), h1_pass->GetBinContent(k), h1_pass->GetBinError(k),
-		 htot ->GetBinContent(i,j), htot ->GetBinError(i,j), h1_tot ->GetBinContent(k), h1_tot ->GetBinError(k),
-		 heff ->GetBinContent(i,j), heff ->GetBinError(i,j), h1_eff ->GetBinContent(k), h1_eff ->GetBinError(k));
-	} else {
-	  printf(" bin %d,%d | TEff %.3f - %.3f + %.3f   TH2 from TEff %.3f +- %.3f   (sanity check sqrt(%.3f) is %.3f)   TH1 %.3f +- %.3f\n",
-                 i, j,
-                 pEff->GetEfficiency(heff->GetBin(i,j)),
-                 pEff->GetEfficiencyErrorLow(heff->GetBin(i,j)),
-                 pEff->GetEfficiencyErrorUp(heff->GetBin(i,j)),
-                 heff->GetBinContent(i,j), heff->GetBinError(i,j),
-		 heff->GetBinContent(i,j),
-                 TMath::Sqrt(heff->GetBinContent(i,j)),
-		 h1_eff->GetBinContent(k),
-		 h1_eff->GetBinError(k)
-		 );
-	}
-      }
+      printf(" i:%d j:%d k:%d | pass TH2 %3.0f(%2.0f)   TH1 %3.0f(%2.0f) | total TH2 %3.0f(%2.0f)   TH1 %3.0f(%2.0f) | efficiency TEff %.3f - %.3f + %.3f   TH2 %.3f +- %.3f   TH1 %.3f +- %.3f   TGraph %.3f - %.3f + %.3f\n",
+	     i, j, k,
+	     hpass->GetBinContent(i,j),
+	     hpass->GetBinError(i,j),
+	     h1_pass->GetBinContent(k),
+	     h1_pass->GetBinError(k),
+	     htot->GetBinContent(i,j),
+	     htot->GetBinError(i,j),
+	     h1_tot->GetBinContent(k),
+	     h1_tot->GetBinError(k),
+	     pEff->GetEfficiency(heff->GetBin(i,j)),
+	     pEff->GetEfficiencyErrorLow(heff->GetBin(i,j)),
+	     pEff->GetEfficiencyErrorUp(heff->GetBin(i,j)),
+	     heff->GetBinContent(i,j), heff->GetBinError(i,j),
+	     h1_eff->GetBinContent(k),
+	     h1_eff->GetBinError(k),
+	     graph->GetY()[k-1],
+	     graph->GetErrorYlow(k-1),
+	     graph->GetErrorYhigh(k-1)
+	     );
     }
-
-    printf("\n");
   }
+
+  printf("\n");
 }
