@@ -126,19 +126,22 @@ void example_TEfficiency2D(bool th1SetDefaultSumw2 = false,
 	k++;
 
 	if (verbose > 1) {
-	  printf(" bin %d,%d | pass th2 %3.0f(%2.0f)   th1 %3.0f(%2.0f) | total th2 %3.0f(%2.0f)   th1 %3.0f(%2.0f) | eff th2 %.3f +- %.3f   th1 %.3f +- %.3f\n",
+	  printf(" bin %d,%d | pass TH2 %3.0f(%2.0f)   TH1 %3.0f(%2.0f) | total TH2 %3.0f(%2.0f)   TH1 %3.0f(%2.0f) | eff TH2 %.3f +- %.3f   TH1 %.3f +- %.3f\n",
 		 i, j,
 		 hpass->GetBinContent(i,j), hpass->GetBinError(i,j), h1_pass->GetBinContent(k), h1_pass->GetBinError(k),
 		 htot ->GetBinContent(i,j), htot ->GetBinError(i,j), h1_tot ->GetBinContent(k), h1_tot ->GetBinError(k),
 		 heff ->GetBinContent(i,j), heff ->GetBinError(i,j), h1_eff ->GetBinContent(k), h1_eff ->GetBinError(k));
 	} else {
-	  printf(" bin %d,%d | teff %.3f - %.3f + %.3f  th from teff %.3f +- %.3f (sanity check sqrt(N) is: %.3f)\n",
+	  printf(" bin %d,%d | TEff %.3f - %.3f + %.3f   TH2 from TEff %.3f +- %.3f   (sanity check sqrt(%.3f) is %.3f)   TH1 %.3f +- %.3f\n",
                  i, j,
                  pEff->GetEfficiency(heff->GetBin(i,j)),
                  pEff->GetEfficiencyErrorLow(heff->GetBin(i,j)),
                  pEff->GetEfficiencyErrorUp(heff->GetBin(i,j)),
                  heff->GetBinContent(i,j), heff->GetBinError(i,j),
-                 TMath::Sqrt(heff->GetBinContent(i,j))
+		 heff->GetBinContent(i,j),
+                 TMath::Sqrt(heff->GetBinContent(i,j)),
+		 h1_eff->GetBinContent(k),
+		 h1_eff->GetBinError(k)
 		 );
 	}
       }
