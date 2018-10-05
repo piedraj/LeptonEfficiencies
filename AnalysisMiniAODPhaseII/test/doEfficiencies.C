@@ -22,7 +22,7 @@
 
 // Data members
 //------------------------------------------------------------------------------
-Bool_t  doSavePdf = false;
+Bool_t  doSavePdf = true;
 Bool_t  doSavePng = true;
 
 TFile*  file1 = NULL;
