@@ -20,20 +20,13 @@
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
     mkdir rootfiles
 
-    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedMuons_PU200' maxEvents=-1
-    mv MyMuonPlots.root rootfiles/DisplacedMuons_PU200.root
-
-    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedMuons_noPU' maxEvents=-1
-    mv MyMuonPlots.root rootfiles/DisplacedMuons_noPU.root
-
-    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_CTau-1_PU200' maxEvents=-1
-    mv MyMuonPlots.root rootfiles/DisplacedSUSY_CTau-1_PU200.root
-
-    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_CTau-1_noPU' maxEvents=-1
-    mv MyMuonPlots.root rootfiles/DisplacedSUSY_CTau-1_noPU.root
-
-    cmsRun MuonAnalyzer_cfg.py inputDataset='DisplacedSUSY_CTau-10_noPU' maxEvents=-1
-    mv MyMuonPlots.root rootfiles/DisplacedSUSY_CTau-10_noPU.root
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedMuons_PU200'           maxEvents=-1
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedMuons_noPU'            maxEvents=-1
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-1_PU200'     maxEvents=-1
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-1_noPU'      maxEvents=-1
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-10_noPU'     maxEvents=-1
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-100_PU200'   maxEvents=-1
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-1000_PU200'  maxEvents=-1
 
 
 # Prepare variable bin sizes for vxy and vz

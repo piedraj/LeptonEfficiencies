@@ -22,55 +22,55 @@
 
 // Data members
 //------------------------------------------------------------------------------
-enum          {noPU, PU200};
+enum           {noPU, PU200};
 
-const Int_t   nbins_pt  =  6;
-const Int_t   nbins_vxy = 10;
+const Int_t    nbins_pt  =  6;
+const Int_t    nbins_vxy = 14;
 
-const Float_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
+const Double_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
 
-const Float_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0088, 0.0200, 0.0334, 0.0498, 0.0704, 0.0968, 0.1332, 0.1892, 0.2988, 3.0000};
+const Double_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0072, 0.0160, 0.0260, 0.0384, 0.0526, 0.0702, 0.0916, 0.1194, 0.1576, 0.2168, 0.3292, 1.0, 2.0, 3.0000};  // 1.0 and 2.0 added by hand
 
-Color_t       pt_colors[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
+Color_t        pt_colors[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
 
-Color_t       vxy_colors[nbins_vxy] = {kRed-10, kRed-9, kRed-8, kRed-7, kRed-6, kRed-5, kRed-4, kRed-3, kRed-2, kRed-1};
+Color_t        vxy_colors[nbins_vxy] = {kRed-10, kRed-9, kRed-8, kRed-7, kRed-6, kRed-5, kRed-4, kRed-3, kRed-2, kRed-1, kRed, kRed+1, kRed+2, kRed+3};
 
-Bool_t        doSavePdf = true;
-Bool_t        doSavePng = true;
+Bool_t         doSavePdf = true;
+Bool_t         doSavePng = true;
 
-TString       directory = "displaced-muons-dxy";
+TString        directory = "displaced-muons-dxy";
 
-TFile*        file = NULL;
+TFile*         file = NULL;
 
-TLegend*      resolution_legend = NULL;
+TLegend*       resolution_legend = NULL;
 
-TMultiGraph*  mg_mean  = NULL;
-TMultiGraph*  mg_width = NULL;
+TMultiGraph*   mg_mean  = NULL;
+TMultiGraph*   mg_width = NULL;
 
-TString       pu_name;
-TString       pu_label;
-TString       muonType_name;
-TString       muonType_label;
+TString        pu_name;
+TString        pu_label;
+TString        muonType_name;
+TString        muonType_label;
 
 
 // Member functions
 //------------------------------------------------------------------------------
-void          DrawResolution(Int_t         vxy_bin);
+void          DrawResolution(Int_t       vxy_bin);
 
-void          SetLegend     (TLegend*      tl,
-			     Size_t        tsize);
+void          SetLegend     (TLegend*    tl,
+			     Size_t      tsize);
 
-TGraphErrors* SetGraph      (Int_t         npoints,
-			     Color_t       color,
-			     Style_t       style);
+TGraphErrors* SetGraph      (Int_t       npoints,
+			     Color_t     color,
+			     Style_t     style);
 
-void          DrawLatex     (Font_t        tfont,
-			     Float_t       x,
-			     Float_t       y,
-			     Float_t       tsize,
-			     Short_t       align,
-			     const char*   text,
-			     Bool_t        setndc = true);
+void          DrawLatex     (Font_t      tfont,
+			     Float_t     x,
+			     Float_t     y,
+			     Float_t     tsize,
+			     Short_t     align,
+			     const char* text,
+			     Bool_t      setndc = true);
 
 
 //------------------------------------------------------------------------------

@@ -36,8 +36,8 @@ Color_t        ptcolor[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+
 Bool_t         doSavePdf = true;
 Bool_t         doSavePng = true;
 
-Bool_t         draw_sta   = true;
-Bool_t         draw_trk   = true;
+Bool_t         draw_sta   = false;
+Bool_t         draw_trk   = false;
 Bool_t         draw_glb   = true;
 Bool_t         draw_tight = true;
 Bool_t         draw_soft  = true;
@@ -104,7 +104,6 @@ void doResolution(Int_t vxy = -1)
   // Input files
   //----------------------------------------------------------------------------
   file1 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_PU200.root");
-//file1 = TFile::Open("rootfiles/DisplacedSUSY_CTau-10_noPU.root");
   file2 = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_noPU.root");
 
 

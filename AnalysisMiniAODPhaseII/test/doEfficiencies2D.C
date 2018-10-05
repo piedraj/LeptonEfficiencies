@@ -75,15 +75,6 @@ void doEfficiencies2D(TString muontype = "Soft",
   h->SetDirectory(0);
 
 
-  // Save
-  //  TFile* output_file = new TFile("th2_efficiency.root", "recreate");
-  //
-  //  hnum->Write("h_pass");
-  //  hden->Write("h_total");
-  //
-  //  output_file->Close();
-
-
   // Draw
   TCanvas* canvas = new TCanvas(hname, hname);
 

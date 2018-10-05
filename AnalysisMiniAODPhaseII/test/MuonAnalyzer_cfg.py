@@ -6,7 +6,7 @@ process = cms.Process("RecoMuon")
 options = opts.VarParsing('analysis')
 
 options.register ('inputDataset',
-                  'PU200',
+                  'DisplacedMuons_PU200',
                   opts.VarParsing.multiplicity.singleton,
                   opts.VarParsing.varType.string,
                   'Input dataset')
@@ -110,10 +110,45 @@ if 'DisplacedSUSY_CTau-10_noPU' in options.inputDataset :
         'file:/afs/cern.ch/work/p/piedra/public/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-10_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_91X_upgrade2023_realistic_v3-v2/70000/304C1A01-C37A-E711-AC11-484D7E8DF092.root'
 
 
+if 'DisplacedSUSY_CTau-100_PU200' in options.inputDataset :
+    print '\n Will read /DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-100_TuneCUETP8M1_14TeV-pythia8/PhaseIITDRSpring17MiniAOD-PU200_91X_upgrade2023_realistic_v3-v1/MINIAODSIM\n'
+    options.inputFiles = \
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/924D80D2-575F-E711-A83E-0242AC110003.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/88630411-705F-E711-A6F6-D4AE52E7F60F.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/82388918-105F-E711-9B7B-008CFA111200.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/80E15E0E-C65E-E711-B6F3-549F35AE4FBC.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/809BA468-DF5E-E711-90C9-A0369FD20CF0.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/62969EE8-DD5E-E711-9039-10983627C3DB.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/4E6C4A11-655F-E711-8B45-001E67398CAA.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/2CB9CF5E-AE5E-E711-9C91-549F35AF44FD.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/2C6A987C-E35F-E711-BCF8-008CFA197EB0.root',\
+        'file:/eos/user/c/calderon//PhaseII/DisplacedSUSY_ctau100/1A1C7B18-C05F-E711-A43C-001E67E69E32.root'
+
+
+if 'DisplacedSUSY_CTau-1000_PU200' in options.inputDataset :
+    print '\n Will read /DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1000_TuneCUETP8M1_14TeV-pythia8/PhaseIITDRSpring17MiniAOD-PU200_91X_upgrade2023_realistic_v3-v1/MINIAODSIM\n'
+    options.inputFiles = \
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/604587B6-5B5F-E711-8B59-0CC47A5FA211.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/502147A8-5C5E-E711-86E8-141877636851.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/4E10029E-685F-E711-921F-D48564591BF4.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/469E8CCC-615E-E711-B200-0026B94DBE17.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/421C6C34-A55E-E711-8CFF-549F35AD8BFD.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/34F4A2D5-4E5E-E711-B9CF-0CC47A5FC619.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/2E803035-E95F-E711-81A4-002590DE6E36.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/2AA71B0E-A45E-E711-BBAE-008CFAF2931E.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/20FDD87E-5060-E711-977D-7CD30AD08F0E.root',\
+        'file:/eos/user/c/calderon/PhaseII/DisplacedSUSY_ctau1000/0A5CE5C3-B15F-E711-8CA5-0090FAA57F44.root'
+
+
+# Output
+outputFileName = 'rootfiles/' + options.inputDataset + '.root'
+
+print ' The output will be written in', outputFileName, '\n'
+
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(options.inputFiles))
 
 process.TFileService=cms.Service('TFileService',
-                                 fileName=cms.string('MyMuonPlots.root')
+                                 fileName=cms.string(outputFileName)
                                  )
 
 process.muonAnalysis = cms.EDAnalyzer("ExampleMuonAnalyzer",
