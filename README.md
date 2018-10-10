@@ -22,9 +22,9 @@
 
     cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedMuons_PU200'           maxEvents=-1
     cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedMuons_noPU'            maxEvents=-1
-    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-1_PU200'     maxEvents=-1
     cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-1_noPU'      maxEvents=-1
     cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-10_noPU'     maxEvents=-1
+    cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-1_PU200'     maxEvents=-1
     cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-100_PU200'   maxEvents=-1
     cmsRun MuonAnalyzer_cfg.py  inputDataset='DisplacedSUSY_CTau-1000_PU200'  maxEvents=-1
 
@@ -43,7 +43,8 @@
 
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
 
-    root -l -b -q doEfficiencies.C+
+    root -l -b -q 'doEfficiencies.C+("CTau-1_PU200", "CTau-100_PU200")'
+
     root -l -b -q doResolution.C+
 
     root -l -b -q 'doResolutionDxy.C+("Soft",  "soft muons",  noPU)'

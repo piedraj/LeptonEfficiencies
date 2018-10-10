@@ -28,10 +28,10 @@ Bool_t  doSavePng = true;
 TFile*  file1 = NULL;
 TFile*  file2 = NULL;
 
-Bool_t  draw_sta   = false;
+Bool_t  draw_sta   = true;
 Bool_t  draw_trk   = false;
 Bool_t  draw_glb   = true;
-Bool_t  draw_tight = true;
+Bool_t  draw_tight = false;
 Bool_t  draw_soft  = false;
 
 TString directory = "displaced-muons";
@@ -53,10 +53,8 @@ void               DrawEfficiency(TString  effType,
 				  TString  variable,
 				  TString  xtitle);
 
-void               Compare       (TString  variable,
-				  TString  muonType,
-				  TString  xtitle,
-				  Float_t  xmax = -999);
+void               Compare       (TString  hname,
+				  TString  xtitle);
 
 TH1F*              AddOverflow   (TH1F*    hist);
 
@@ -97,23 +95,24 @@ void doEfficiencies(TString name1 = "CTau-1_PU200",
   DrawEfficiency("efficiency", "eta", "gen #eta");
   DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]");
 
-  //  DrawEfficiency("fakes", "vxy", "gen production distance in xy [cm]");
-  //  DrawEfficiency("fakes", "vz",  "gen production distance in z [cm]");
-  //  DrawEfficiency("fakes", "vr",  "gen production distance in xyz [cm]");
-  //  DrawEfficiency("fakes", "eta", "gen #eta");
-  //  DrawEfficiency("fakes", "pt",  "gen p_{T} [GeV]");
+  if (draw_sta)   Compare("StaMuons_dR",   "#DeltaR(gen, standalone)");
+  if (draw_trk)   Compare("TrkMuons_dR",   "#DeltaR(gen, tracker)");
+  if (draw_glb)   Compare("GlbMuons_dR",   "#DeltaR(gen, global)");
+  if (draw_tight) Compare("TightMuons_dR", "#DeltaR(gen, tight)");
+  if (draw_soft)  Compare("SoftMuons_dR",  "#DeltaR(gen, soft)");
 
-  if (draw_sta)   Compare("dR", "Sta",   "#DeltaR(gen, standalone)");
-  if (draw_trk)   Compare("dR", "Trk",   "#DeltaR(gen, tracker)");
-  if (draw_glb)   Compare("dR", "Glb",   "#DeltaR(gen, global)");
-  if (draw_tight) Compare("dR", "Tight", "#DeltaR(gen, tight)");
-  if (draw_soft)  Compare("dR", "Soft",  "#DeltaR(gen, soft)");
+  Compare("MuPFIso",        "muon PF isolation");
+  Compare("MuPFChargeIso",  "muon charged PF isolation");
+  Compare("MuPFNeutralIso", "muon neutral PF isolation");
+  Compare("MuPFPhotonIso",  "muon photon PF isolation");
+  Compare("MuPFPUIso",      "muon PU PF isolation");
 
-  Compare("MuPFIso",        "NA", "muon PF isolation");
-  Compare("MuPFChargeIso",  "NA", "muon charged PF isolation");
-  Compare("MuPFNeutralIso", "NA", "muon neutral PF isolation");
-  Compare("MuPFPhotonIso",  "NA", "muon photon PF isolation");
-  Compare("MuPFPUIso",      "NA", "muon PU PF isolation");
+  Compare("dxy", "gen dxy [cm]");
+  Compare("dz",  "gen dz [cm]");
+  Compare("vxy", "gen production distance in xy [cm]");
+  Compare("vz",  "gen production distance in z [cm]");
+  Compare("vr",  "gen production distance in xyz [cm]");
+  Compare("pt",  "gen p_{T} [GeV]");
 }
 
 
@@ -170,11 +169,18 @@ void DrawEfficiency(TString effType,
   TGraphAsymmErrors* tight_efficiency_2 = MakeEfficiency(effType, "Tight", variable, file2, kGreen+2,  kOpenCircle);
   TGraphAsymmErrors* soft_efficiency_2  = MakeEfficiency(effType, "Soft",  variable, file2, kOrange+7, kOpenCircle);
 
+  // Canvas settings
   TCanvas* canvas = new TCanvas(effType + " vs. " + xtitle,
 				effType + " vs. " + xtitle, 650, 600);
 
   canvas->SetLeftMargin (0.14);
   canvas->SetRightMargin(0.28);
+  canvas->SetGridx();
+  canvas->SetGridy();
+
+  if (variable.EqualTo("vxy")) canvas->SetLogx();
+  if (variable.EqualTo("vz"))  canvas->SetLogx();
+  if (variable.EqualTo("vr"))  canvas->SetLogx();
 
   TMultiGraph* mg = new TMultiGraph();
 
@@ -198,10 +204,6 @@ void DrawEfficiency(TString effType,
   mg->SetMinimum(-0.05);
   mg->SetMaximum( 1.05);
 
-  // Cosmetics
-  canvas->SetGridx();
-  canvas->SetGridy();
-
   // Labels
   mg->SetTitle("");
   mg->GetXaxis()->SetTitle(xtitle);
@@ -215,19 +217,23 @@ void DrawEfficiency(TString effType,
   SetLegend(legend, 0.025);
 
   if (draw_sta)   legend->AddEntry(sta_efficiency_1,   file1name + " sta",   "lp");
-  if (draw_trk)   legend->AddEntry(trk_efficiency_1,   file1name + " trk",   "lp");
-  if (draw_glb)   legend->AddEntry(glb_efficiency_1,   file1name + " glb",   "lp");
-  if (draw_tight) legend->AddEntry(tight_efficiency_1, file1name + " tight", "lp");
-  if (draw_soft)  legend->AddEntry(soft_efficiency_1,  file1name + " soft",  "lp");
-
   if (draw_sta)   legend->AddEntry(sta_efficiency_2,   file2name + " sta",   "lp");
+
+  if (draw_trk)   legend->AddEntry(trk_efficiency_1,   file1name + " trk",   "lp");
   if (draw_trk)   legend->AddEntry(trk_efficiency_2,   file2name + " trk",   "lp");
+
+  if (draw_glb)   legend->AddEntry(glb_efficiency_1,   file1name + " glb",   "lp");
   if (draw_glb)   legend->AddEntry(glb_efficiency_2,   file2name + " glb",   "lp");
+
+  if (draw_tight) legend->AddEntry(tight_efficiency_1, file1name + " tight", "lp");
   if (draw_tight) legend->AddEntry(tight_efficiency_2, file2name + " tight", "lp"); 
+
+  if (draw_soft)  legend->AddEntry(soft_efficiency_1,  file1name + " soft",  "lp");
   if (draw_soft)  legend->AddEntry(soft_efficiency_2,  file2name + " soft",  "lp"); 
 
   legend->Draw();
 
+  // Save
   canvas->Modified();
   canvas->Update();
 
@@ -241,24 +247,14 @@ void DrawEfficiency(TString effType,
 // Compare
 //
 //------------------------------------------------------------------------------
-void Compare(TString variable,
-	     TString muonType,
-	     TString xtitle,
-	     Float_t xmax)
+void Compare(TString hname,
+	     TString xtitle)
 {
   TH1F* hist1 = NULL;
   TH1F* hist2 = NULL;
 
-  if (variable.Contains("MuPF"))
-    {
-      hist1 = (TH1F*)(file1->Get("muonAnalysis/" + variable))->Clone("hist1_" + variable);
-      hist2 = (TH1F*)(file2->Get("muonAnalysis/" + variable))->Clone("hist2_" + variable);
-    }
-  else
-    {
-      hist1 = (TH1F*)(file1->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("hist1_" + muonType + "_" + variable);
-      hist2 = (TH1F*)(file2->Get("muonAnalysis/" + muonType + "Muons_" + variable))->Clone("hist2_" + muonType + "_" + variable);
-    }
+  hist1 = (TH1F*)(file1->Get("muonAnalysis/" + hname))->Clone("hist1_" + hname);
+  hist2 = (TH1F*)(file2->Get("muonAnalysis/" + hname))->Clone("hist2_" + hname);
 
   hist1->Scale(1. / hist1->Integral(-1, -1));
   hist2->Scale(1. / hist2->Integral(-1, -1));
@@ -272,13 +268,16 @@ void Compare(TString variable,
 
   // Draw
   //----------------------------------------------------------------------------
-  TString label = (muonType.EqualTo("NA")) ? variable : muonType + "_" + variable;
+  TCanvas* canvas = new TCanvas("compare " + hname,
+				"compare " + hname);
 
-  TCanvas* canvas = new TCanvas("compare " + xtitle,
-				"compare " + xtitle);
-
-  if (variable.Contains("dR"))   canvas->SetLogy();
-  if (variable.Contains("MuPF")) canvas->SetLogy();
+  if (hname.Contains("dxy"))  canvas->SetLogy();
+  if (hname.Contains("dz"))   canvas->SetLogy();
+  if (hname.Contains("vxy"))  canvas->SetLogy();
+  if (hname.Contains("vz"))   canvas->SetLogy();
+  if (hname.Contains("vr"))   canvas->SetLogy();
+  if (hname.Contains("dR"))   canvas->SetLogy();
+  if (hname.Contains("MuPF")) canvas->SetLogy();
 
   TH1F* hist1_overflow = AddOverflow(hist1);
   TH1F* hist2_overflow = AddOverflow(hist2);
@@ -288,19 +287,17 @@ void Compare(TString variable,
       hist1_overflow->Draw("hist");
       hist2_overflow->Draw("hist,same");
       hist1_overflow->GetXaxis()->SetTitle(xtitle);
-      
-      if (xmax > -999) hist1_overflow->GetXaxis()->SetRangeUser(-1, xmax);
     }
   else
     {
       hist2_overflow->Draw("hist");
       hist1_overflow->Draw("hist,same");
       hist2_overflow->GetXaxis()->SetTitle(xtitle);
-      
-      if (xmax > -999) hist2_overflow->GetXaxis()->SetRangeUser(-1, xmax);
     }
 
+
   // Legend
+  //----------------------------------------------------------------------------
   TLegend* legend = new TLegend(0.64, 0.78, 0.80, 0.89);
 
   SetLegend(legend, 0.03);
@@ -310,11 +307,13 @@ void Compare(TString variable,
 
   legend->Draw();
 
+
   // Save
+  //----------------------------------------------------------------------------
   canvas->GetFrame()->DrawClone();
 
-  if (doSavePdf) canvas->SaveAs(directory + "/" + file1name + "__vs__" + file2name + "__compare-" + label + ".pdf");
-  if (doSavePng) canvas->SaveAs(directory + "/" + file1name + "__vs__" + file2name + "__compare-" + label + ".png");
+  if (doSavePdf) canvas->SaveAs(directory + "/" + file1name + "__vs__" + file2name + "__compare-" + hname + ".pdf");
+  if (doSavePng) canvas->SaveAs(directory + "/" + file1name + "__vs__" + file2name + "__compare-" + hname + ".png");
 }
 
 
@@ -343,7 +342,7 @@ TH1F* AddOverflow(TH1F* hist)
   htmp->Fill(x1-1, hist->GetBinContent(0));
 
   // Restore the number of entries
-  htmp->SetEntries(hist->GetEntries());
+  htmp->SetEntries(hist->GetEffectiveEntries());
 
   // Cosmetics
   htmp->SetLineColor(hist->GetLineColor());

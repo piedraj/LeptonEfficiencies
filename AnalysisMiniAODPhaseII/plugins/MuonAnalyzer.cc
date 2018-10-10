@@ -48,12 +48,12 @@ void ExampleMuonAnalyzer::beginJob()
 
   edm::Service<TFileService> fileService;
 
-  h_dxy = fileService->make<TH1F>("dxy", "",    100, -0.1, 0.1);
-  h_dz  = fileService->make<TH1F>("dz",  "",    100, -0.1, 0.1);
-  h_vxy = fileService->make<TH1F>("vxy", "",  15000,    0,   3);
-  h_vz  = fileService->make<TH1F>("vz",  "", 100000,    0,  20);
-  h_vr  = fileService->make<TH1F>("vr",  "", 100000,    0,  20);
-  h_pt  = fileService->make<TH1F>("pt",  "", 100000,    0, 500);
+  h_dxy = fileService->make<TH1F>("dxy", "",  100, -0.1,     0.1);
+  h_dz  = fileService->make<TH1F>("dz",  "",  100, -0.1,     0.1);
+  h_vxy = fileService->make<TH1F>("vxy", "", 1000,    0, vxy_max);
+  h_vz  = fileService->make<TH1F>("vz",  "", 1000,    0,  vz_max);
+  h_vr  = fileService->make<TH1F>("vr",  "", 1000,    0,  vr_max);
+  h_pt  = fileService->make<TH1F>("pt",  "", 1000,    0,  pt_max);
 
   hGenMuons_vxy_vz         = fileService->make<TH2F>("GenMuons_vxy_vz",         "", nbins_vxy, vxy_bins, nbins_vz, vz_bins);
   hStaMuons_vxy_vz         = fileService->make<TH2F>("StaMuons_vxy_vz",         "", nbins_vxy, vxy_bins, nbins_vz, vz_bins);
@@ -246,7 +246,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
     Float_t vr     = sqrt(vx*vx + vy*vy + vz*vz);
 
     if (fabs(eta) > 2.4) continue;
-    if (pt < pt_bins[0]) continue;  // The value of pt_bins[0] is 10 GeV
+    if (pt < pt_min)     continue;
     
     pat::PackedGenParticle pks((*pruned)[i], reco::GenParticleRef());
 
@@ -293,7 +293,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t muCharge = muon->standAloneMuon()->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0]) continue;
+	if (muPt < pt_min)     continue;
 
 	Float_t dPhi = muPhi - phi;
 	Float_t dEta = muEta - eta;
@@ -317,7 +317,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	float muCharge = muon->innerTrack()->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0]) continue;
+	if (muPt < pt_min)     continue;
        
 	float dPhi = muPhi - phi;
 	float dEta = muEta - eta;
@@ -341,7 +341,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	float muCharge = muon->globalTrack()->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0]) continue;
+	if (muPt < pt_min)     continue;
        
 	float dPhi = muPhi - phi;
 	float dEta = muEta - eta;
@@ -365,7 +365,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t muCharge = muon->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0]) continue;
+	if (muPt < pt_min)     continue;
  
 	Float_t dPhi = muPhi - phi;
 	Float_t dEta = muEta - eta;
@@ -389,7 +389,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
 	Float_t muCharge = muon->charge();
 
 	if (fabs(muEta) > 2.4) continue;
-	if (muPt < pt_bins[0]) continue;
+	if (muPt < pt_min)     continue;
  
 	Float_t dPhi = muPhi - phi;
 	Float_t dEta = muEta - eta;
@@ -429,7 +429,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
       {
 	hStaMuons_dR->Fill(sta_min_deltaR);
 
-	if (sta_min_deltaR < max_deltaR)
+	if (sta_min_deltaR < deltaR_max)
 	  {
 	    hStaMuons_vxy->Fill(vxy);
 	    hStaMuons_vz ->Fill(fabs(vz));
@@ -463,7 +463,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
       {
 	hTrkMuons_dR->Fill(trk_min_deltaR);
 	
-	if (trk_min_deltaR < max_deltaR)
+	if (trk_min_deltaR < deltaR_max)
 	  {
 	    hTrkMuons_vxy->Fill(vxy);
 	    hTrkMuons_vz ->Fill(fabs(vz));
@@ -497,7 +497,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
       {
 	hGlbMuons_dR->Fill(glb_min_deltaR);
 
-	if (glb_min_deltaR < max_deltaR)
+	if (glb_min_deltaR < deltaR_max)
 	  {
 	    hGlbMuons_vxy->Fill(vxy);
 	    hGlbMuons_vz ->Fill(fabs(vz));
@@ -531,7 +531,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
       {
 	hTightMuons_dR->Fill(tight_min_deltaR);
 	
-	if (tight_min_deltaR < max_deltaR)
+	if (tight_min_deltaR < deltaR_max)
 	  {
 	    hTightMuons_vxy->Fill(vxy);
 	    hTightMuons_vz ->Fill(fabs(vz));
@@ -565,7 +565,7 @@ void ExampleMuonAnalyzer::analyze(const Event& event, const EventSetup& eventSet
       {
 	hSoftMuons_dR->Fill(soft_min_deltaR);
 	
-	if (soft_min_deltaR < max_deltaR)
+	if (soft_min_deltaR < deltaR_max)
 	  {
 	    hSoftMuons_vxy->Fill(vxy);
 	    hSoftMuons_vz ->Fill(fabs(vz));
