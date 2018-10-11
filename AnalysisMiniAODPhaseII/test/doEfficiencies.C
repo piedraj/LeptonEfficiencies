@@ -2,7 +2,7 @@
 //
 // Compare histograms for two samples
 //
-// root -l -b -q doEfficiencies.C+
+// root -l -b -q 'doEfficiencies.C+("CTau-1_PU200","CTau-100_PU200")'
 //
 //------------------------------------------------------------------------------
 #include "TCanvas.h"
@@ -17,27 +17,25 @@
 #include "TString.h"
 #include "TSystem.h"
 
-#include <fstream>
-
 
 // Data members
 //------------------------------------------------------------------------------
-Bool_t  doSavePdf = true;
-Bool_t  doSavePng = true;
+Bool_t         doSavePdf = true;
+Bool_t         doSavePng = true;
 
-TFile*  file1 = NULL;
-TFile*  file2 = NULL;
+Bool_t         draw_sta   = true;
+Bool_t         draw_trk   = true;
+Bool_t         draw_glb   = true;
+Bool_t         draw_tight = false;
+Bool_t         draw_soft  = false;
 
-Bool_t  draw_sta   = true;
-Bool_t  draw_trk   = false;
-Bool_t  draw_glb   = true;
-Bool_t  draw_tight = false;
-Bool_t  draw_soft  = false;
+TString        directory = "displaced-muons";
 
-TString directory = "displaced-muons";
+TFile*         file1 = NULL;
+TFile*         file2 = NULL;
 
-TString file1name;
-TString file2name;
+TString        file1name;
+TString        file2name;
 
 
 // Member functions
@@ -87,19 +85,14 @@ void doEfficiencies(TString name1 = "CTau-1_PU200",
   file2 = TFile::Open("rootfiles/DisplacedSUSY_" + file2name + ".root");
 
 
-  // Do the work
+  // Compare distributions
   //----------------------------------------------------------------------------
-  DrawEfficiency("efficiency", "vxy", "gen production distance in xy [cm]");
-  DrawEfficiency("efficiency", "vz",  "gen production distance in z [cm]");
-  DrawEfficiency("efficiency", "vr",  "gen production distance in xyz [cm]");
-  DrawEfficiency("efficiency", "eta", "gen #eta");
-  DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]");
-
-  if (draw_sta)   Compare("StaMuons_dR",   "#DeltaR(gen, standalone)");
-  if (draw_trk)   Compare("TrkMuons_dR",   "#DeltaR(gen, tracker)");
-  if (draw_glb)   Compare("GlbMuons_dR",   "#DeltaR(gen, global)");
-  if (draw_tight) Compare("TightMuons_dR", "#DeltaR(gen, tight)");
-  if (draw_soft)  Compare("SoftMuons_dR",  "#DeltaR(gen, soft)");
+  Compare("dxy", "gen dxy [cm]");
+  Compare("dz",  "gen dz [cm]");
+  Compare("vxy", "gen production distance in xy [cm]");
+  Compare("vz",  "gen production distance in z [cm]");
+  Compare("vr",  "gen production distance in xyz [cm]");
+  Compare("pt",  "gen p_{T} [GeV]");
 
   Compare("MuPFIso",        "muon PF isolation");
   Compare("MuPFChargeIso",  "muon charged PF isolation");
@@ -107,12 +100,21 @@ void doEfficiencies(TString name1 = "CTau-1_PU200",
   Compare("MuPFPhotonIso",  "muon photon PF isolation");
   Compare("MuPFPUIso",      "muon PU PF isolation");
 
-  Compare("dxy", "gen dxy [cm]");
-  Compare("dz",  "gen dz [cm]");
-  Compare("vxy", "gen production distance in xy [cm]");
-  Compare("vz",  "gen production distance in z [cm]");
-  Compare("vr",  "gen production distance in xyz [cm]");
-  Compare("pt",  "gen p_{T} [GeV]");
+  if (draw_sta)   Compare("StaMuons_dR",   "#DeltaR(gen, standalone)");
+  if (draw_trk)   Compare("TrkMuons_dR",   "#DeltaR(gen, tracker)");
+  if (draw_glb)   Compare("GlbMuons_dR",   "#DeltaR(gen, global)");
+  if (draw_tight) Compare("TightMuons_dR", "#DeltaR(gen, tight)");
+  if (draw_soft)  Compare("SoftMuons_dR",  "#DeltaR(gen, soft)");
+
+
+  // Compare efficiencies
+  //----------------------------------------------------------------------------
+  DrawEfficiency("efficiency", "vxy", "gen production distance in xy [cm]");
+  DrawEfficiency("efficiency", "vz",  "gen production distance in z [cm]");
+  DrawEfficiency("efficiency", "vr",  "gen production distance in xyz [cm]");
+  DrawEfficiency("efficiency", "eta", "gen #eta");
+  DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]");
+
 }
 
 
@@ -201,7 +203,8 @@ void DrawEfficiency(TString effType,
 
   mg->Draw("apz");
 
-  mg->SetMinimum(-0.05);
+//mg->SetMinimum(-0.05);
+  mg->SetMinimum( 0.30);
   mg->SetMaximum( 1.05);
 
   // Labels
@@ -216,20 +219,20 @@ void DrawEfficiency(TString effType,
 
   SetLegend(legend, 0.025);
 
-  if (draw_sta)   legend->AddEntry(sta_efficiency_1,   file1name + " sta",   "lp");
-  if (draw_sta)   legend->AddEntry(sta_efficiency_2,   file2name + " sta",   "lp");
+  if (draw_sta) legend->AddEntry(sta_efficiency_1, file1name + " sta", "lp");
+  if (draw_sta) legend->AddEntry(sta_efficiency_2, file2name + " sta", "lp");
 
-  if (draw_trk)   legend->AddEntry(trk_efficiency_1,   file1name + " trk",   "lp");
-  if (draw_trk)   legend->AddEntry(trk_efficiency_2,   file2name + " trk",   "lp");
+  if (draw_trk) legend->AddEntry(trk_efficiency_1, file1name + " trk", "lp");
+  if (draw_trk) legend->AddEntry(trk_efficiency_2, file2name + " trk", "lp");
 
-  if (draw_glb)   legend->AddEntry(glb_efficiency_1,   file1name + " glb",   "lp");
-  if (draw_glb)   legend->AddEntry(glb_efficiency_2,   file2name + " glb",   "lp");
+  if (draw_glb) legend->AddEntry(glb_efficiency_1, file1name + " glb", "lp");
+  if (draw_glb) legend->AddEntry(glb_efficiency_2, file2name + " glb", "lp");
 
   if (draw_tight) legend->AddEntry(tight_efficiency_1, file1name + " tight", "lp");
   if (draw_tight) legend->AddEntry(tight_efficiency_2, file2name + " tight", "lp"); 
 
-  if (draw_soft)  legend->AddEntry(soft_efficiency_1,  file1name + " soft",  "lp");
-  if (draw_soft)  legend->AddEntry(soft_efficiency_2,  file2name + " soft",  "lp"); 
+  if (draw_soft) legend->AddEntry(soft_efficiency_1, file1name + " soft", "lp");
+  if (draw_soft) legend->AddEntry(soft_efficiency_2, file2name + " soft", "lp"); 
 
   legend->Draw();
 
