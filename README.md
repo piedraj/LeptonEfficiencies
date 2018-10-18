@@ -45,7 +45,7 @@
 
     root -l -b -q 'doEfficiencies.C+("CTau-1_PU200", "CTau-100_PU200")'
 
-    root -l -b -q doResolution.C+
+    root -l -b -q 'doResolution.C+("CTau-1_PU200", "CTau-100_PU200")'
 
     root -l -b -q 'doResolutionDxy.C+("Soft",  "soft muons",  noPU)'
     root -l -b -q 'doResolutionDxy.C+("Soft",  "soft muons",  PU200)'

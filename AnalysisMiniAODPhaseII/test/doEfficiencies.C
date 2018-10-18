@@ -34,6 +34,9 @@ TString        directory = "displaced-muons";
 TFile*         file1 = NULL;
 TFile*         file2 = NULL;
 
+
+// Main arguments
+//------------------------------------------------------------------------------
 TString        file1name;
 TString        file2name;
 
@@ -52,7 +55,8 @@ void               DrawEfficiency(TString  effType,
 				  TString  xtitle);
 
 void               Compare       (TString  hname,
-				  TString  xtitle);
+				  TString  xtitle,
+				  Bool_t   setlogy = true);
 
 TH1F*              AddOverflow   (TH1F*    hist);
 
@@ -66,10 +70,15 @@ void               SetLegend     (TLegend* tl,
 //
 //------------------------------------------------------------------------------
 void doEfficiencies(TString name1 = "CTau-1_PU200",
-		    TString name2 = "CTau-100_PU200")
+		    TString name2 = "CTau-1_noPU")
 {
   file1name = name1;
   file2name = name2;
+
+  printf("\n");
+  printf(" file1name = %s\n", file1name.Data());
+  printf(" file2name = %s\n", file2name.Data());
+  printf("\n");
 
   gInterpreter->ExecuteMacro("PaperStyle.C");
 
@@ -92,7 +101,7 @@ void doEfficiencies(TString name1 = "CTau-1_PU200",
   Compare("vxy", "gen production distance in xy [cm]");
   Compare("vz",  "gen production distance in z [cm]");
   Compare("vr",  "gen production distance in xyz [cm]");
-  Compare("pt",  "gen p_{T} [GeV]");
+  Compare("pt",  "gen p_{T} [GeV]", false);
 
   Compare("MuPFIso",        "muon PF isolation");
   Compare("MuPFChargeIso",  "muon charged PF isolation");
@@ -114,7 +123,6 @@ void doEfficiencies(TString name1 = "CTau-1_PU200",
   DrawEfficiency("efficiency", "vr",  "gen production distance in xyz [cm]");
   DrawEfficiency("efficiency", "eta", "gen #eta");
   DrawEfficiency("efficiency", "pt",  "gen p_{T} [GeV]");
-
 }
 
 
@@ -251,7 +259,8 @@ void DrawEfficiency(TString effType,
 //
 //------------------------------------------------------------------------------
 void Compare(TString hname,
-	     TString xtitle)
+	     TString xtitle,
+	     Bool_t  setlogy)
 {
   TH1F* hist1 = NULL;
   TH1F* hist2 = NULL;
@@ -274,13 +283,7 @@ void Compare(TString hname,
   TCanvas* canvas = new TCanvas("compare " + hname,
 				"compare " + hname);
 
-  if (hname.Contains("dxy"))  canvas->SetLogy();
-  if (hname.Contains("dz"))   canvas->SetLogy();
-  if (hname.Contains("vxy"))  canvas->SetLogy();
-  if (hname.Contains("vz"))   canvas->SetLogy();
-  if (hname.Contains("vr"))   canvas->SetLogy();
-  if (hname.Contains("dR"))   canvas->SetLogy();
-  if (hname.Contains("MuPF")) canvas->SetLogy();
+  canvas->SetLogy(setlogy);
 
   TH1F* hist1_overflow = AddOverflow(hist1);
   TH1F* hist2_overflow = AddOverflow(hist2);

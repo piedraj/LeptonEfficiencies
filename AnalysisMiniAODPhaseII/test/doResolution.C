@@ -2,7 +2,7 @@
 //
 // Compare displaced muons resolution
 //
-// root -l -b -q 'doResolution.C+("CTau-1_PU200","CTau-1_noPU",-1)'
+// root -l -b -q 'doResolution.C+("CTau-1_PU200","CTau-1_noPU")'
 //
 //------------------------------------------------------------------------------
 #include "TCanvas.h"
@@ -22,8 +22,6 @@
 
 // Data members
 //------------------------------------------------------------------------------
-enum           {noPU, PU200};
-
 const Int_t    nbins_pt = 6;
 
 const Double_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
@@ -44,14 +42,16 @@ TString        directory = "displaced-muons";
 TFile*         file1 = NULL;
 TFile*         file2 = NULL;
 
-TString        file1name;
-TString        file2name;
-
 TLegend*       resolution_legend = NULL;
 
 TMultiGraph*   mg_mean  = NULL;
 TMultiGraph*   mg_width = NULL;
 
+
+// Main arguments
+//------------------------------------------------------------------------------
+TString        file1name;
+TString        file2name;
 Int_t          vxy_bin;
 
 
@@ -59,7 +59,7 @@ Int_t          vxy_bin;
 //------------------------------------------------------------------------------
 void          DrawResolution(TString       muonType,
 			     TString       xtitle,
-			     Int_t         PU,
+			     TString       filename,
 			     Color_t       color);
 
 void          SetLegend     (TLegend*      tl,
@@ -92,6 +92,12 @@ void doResolution(TString name1 = "CTau-1_PU200",
 
   vxy_bin = vxy;
 
+  printf("\n");
+  printf(" file1name = %s\n", file1name.Data());
+  printf(" file2name = %s\n", file2name.Data());
+  printf("   vxy_bin = %d\n", vxy_bin);
+  printf("\n");
+
   gInterpreter->ExecuteMacro("PaperStyle.C");
 
   if (doSavePdf) gSystem->mkdir(directory, kTRUE);
@@ -111,37 +117,33 @@ void doResolution(TString name1 = "CTau-1_PU200",
   mg_mean  = new TMultiGraph();
   mg_width = new TMultiGraph();
 
-  resolution_legend = new TLegend(0.81, 0.5, 0.95, 0.91);
+  resolution_legend = new TLegend(0.74, 0.5, 0.95, 0.91);
 
   SetLegend(resolution_legend, 0.025);
 
-  if (draw_sta)   DrawResolution("Sta",   "standalone muons", noPU, kBlack);
-  if (draw_trk)   DrawResolution("Trk",   "tracker muons",    noPU, kRed+1);
-  if (draw_glb)   DrawResolution("Glb",   "global muons",     noPU, kBlue);
-  if (draw_tight) DrawResolution("Tight", "tight muons",      noPU, kGreen+2);
-  if (draw_soft)  DrawResolution("Soft",  "soft muons",       noPU, kOrange+7);
+  if (draw_sta)   DrawResolution("Sta",   "standalone muons", file1name, kBlack);
+  if (draw_trk)   DrawResolution("Trk",   "tracker muons",    file1name, kRed+1);
+  if (draw_glb)   DrawResolution("Glb",   "global muons",     file1name, kBlue);
+  if (draw_tight) DrawResolution("Tight", "tight muons",      file1name, kGreen+2);
+  if (draw_soft)  DrawResolution("Soft",  "soft muons",       file1name, kOrange+7);
 
-  if (draw_sta)   DrawResolution("Sta",   "standalone muons", PU200, kBlack);
-  if (draw_trk)   DrawResolution("Trk",   "tracker muons",    PU200, kRed+1);
-  if (draw_glb)   DrawResolution("Glb",   "global muons",     PU200, kBlue);
-  if (draw_tight) DrawResolution("Tight", "tight muons",      PU200, kGreen+2);
-  if (draw_soft)  DrawResolution("Soft",  "soft muons",       PU200, kOrange+7);
+  if (draw_sta)   DrawResolution("Sta",   "standalone muons", file2name, kBlack);
+  if (draw_trk)   DrawResolution("Trk",   "tracker muons",    file2name, kRed+1);
+  if (draw_glb)   DrawResolution("Glb",   "global muons",     file2name, kBlue);
+  if (draw_tight) DrawResolution("Tight", "tight muons",      file2name, kGreen+2);
+  if (draw_soft)  DrawResolution("Soft",  "soft muons",       file2name, kOrange+7);
 
 
   // Draw mean
   //----------------------------------------------------------------------------
-  TCanvas* c1 = new TCanvas("mean", "mean");
+  TCanvas* c1 = new TCanvas("mean", "mean", 650, 600);
 
-  c1->SetLeftMargin (0.165);
-  c1->SetRightMargin(0.205);
-
+  c1->SetLeftMargin (0.14);
+  c1->SetRightMargin(0.28);
   c1->SetGridx();
   c1->SetGridy();
 
   mg_mean->Draw("apz");
-
-  mg_mean->SetMinimum(-0.0005);
-  mg_mean->SetMaximum(+0.0005);
 
   mg_mean->GetXaxis()->SetTitle("gen p_{T} [GeV]");
   mg_mean->GetYaxis()->SetTitle("");
@@ -159,18 +161,15 @@ void doResolution(TString name1 = "CTau-1_PU200",
 
   // Draw width
   //----------------------------------------------------------------------------
-  TCanvas* c2 = new TCanvas("width", "width");
+  TCanvas* c2 = new TCanvas("width", "width", 650, 600);
 
-  c2->SetLeftMargin (0.165);
-  c2->SetRightMargin(0.205);
+  c2->SetLeftMargin (0.14);
+  c2->SetRightMargin(0.28);
 
   c2->SetGridx();
   c2->SetGridy();
 
   mg_width->Draw("apz");
-
-  mg_width->SetMinimum(0.000);
-  mg_width->SetMaximum(0.025);
 
   mg_width->GetXaxis()->SetTitle("gen p_{T} [GeV]");
   mg_width->GetYaxis()->SetTitle("");
@@ -194,26 +193,22 @@ void doResolution(TString name1 = "CTau-1_PU200",
 //------------------------------------------------------------------------------
 void DrawResolution(TString muonType,
 		    TString xtitle,
-		    Int_t   PU,
+		    TString filename,
 		    Color_t color)
 {
-  TFile* file = (PU == noPU) ? file2 : file1;
+  TFile* file = (filename == file1name) ? file1 : file2;
   
-  TString pu_string = (PU == noPU) ? "noPU" : "PU200";
-
-  TString pu_label = (PU == noPU) ? "no PU" : "200 PU";
-
-  Style_t pu_style = (PU == noPU) ? kOpenCircle : kFullCircle;
-
-  TCanvas* canvas = new TCanvas(xtitle + " resolution (" + pu_label + ")",
-				xtitle + " resolution (" + pu_label + ")");
+  TCanvas* canvas = new TCanvas(xtitle + " resolution (" + filename + ")",
+				xtitle + " resolution (" + filename + ")");
   
   // One histogram per pt bin
   TH1F* h_resolution[nbins_pt];
 
   // Graphs that will store the mean and width of the resolution
-  TGraphErrors* gr_mean  = SetGraph(nbins_pt, color, pu_style);
-  TGraphErrors* gr_width = SetGraph(nbins_pt, color, pu_style);
+  Style_t gr_style = (filename == file1name) ? kFullCircle : kOpenCircle;
+
+  TGraphErrors* gr_mean  = SetGraph(nbins_pt, color, gr_style);
+  TGraphErrors* gr_width = SetGraph(nbins_pt, color, gr_style);
 
   // Legend
   TLegend* legend = new TLegend(0.61, 0.6, 0.82, 0.89);
@@ -233,7 +228,7 @@ void DrawResolution(TString muonType,
 
     TString vxy_suffix = (vxy_bin < 0) ? "all" : Form("%d", vxy_bin);
 
-    TString hname = Form("%s_%s_vxy_%s", h2->GetName(), pu_string.Data(), vxy_suffix.Data());
+    TString hname = Form("%s_%s_vxy_%s", h2->GetName(), filename.Data(), vxy_suffix.Data());
 
     h_resolution[i] = (vxy_bin < 0) ? (TH1F*)h2->ProjectionY(hname) : (TH1F*)h2->ProjectionY(hname, vxy_bin, vxy_bin+1);
 
@@ -278,11 +273,11 @@ void DrawResolution(TString muonType,
   // Legend
   Bool_t pickMe = false;
 
-  if (muonType.EqualTo("Sta")   && draw_sta)   resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") sta",   "lp");
-  if (muonType.EqualTo("Trk")   && draw_trk)   resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") trk",   "lp");
-  if (muonType.EqualTo("Glb")   && draw_glb)   resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") glb",   "lp");
-  if (muonType.EqualTo("Tight") && draw_tight) resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") tight", "lp");
-  if (muonType.EqualTo("Soft")  && draw_soft)  resolution_legend->AddEntry(gr_mean, "(" + pu_label + ") soft",  "lp");
+  if (muonType.EqualTo("Sta")   && draw_sta)   resolution_legend->AddEntry(gr_mean, "(" + filename + ") sta",   "lp");
+  if (muonType.EqualTo("Trk")   && draw_trk)   resolution_legend->AddEntry(gr_mean, "(" + filename + ") trk",   "lp");
+  if (muonType.EqualTo("Glb")   && draw_glb)   resolution_legend->AddEntry(gr_mean, "(" + filename + ") glb",   "lp");
+  if (muonType.EqualTo("Tight") && draw_tight) resolution_legend->AddEntry(gr_mean, "(" + filename + ") tight", "lp");
+  if (muonType.EqualTo("Soft")  && draw_soft)  resolution_legend->AddEntry(gr_mean, "(" + filename + ") soft",  "lp");
 
   // Cosmetics
   h_resolution[0]->SetMaximum(1.1 * ymax);
@@ -292,15 +287,15 @@ void DrawResolution(TString muonType,
   h_resolution[0]->GetXaxis()->SetTitleOffset(1.5);
   h_resolution[0]->GetYaxis()->SetTitleOffset(2.0);
 
-  DrawLatex(42, 0.940, 0.945, 0.04, 31, pu_label);
+  DrawLatex(42, 0.940, 0.945, 0.04, 31, filename);
 
   legend->Draw();
 
   canvas->GetFrame()->DrawClone();
 
   // Save
-  if (doSavePdf) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + pu_string + ".pdf");
-  if (doSavePng) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + pu_string + ".png");
+  if (doSavePdf) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + filename + ".pdf");
+  if (doSavePng) canvas->SaveAs(directory + "/resolution_" + muonType + "_" + filename + ".png");
 }
 
 
@@ -327,7 +322,7 @@ TGraphErrors* SetGraph(Int_t   npoints,
   TGraphErrors* gr = new TGraphErrors(npoints);
 
   gr->SetLineColor  (color);
-  gr->SetLineWidth  (    1);
+  gr->SetLineWidth  (1    );
   gr->SetMarkerColor(color);
   gr->SetMarkerStyle(style);
 
