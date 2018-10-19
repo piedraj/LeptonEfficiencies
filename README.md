@@ -66,14 +66,14 @@
 
 # Combine samples
 
-To gain statistics we perform an *hadd* of the _PU200_ and _noPU_ files.
+To gain statistics we perform an `hadd` of the **PU200** and **noPU** files.
 
     pushd rootfiles
     hadd DisplacedSUSY_PU200.root DisplacedSUSY_CTau-1_PU200.root DisplacedSUSY_CTau-100_PU200.root DisplacedSUSY_CTau-1000_PU200.root
     hadd DisplacedSUSY_noPU.root  DisplacedSUSY_CTau-1_noPU.root DisplacedSUSY_CTau-10_noPU.root
     popd
 
-The distributions below are made with the *hadd* files.
+The distributions below are made with the `hadd` files.
 
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
 
