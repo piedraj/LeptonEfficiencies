@@ -1,6 +1,8 @@
 //------------------------------------------------------------------------------
 //
-// doEfficiencies2D by Jonatan Piedra
+// Produce 2D efficiencies
+//
+// root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-1000_PU200")'
 //
 //------------------------------------------------------------------------------
 #include "TCanvas.h"
@@ -18,13 +20,11 @@
 
 // Data members
 //------------------------------------------------------------------------------
-const Float_t bigLabelSize = 0.04;
+Float_t        bigLabelSize = 0.04;
 
-Bool_t printEfficiencies = false;
+Bool_t         printEfficiencies = false;
 
-TString directory = "displaced-muons";
-
-TFile* inputfile;
+TString        directory = "displaced-muons";
 
 
 // Member functions
@@ -46,11 +46,12 @@ void DrawTLatex   (Font_t      tfont,
 
 
 //------------------------------------------------------------------------------
+//
 // doEfficiencies2D
+//
 //------------------------------------------------------------------------------
 void doEfficiencies2D(TString muontype = "Soft",
-		      TString pileup   = "PU200",
-		      TString title    = "soft muons efficiency (200 PU)")
+		      TString filename = "CTau-1_PU200")
 {
   gInterpreter->ExecuteMacro("PaperStyle.C");
 
@@ -59,24 +60,29 @@ void doEfficiencies2D(TString muontype = "Soft",
   TH1::SetDefaultSumw2();
   TH2::SetDefaultSumw2();
 
-  inputfile = TFile::Open("rootfiles/DisplacedSUSY_CTau-1_" + pileup + ".root", "read");
+  TFile* inputfile = TFile::Open("rootfiles/DisplacedSUSY_" + filename + ".root");
 
   TH2F* hnum = (TH2F*)inputfile->Get("muonAnalysis/" + muontype + "Muons_vxy_vz");
   TH2F* hden = (TH2F*)inputfile->Get("muonAnalysis/GenMuons_vxy_vz");
 
   hnum->Sumw2();  // TH2::SetDefaultSumw2() doesn't affect already existing histograms
 
-  TString hname = "efficiency_vxy_vz_muon" + muontype + "Id_" + pileup;
+  TString hname = "efficiency_vxy_vz_muon" + muontype + "Id_" + filename;
 
   TH2F* h = (TH2F*)hnum->Clone(hname);
 
   h->Divide(hnum, hden, 1, 1, "B");
 
   h->SetDirectory(0);
+  h->SetTitle("");
 
 
   // Draw
+  //----------------------------------------------------------------------------
   TCanvas* canvas = new TCanvas(hname, hname);
+
+  canvas->SetLogx();
+  canvas->SetLogy();
 
   canvas->SetLeftMargin (0.9 * canvas->GetLeftMargin());
   canvas->SetRightMargin(3.5 * canvas->GetRightMargin());
@@ -87,26 +93,26 @@ void doEfficiencies2D(TString muontype = "Soft",
 
   h->Draw("colz");
   
+  DrawTLatex(42, 0.940, 0.976, bigLabelSize, 33, filename + " " + muontype + " muons efficiency");
+
   TAxis* xaxis = h->GetXaxis();
   TAxis* yaxis = h->GetYaxis();
 
 
+  // Save tcl
   //----------------------------------------------------------------------------
-  //
-  // Print
-  //
   std::ofstream efficiency_tcl;
 
   efficiency_tcl.open(Form("%s/tcl/%s_error.tcl", directory.Data(), hname.Data()), std::ofstream::out);
 
-  efficiency_tcl << Form("# %s muons efficiency for d0 [mm] and dz [mm] with %s\n\n", muontype.Data(), pileup.Data()); 
+  efficiency_tcl << Form("# %s %s muons efficiency for d0 [mm] and dz [mm]\n\n", filename.Data(), muontype.Data()); 
 
   efficiency_tcl << "set EfficiencyFormula {\n";
 
   for (Int_t i=1; i<=h->GetNbinsX(); i++) {
     for (Int_t j=1; j<=h->GetNbinsX(); j++) {
 
-      efficiency_tcl << Form(" (abs(d0) > %6.3f && abs(d0) <= %6.3f) * (abs(dz) > %7.3f && abs(dz) < %7.3f) * %.3f   (error = %.3f)\n",
+      efficiency_tcl << Form(" (abs(d0) > %6.3f && abs(d0) <= %8.3f) * (abs(dz) > %7.3f && abs(dz) < %9.3f) * %.3f   (error = %.3f)\n",
 			     10*xaxis->GetBinLowEdge(i), 10*xaxis->GetBinLowEdge(i+1),
 			     10*yaxis->GetBinLowEdge(j), 10*yaxis->GetBinLowEdge(j+1),
 			     h->GetBinContent(i,j), h->GetBinError(i,j));
@@ -116,16 +122,10 @@ void doEfficiencies2D(TString muontype = "Soft",
   efficiency_tcl << "}\n";
   
   efficiency_tcl.close();
-  //
-  // Print
-  //
+
+
+  // Print efficiencies
   //----------------------------------------------------------------------------
-
-
-  h->SetTitle("");
-
-  DrawTLatex(42, 0.940, 0.976, bigLabelSize, 33, title);
-
   if (printEfficiencies) {
 
     Double_t hmin = h->GetMinimum();

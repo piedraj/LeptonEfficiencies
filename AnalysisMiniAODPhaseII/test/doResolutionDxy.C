@@ -25,15 +25,15 @@
 enum           {noPU, PU200};
 
 const Int_t    nbins_pt  =  6;
-const Int_t    nbins_vxy = 14;
+const Int_t    nbins_vxy = 15;
 
 const Double_t pt_bins[nbins_pt+1] = {10, 60, 90, 130, 170, 250, 500};
 
-const Double_t vxy_bins[nbins_vxy+1] = {0.0000, 0.0072, 0.0160, 0.0260, 0.0384, 0.0526, 0.0702, 0.0916, 0.1194, 0.1576, 0.2168, 0.3292, 1.0, 2.0, 3.0000};  // 1.0 and 2.0 added by hand
+const Double_t vxy_bins[nbins_vxy+1] = {0.0, 0.0072, 0.0160, 0.0260, 0.0384, 0.0526, 0.0702, 0.0916, 0.1194, 0.1576, 0.2168, 0.3292, 1.0, 2.0, 3.0, 300};
 
 Color_t        pt_colors[nbins_pt] = {kRed-10, kRed-9, kRed-7, kRed-4, kRed, kRed+1};
 
-Color_t        vxy_colors[nbins_vxy] = {kRed-10, kRed-9, kRed-8, kRed-7, kRed-6, kRed-5, kRed-4, kRed-3, kRed-2, kRed-1, kRed, kRed+1, kRed+2, kRed+3};
+Color_t        vxy_colors[nbins_vxy] = {kRed-10, kRed-9, kRed-8, kRed-7, kRed-6, kRed-5, kRed-4, kRed-3, kRed-2, kRed-1, kRed, kRed+1, kRed+2, kRed+3, kRed+4};
 
 Bool_t         doSavePdf = true;
 Bool_t         doSavePng = true;

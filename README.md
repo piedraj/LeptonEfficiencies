@@ -52,8 +52,14 @@
     root -l -b -q 'doResolutionDxy.C+("Tight", "tight muons", noPU)'
     root -l -b -q 'doResolutionDxy.C+("Tight", "tight muons", PU200)'
 
-    root -l -b -q 'doEfficiencies2D.C+("Soft",  "PU200", "soft muons efficiency (200 PU)")'
-    root -l -b -q 'doEfficiencies2D.C+("Soft",  "noPU",  "soft muons efficiency (no PU)")'
-    root -l -b -q 'doEfficiencies2D.C+("Tight", "PU200", "tight muons efficiency (200 PU)")'
-    root -l -b -q 'doEfficiencies2D.C+("Tight", "noPU",  "tight muons efficiency (no PU)")'
+    root -l -b -q 'doEfficiencies2D.C+("Soft", "CTau-1_noPU")'
+    root -l -b -q 'doEfficiencies2D.C+("Soft", "CTau-10_noPU")'
+    root -l -b -q 'doEfficiencies2D.C+("Soft", "CTau-1_PU200")'
+    root -l -b -q 'doEfficiencies2D.C+("Soft", "CTau-100_PU200")'
+    root -l -b -q 'doEfficiencies2D.C+("Soft", "CTau-1000_PU200")'
 
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-1_noPU")'
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-10_noPU")'
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-1_PU200")'
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-100_PU200")'
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-1000_PU200")'
