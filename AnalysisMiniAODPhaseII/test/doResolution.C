@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
 //
-// Compare displaced muons resolution
+// Produce and compare displaced muons resolution
 //
-// root -l -b -q 'doResolution.C+("CTau-1_PU200","CTau-1_noPU")'
+// root -l -b -q 'doResolution.C+("CTau-1_PU200","CTau-100_PU200")'
 //
 //------------------------------------------------------------------------------
 #include "TCanvas.h"
@@ -52,30 +52,32 @@ TMultiGraph*   mg_width = NULL;
 //------------------------------------------------------------------------------
 TString        file1name;
 TString        file2name;
-Int_t          vxy_bin;
 
 
 // Member functions
 //------------------------------------------------------------------------------
-void          DrawResolution(TString       muonType,
-			     TString       xtitle,
-			     TString       filename,
-			     Color_t       color);
+void          DrawMultiGraph(TMultiGraph* mg,
+			     TString      title);
 
-void          SetLegend     (TLegend*      tl,
-			     Size_t        tsize);
+void          DrawResolution(TString      muonType,
+			     TString      xtitle,
+			     TString      filename,
+			     Color_t      color);
 
-TGraphErrors* SetGraph      (Int_t         npoints,
-			     Color_t       color,
-			     Style_t       style);
+void          SetLegend     (TLegend*     tl,
+			     Size_t       tsize);
 
-void          DrawLatex     (Font_t        tfont,
-			     Float_t       x,
-			     Float_t       y,
-			     Float_t       tsize,
-			     Short_t       align,
-			     const char*   text,
-			     Bool_t        setndc = true);
+TGraphErrors* SetGraph      (Int_t        npoints,
+			     Color_t      color,
+			     Style_t      style);
+
+void          DrawLatex     (Font_t       tfont,
+			     Float_t      x,
+			     Float_t      y,
+			     Float_t      tsize,
+			     Short_t      align,
+			     const char*  text,
+			     Bool_t       setndc = true);
 
 
 //------------------------------------------------------------------------------
@@ -84,18 +86,14 @@ void          DrawLatex     (Font_t        tfont,
 //
 //------------------------------------------------------------------------------
 void doResolution(TString name1 = "CTau-1_PU200",
-		  TString name2 = "CTau-1_noPU",
-		  Int_t   vxy   = -1)
+		  TString name2 = "CTau-1_noPU")
 {
   file1name = name1;
   file2name = name2;
 
-  vxy_bin = vxy;
-
   printf("\n");
   printf(" file1name = %s\n", file1name.Data());
   printf(" file2name = %s\n", file2name.Data());
-  printf("   vxy_bin = %d\n", vxy_bin);
   printf("\n");
 
   gInterpreter->ExecuteMacro("PaperStyle.C");
@@ -133,56 +131,38 @@ void doResolution(TString name1 = "CTau-1_PU200",
   if (draw_tight) DrawResolution("Tight", "tight muons",      file2name, kGreen+2);
   if (draw_soft)  DrawResolution("Soft",  "soft muons",       file2name, kOrange+7);
 
-
-  // Draw mean
-  //----------------------------------------------------------------------------
-  TCanvas* c1 = new TCanvas("mean", "mean", 650, 600);
-
-  c1->SetLeftMargin (0.14);
-  c1->SetRightMargin(0.28);
-  c1->SetGridx();
-  c1->SetGridy();
-
-  mg_mean->Draw("apz");
-
-  mg_mean->GetXaxis()->SetTitle("gen p_{T} [GeV]");
-  mg_mean->GetYaxis()->SetTitle("");
-
-  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) fit mean");
-
-  mg_mean->GetXaxis()->SetTitleOffset(1.6);
-  mg_mean->GetYaxis()->SetTitleOffset(1.8);
-
-  resolution_legend->Draw("same");
-
-  if (doSavePdf) c1->SaveAs(directory + "/resolution_mean.pdf");
-  if (doSavePng) c1->SaveAs(directory + "/resolution_mean.png");
+  DrawMultiGraph(mg_mean,  "mean");
+  DrawMultiGraph(mg_width, "width");
+}
 
 
-  // Draw width
-  //----------------------------------------------------------------------------
-  TCanvas* c2 = new TCanvas("width", "width", 650, 600);
+//------------------------------------------------------------------------------
+// Draw MultiGraph
+//------------------------------------------------------------------------------
+void DrawMultiGraph(TMultiGraph* mg,
+		    TString      title)
+{
+  TCanvas* canvas = new TCanvas(title, title, 650, 600);
 
-  c2->SetLeftMargin (0.14);
-  c2->SetRightMargin(0.28);
+  canvas->SetLeftMargin (0.14);
+  canvas->SetRightMargin(0.28);
+  canvas->SetGridx();
+  canvas->SetGridy();
 
-  c2->SetGridx();
-  c2->SetGridy();
+  mg->Draw("apz");
 
-  mg_width->Draw("apz");
+  mg->GetXaxis()->SetTitle("gen p_{T} [GeV]");
+  mg->GetYaxis()->SetTitle("");
 
-  mg_width->GetXaxis()->SetTitle("gen p_{T} [GeV]");
-  mg_width->GetYaxis()->SetTitle("");
+  DrawLatex(42, 0.43, 0.95, 0.04, 21, Form("#Deltaq/p_{T} / (q/p_{T}) fit %s", title.Data()));
 
-  DrawLatex(42, 0.5, 0.95, 0.04, 21, "#Deltaq/p_{T} / (q/p_{T}) fit width");
-
-  mg_width->GetXaxis()->SetTitleOffset(1.6);
-  mg_width->GetYaxis()->SetTitleOffset(2.3);
+  mg->GetXaxis()->SetTitleOffset(1.6);
+  mg->GetYaxis()->SetTitleOffset(2.1);
 
   resolution_legend->Draw("same");
 
-  if (doSavePdf) c2->SaveAs(directory + "/resolution_width.pdf");
-  if (doSavePng) c2->SaveAs(directory + "/resolution_width.png");
+  if (doSavePdf) canvas->SaveAs(directory + "/resolution_" + title + ".pdf");
+  if (doSavePng) canvas->SaveAs(directory + "/resolution_" + title + ".png");
 }
 
 
@@ -219,21 +199,17 @@ void DrawResolution(TString muonType,
   Float_t ymax = 0;
 
 
-  // Loop
+  // Loop over pt bins
+  //----------------------------------------------------------------------------
   for (Int_t i=0; i<nbins_pt; i++) {
 
     TH2F* h2 = (TH2F*)file->Get(Form("muonAnalysis/%sMuons_pt_resolution_pt%d", muonType.Data(), i));
 
-    // TH1D* ProjectionY(const char* name = "_py", Int_t firstxbin = 0, Int_t lastxbin = -1, Option_t* option = "")
+    TString hname = Form("%s_%s_vxy", h2->GetName(), filename.Data());
 
-    TString vxy_suffix = (vxy_bin < 0) ? "all" : Form("%d", vxy_bin);
+    h_resolution[i] = (TH1F*)h2->ProjectionY(hname);
 
-    TString hname = Form("%s_%s_vxy_%s", h2->GetName(), filename.Data(), vxy_suffix.Data());
-
-    h_resolution[i] = (vxy_bin < 0) ? (TH1F*)h2->ProjectionY(hname) : (TH1F*)h2->ProjectionY(hname, vxy_bin, vxy_bin+1);
-
-    // Fit
-    TF1 *gfit = new TF1("gfit", "gaus", -0.035, 0.035);
+    TF1* gfit = new TF1("gfit", "gaus", -0.035, 0.035);
 
     gfit->SetParameters(1,0,1);
 
@@ -245,7 +221,6 @@ void DrawResolution(TString muonType,
     Float_t mean_error  = gfit->GetParError(1);
     Float_t width_error = gfit->GetParError(2);
 
-    // Get the mean and the width
     gr_mean ->SetPoint(i, 0.5*(pt_bins[i]+pt_bins[i+1]), mean_value);
     gr_width->SetPoint(i, 0.5*(pt_bins[i]+pt_bins[i+1]), width_value);
 
@@ -269,10 +244,7 @@ void DrawResolution(TString muonType,
   mg_mean ->Add(gr_mean);
   mg_width->Add(gr_width);
 
-
   // Legend
-  Bool_t pickMe = false;
-
   if (muonType.EqualTo("Sta")   && draw_sta)   resolution_legend->AddEntry(gr_mean, "(" + filename + ") sta",   "lp");
   if (muonType.EqualTo("Trk")   && draw_trk)   resolution_legend->AddEntry(gr_mean, "(" + filename + ") trk",   "lp");
   if (muonType.EqualTo("Glb")   && draw_glb)   resolution_legend->AddEntry(gr_mean, "(" + filename + ") glb",   "lp");
