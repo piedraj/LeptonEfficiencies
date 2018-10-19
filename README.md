@@ -43,9 +43,13 @@
 
     cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
 
-    root -l -b -q 'doEfficiencies.C+("CTau-1_PU200", "CTau-100_PU200")'
+    root -l -b -q 'doEfficiencies.C+("CTau-1_noPU",    "CTau-1_PU200")'
+    root -l -b -q 'doEfficiencies.C+("CTau-1_noPU",    "CTau-10_noPU")'
+    root -l -b -q 'doEfficiencies.C+("CTau-100_PU200", "CTau-1000_PU200")'
 
-    root -l -b -q 'doResolution.C+("CTau-1_PU200", "CTau-100_PU200")'
+    root -l -b -q 'doResolution.C+("CTau-1_noPU",    "CTau-1_PU200")'
+    root -l -b -q 'doResolution.C+("CTau-1_noPU",    "CTau-10_noPU")'
+    root -l -b -q 'doResolution.C+("CTau-100_PU200", "CTau-1000_PU200")'
 
     root -l -b -q 'doEfficiencies2D.C+("Soft", "CTau-1_noPU")'
     root -l -b -q 'doEfficiencies2D.C+("Soft", "CTau-10_noPU")'
@@ -58,3 +62,28 @@
     root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-1_PU200")'
     root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-100_PU200")'
     root -l -b -q 'doEfficiencies2D.C+("Tight", "CTau-1000_PU200")'
+
+
+# Combine samples
+
+To gain statistics we perform an *hadd* of the _PU200_ and _noPU_ files.
+
+    pushd rootfiles
+    hadd DisplacedSUSY_PU200.root DisplacedSUSY_CTau-1_PU200.root DisplacedSUSY_CTau-100_PU200.root DisplacedSUSY_CTau-1000_PU200.root
+    hadd DisplacedSUSY_noPU.root  DisplacedSUSY_CTau-1_noPU.root DisplacedSUSY_CTau-10_noPU.root
+    popd
+
+The distributions below are made with the *hadd* files.
+
+    cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
+
+    root -l -b -q 'doEfficiencies.C+("noPU", "PU200")'
+
+    root -l -b -q 'doResolution.C+("noPU", "PU200")'
+
+    root -l -b -q 'doEfficiencies2D.C+("Soft", "noPU")'
+    root -l -b -q 'doEfficiencies2D.C+("Soft", "PU200")'
+
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "noPU")'
+    root -l -b -q 'doEfficiencies2D.C+("Tight", "PU200")'
+
