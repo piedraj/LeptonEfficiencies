@@ -211,8 +211,7 @@ void DrawEfficiency(TString effType,
 
   mg->Draw("apz");
 
-//mg->SetMinimum(-0.05);
-  mg->SetMinimum( 0.30);
+  mg->SetMinimum(-0.05);
   mg->SetMaximum( 1.05);
 
   // Labels
