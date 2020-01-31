@@ -17,7 +17,7 @@ options.register ('location',
                   opts.VarParsing.varType.string,
                   'Can be lxplus or gridui')
 
-samplesPath = '/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/'
+samplesPath = '/afs/cern.ch/work/p/piedra/public/store/mc/PhaseIITDRSpring17MiniAOD/'
 
 if 'gridui' in options.location : samplesPath = '/gpfs/projects/cms/data/PhaseIITDRSpring17MiniAOD/'
 
@@ -58,25 +58,25 @@ if 'DisplacedMuons_PU200' in options.inputDataset :
 if 'DisplacedMuons_noPU' in options.inputDataset :
     print '\n Will read /DisplacedMuons_Pt2to50_Dxy0to500-pythia8-gun/PhaseIITDRSpring17MiniAOD-noPUBX8_91X_upgrade2023_realistic_v3-v3/MINIAODSIM\n'
     options.inputFiles = \
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedMuons_Pt2to50_Dxy0to500-pythia8-gun/MINIAODSIM/noPUBX8_91X_upgrade2023_realistic_v3-v3/50000/FCEFF295-A27C-E711-92A6-0CC47AD98CEA.root'
+        'file:' + samplesPath + 'DisplacedMuons_Pt2to50_Dxy0to500-pythia8-gun/MINIAODSIM/noPUBX8_91X_upgrade2023_realistic_v3-v3/50000/FCEFF295-A27C-E711-92A6-0CC47AD98CEA.root'
 
 
 if 'DisplacedSUSY_CTau-1_PU200' in options.inputDataset :
     print '\n Will read /DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/PhaseIITDRSpring17MiniAOD-PU200_91X_upgrade2023_realistic_v3-v2/MINIAODSIM\n'
     options.inputFiles = \
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/110000/A2DEC450-707E-E711-BD0E-00259048AE50.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/004CD079-877B-E711-AA24-00269E95B1BC.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0628DE6A-517B-E711-AF5B-002590E7DE26.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0C089C80-517B-E711-A8A2-008CFAF2222E.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0CDD60CA-277B-E711-B0A9-6C3BE5B59150.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0EA9129C-217B-E711-9675-0CC47A5FA3B9.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/12C4CB84-E87A-E711-988E-0242AC1C0501.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/34650372-877B-E711-B277-A0369FC5B844.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/3E2B439C-E97A-E711-B783-00266CFFC80C.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/46DFDA8C-457B-E711-BD37-008CFA197480.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/4A8F61D3-427A-E711-BA3D-008CFA14FA8C.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/562EBE89-567B-E711-BC50-0025907B4EEE.root',\
-        'file:/afs/cern.ch/user/p/piedra/work/store/mc/PhaseIITDRSpring17MiniAOD/DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/5AFDDB67-5F7B-E711-B319-3417EBE5062D.root'
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/110000/A2DEC450-707E-E711-BD0E-00259048AE50.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/004CD079-877B-E711-AA24-00269E95B1BC.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0628DE6A-517B-E711-AF5B-002590E7DE26.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0C089C80-517B-E711-A8A2-008CFAF2222E.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0CDD60CA-277B-E711-B0A9-6C3BE5B59150.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/0EA9129C-217B-E711-9675-0CC47A5FA3B9.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/12C4CB84-E87A-E711-988E-0242AC1C0501.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/34650372-877B-E711-B277-A0369FC5B844.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/3E2B439C-E97A-E711-B783-00266CFFC80C.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/46DFDA8C-457B-E711-BD37-008CFA197480.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/4A8F61D3-427A-E711-BA3D-008CFA14FA8C.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/562EBE89-567B-E711-BC50-0025907B4EEE.root',\
+        'file:' + samplesPath + 'DisplacedSUSY_SmuonToMuNeutralino_M-200_CTau-1_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/PU200_91X_upgrade2023_realistic_v3-v2/70000/5AFDDB67-5F7B-E711-B319-3417EBE5062D.root'
 
 
 if 'DisplacedSUSY_CTau-1_noPU' in options.inputDataset :
