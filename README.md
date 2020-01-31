@@ -1,5 +1,7 @@
 # Everything begins here
 
+Log in to gridui or lxplus.
+
     ssh -Y gridui.ifca.es -o ServerAliveInterval=240
     ssh -Y lxplus.cern.ch -o ServerAliveInterval=240
 
