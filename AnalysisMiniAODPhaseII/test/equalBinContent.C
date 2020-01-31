@@ -36,7 +36,7 @@ void equalBinContent(Int_t   nbins = 6,
 
   Int_t usedBins = 0;
 
-  printf("\n integral = %.1f; target = %.1f\n\n",
+  printf("\n integral = %.1f; target bin content = %.1f\n\n",
 	 integral, targetBinContent);
   
   Int_t i_begin = h1->GetNbinsX()+1;
@@ -104,4 +104,16 @@ void equalBinContent(Int_t   nbins = 6,
   TCanvas* c2 = new TCanvas("c2", "c2");
 
   h1_rebin->Draw();
+
+  // Cross-check the numbers
+  //----------------------------------------------------------------------------
+  printf(" Let's double check the numbers in the histogram with new bins\n\n");
+
+  for (Int_t i=h1_rebin->GetNbinsX(); i>0; i--) {
+
+    printf(" bin %2d; integral = %.1f\n", i, h1_rebin->GetBinContent(i));
+  }
+
+  printf("\n The new binning should be copied in LeptonEfficiencies/AnalysisMiniAODPhaseII/plugins/MuonAnalyzer.h\n");
+  printf("\n Once the binning has been updated MuonAnalyzer should be recompiled and run again\n\n");
 }
