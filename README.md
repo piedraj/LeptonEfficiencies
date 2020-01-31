@@ -1,10 +1,17 @@
 # Everything begins here
 
+    ssh -Y gridui.ifca.es -o ServerAliveInterval=240
     ssh -Y lxplus.cern.ch -o ServerAliveInterval=240
 
     bash -l
 
-    export SCRAM_ARCH=slc6_amd64_gcc530
+Execute this line **only** in gridui.
+
+    source /cvmfs/cms.cern.ch/cmsset_default.sh
+
+Set a CMSSW release.
+
+    export SCRAM_ARCH=slc7_amd64_gcc530
     cmsrel CMSSW_9_1_1_patch1
     cd CMSSW_9_1_1_patch1/src
     cmsenv
