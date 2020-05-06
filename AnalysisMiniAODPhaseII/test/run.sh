@@ -26,7 +26,7 @@ eval `scramv1 runtime -sh`
 
 cd LeptonEfficiencies/AnalysisMiniAODPhaseII/test
 
-printf "\n [run.sh] We are in the working directory %s\n" $PWD
+printf "\n [run.sh] We are in the working directory %s\n\n" $PWD
 
 mkdir -p rootfiles
 
