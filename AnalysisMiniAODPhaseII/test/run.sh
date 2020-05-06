@@ -10,6 +10,12 @@
 # Additional information can be found in the Altamira Users Guide
 # https://confluence.ifca.es/display/IC/Altamira+Users+Guide#AltamiraUsersGuide-Batchsystem
 
+printf "\n [run.sh] Load PERL module\n"
+
+module load PERL
+
+printf "\n [run.sh] Setup CMS environment\n"
+
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
 cd /gpfs/users/piedra/project/work/CMSSW_9_1_1_patch1/src
